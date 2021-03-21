@@ -3,7 +3,7 @@
  The motor will rotate to position set by the mouse location 
 */
 
-import shenkar.phidgets4processing.*;
+import shenkar.SimplePhidgets.*;
 
 Channel myServo;
 

@@ -3,7 +3,7 @@
  See basic examples for full documentation of each channel type
 */
 
-import shenkar.phidgets4processing.*;
+import shenkar.SimplePhidgets.*;
 
 Channel xChan;
 Channel yChan;

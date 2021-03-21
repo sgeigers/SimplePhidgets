@@ -4,7 +4,7 @@
  See comments and explanations inside code, and full function descriptions below.
 */
 
-import shenkar.phidgets4processing.*;
+import shenkar.SimplePhidgets.*;
 
 Channel myLightSensor;
 

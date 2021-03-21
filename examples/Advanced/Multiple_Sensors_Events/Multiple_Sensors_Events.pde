@@ -6,7 +6,7 @@
 */
 
 
-import shenkar.phidgets4processing.*;
+import shenkar.SimplePhidgets.*;
 
 Channel myProximitySensor;
 Channel myTouchSensor;

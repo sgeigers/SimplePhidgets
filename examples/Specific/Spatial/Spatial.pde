@@ -4,7 +4,7 @@
  The use of accelerometer-only devices is more limited - you can only get roll and pitch angles (no yaw angle)
 */
 
-import shenkar.phidgets4processing.*;
+import shenkar.SimplePhidgets.*;
 
 Channel mySpatial;
 

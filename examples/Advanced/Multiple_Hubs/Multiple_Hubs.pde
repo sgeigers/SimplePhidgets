@@ -2,7 +2,7 @@
  This example demonstrates opening multiple sensors connected to 2 hubs.
 */
 
-import shenkar.phidgets4processing.*;
+import shenkar.SimplePhidgets.*;
 
 Channel myLightSensor;
 Channel mySlider;

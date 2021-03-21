@@ -2,7 +2,7 @@
  This example shows simple use of a button or switch connected to an interfaceKit. (It is similar to connecting it to a VINT hub - mostly the physical connections are different)
 */
 
-import shenkar.phidgets4processing.*;
+import shenkar.SimplePhidgets.*;
 
 Channel myButtonChannel;
 

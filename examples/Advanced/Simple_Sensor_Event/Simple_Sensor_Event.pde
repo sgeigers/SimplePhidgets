@@ -7,7 +7,7 @@
  In this example, we use a one-time event for drawing a red circle when the sensor detects an intruder. The sensor "raises a flag" when a motion is detected. See more comments and explanations in the code.
 */
 
-import shenkar.phidgets4processing.*;
+import shenkar.SimplePhidgets.*;
 
 Channel myMotionSensor;
 boolean alarm = false;

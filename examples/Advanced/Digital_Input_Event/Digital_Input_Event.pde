@@ -6,7 +6,7 @@
  If you have multiple buttons (or switches etc.) and you need to know which one triggered the event, you should use stateChange(Channel ch) - see example Multiple_Sensors_Events
 */
 
-import shenkar.phidgets4processing.*;
+import shenkar.SimplePhidgets.*;
 
 Channel myButton;
 

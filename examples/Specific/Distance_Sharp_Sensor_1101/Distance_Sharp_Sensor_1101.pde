@@ -5,7 +5,7 @@
   For detecting vlaues that are out of range (too close or too far), you can use getSensorValueValidity. See example Advanced -> Multimple_Sensors_Events
 */
 
-import shenkar.phidgets4processing.*;
+import shenkar.SimplePhidgets.*;
 
 Channel myDistanceSensor;
 
