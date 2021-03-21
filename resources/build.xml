@@ -233,6 +233,7 @@ ${line}
 		<mkdir dir="${project.dist.version}/tmp/${project.name}/reference" />
 
 		<copy file="${install.source}" tofile="${project.dist.version}/tmp/${project.name}/reference/README.md" />
+		<copy file="${install.source}" tofile="README.md" />
 
 		<antcall target="parse.file"><param name="file" value="${project.dist.version}/tmp/${project.name}/reference/README.md"/></antcall>
 
