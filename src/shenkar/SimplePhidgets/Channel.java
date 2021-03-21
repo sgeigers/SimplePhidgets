@@ -22,6 +22,8 @@ import processing.core.*;
  * Many initialization methods are possible, depending on system setup. See github.com/sgeigers/SimplePhidgets#reference for details
  * 
  * @example Basic/Digital_Input
+ * @example Basic/Digital_Output
+ * @example Basic/LED_Analog
  * @example Basic/Servo_Motor_Basic
  * @example Basic/Simple_Sensor
  * @example Specific/Distance_Sharp_Sensor_1101
@@ -383,7 +385,7 @@ public class Channel {
 	 * @param theParent the parent PApplet
 	 * @param type 4 numbers or 3 letters and 4 numbers describing type of device to associate to this channel
 	 * @param serial serial number of hub or interfaceKit (to be used in case there are more than one hub/IK connected to the computer)
-	 * @param hubPort the port number of hub or interfaceKit where the device is connected. Only needed if differnt than 0 or if a channel number is specified
+	 * @param hubPort the port number of hub or interfaceKit where the device is connected. Only needed if different than 0 or if a channel number is specified
 	 * @param chNum if the device has more than one channel (e.g. wheatstone bridge) - specify the channel used
 	 */
 	public Channel(PApplet theParent, String type, int serialNum, int hubPort, int chNum, String secondaryIO) {
@@ -446,6 +448,45 @@ public class Channel {
 				}
 				break;
 
+			case "DIGITALOUTPUT":
+				switch (deviceType) {
+				case "1010": // PhidgetInterfaceKit 8/8/8
+				case "1011": // PhidgetInterfaceKit 2/2/2
+				case "1012": // PhidgetInterfaceKit 0/16/16
+				case "1013": // PhidgetInterfaceKit 8/8/8
+				case "1018": // PhidgetInterfaceKit 8/8/8
+				case "1019": // PhidgetInterfaceKit 8/8/8
+				case "1023": // PhidgetRFID
+				case "1024": // PhidgetRFID Read-Write
+				case "1030": // PhidgetLED-64
+				case "1031": // PhidgetLED-64 Advanced
+				case "1032": // PhidgetLED-64 Advanced
+				case "1070": // PhidgetSBC
+				case "1072": // PhidgetSBC2
+				case "1073": // PhidgetSBC3
+				case "1202": // PhidgetTextLCD 20X2 : Blue : Integrated PhidgetInterfaceKit 8/8/8
+				case "1203": // PhidgetTextLCD 20X2 : White : Integrated PhidgetInterfaceKit 8/8/8
+				case "1219": // PhidgetTextLCD 20X2 White with PhidgetInterfaceKit 0/8/8
+				case "1220": // PhidgetTextLCD 20X2 Blue with PhidgetInterfaceKit 0/8/8
+				case "1221": // PhidgetTextLCD 20X2 Green with PhidgetInterfaceKit 0/8/8
+				case "1222": // PhidgetTextLCD 20X2 Red with PhidgetInterfaceKit 0/8/8
+				case "LED1000": // 32x Isolated LED Phidget
+				case "HUB0000": // 6-Port USB VINT Hub Phidget
+				case "HUB5000": // 6-Port Network VINT Hub Phidget
+				case "OUT1100": // 4x Digital Output Phidget
+				case "REL1000": // 4x Relay Phidget
+				case "REL1100": // 4x Isolated Solid State Relay Phidget
+				case "REL1101": // 16x Isolated Solid State Relay Phidget
+				case "SBC3003": // PhidgetSBC4 - 6-Port VINT Hub Phidget
+					device = new P_Digital_Output(myParent, this, deviceType, serialNum, hubPort, chNum);
+					break;
+
+				default:
+					System.out.println("device " + deviceType + " has no secondary I/O of type \"digitalOutput\"");	
+					break;
+				}
+				break;
+			
 			case "ANALOGINPUT":
 				switch (deviceType) {
 /*					case "HIN1100": // Thumbstick Phidget
@@ -475,7 +516,7 @@ public class Channel {
 				break;
 
 			default:
-				System.out.println("unknown secondary I/O: " + secondaryIO + ". currently, possible secondary I/Os are: digitalInput, analogInput.");	
+				System.out.println("unknown secondary I/O: " + secondaryIO + ". currently, possible secondary I/Os are: digitalInput, digitalOutput, analogInput and voltageInput.");	
 				break;
 			}
 		}
@@ -586,6 +627,17 @@ public class Channel {
 			case "3589": // +-250A DC Current Transducer
 			case "MOT2002": // Motion Sensor (PIR)
 				device = new P_Voltage_Input(myParent, this, deviceType, serialNum, hubPort, chNum);
+				break;
+
+			case "1030": // PhidgetLED-64
+			case "1031": // PhidgetLED-64 Advanced
+			case "1032": // PhidgetLED-64 Advanced
+			case "LED1000": // 32x Isolated LED Phidget
+			case "OUT1100": // 4x Digital Output Phidget
+			case "REL1000": // 4x Relay Phidget
+			case "REL1100": // 4x Isolated Solid State Relay Phidget
+			case "REL1101": // 16x Isolated Solid State Relay Phidget
+				device = new P_Digital_Output(myParent, this, deviceType, serialNum, hubPort, chNum);
 				break;
 
 			case "1015": // Linear Touch
