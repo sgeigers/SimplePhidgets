@@ -118,6 +118,7 @@ A few exceptions:
 <span style="color: #006699;">println</span>(temperatureSensor.getSensorUnit());
 // prints: DEGREE_CELCIUS
 </pre>
+<li>Some functions have their name changed a little (this was mandatory, because of the way this library works - we can't have two functions with different return types have the same name). In case you try to use a function and gets an error that it doesn't exist, find the relevant example and look on the list of all available functions in the comments below.
 </ol>
 
 When there is no "Choose a Language" box in the API tab on the product page, the page will refer you to an API that controls the device (e.g. VoltageRatioInput API). You can find the list of functions for this API in the [API page](https://www.phidgets.com/?view=api&lang=Java) - select the stated API from the "Choose an API" box.
@@ -131,6 +132,9 @@ the <code><span style="color: #000000;">read()</span></code> function returns 0 
 
 ### analogInput
 Some boards have an analog port as secondary input (e.g. DC Motor Phidget DCC1000). This enables to connect a sensor to this board without using another hub or interfaceKit. Technically, this option implements a VoltageRatioInput API. For using VoltageInput API, use "VoltageInput" instead.
+
+### digitalOutput
+This allows to turn on or off an output device connected to a channel (usually used with LEDs). Basic commands are <code><span style="color: #000000;">on()</span></code> and <code><span style="color: #000000;">off()</span></code>. When using LEDs, some boards (e.g. HUB0000) allow to also use <code><span style="color: #000000;">analogWrite()</span></code> with a number from 0 to 1000 to set LED intensity.
 
 ### voltageInput
 Opens a VoltageInput channel as secondary I/O. This fits some sensors that has extra specific possibilities over the default VoltageRatioInput.
