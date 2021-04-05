@@ -4,17 +4,17 @@
 
 import shenkar.SimplePhidgets.*;
 
-Channel myButtonChannel;
+Channel myDigitalInput;
 
 void setup() {
   size(200, 400);
   // using a "1018" interfaceKit, connect a button between terminal 4 of INPUTS and G 
-  myButtonChannel = new Channel(this, "1018", 4, "digitalInput");
+  myDigitalInput = new Channel(this, "1018", 4, "digitalInput");
 }
 
 void draw() {
   background(0);
-  int val = myButtonChannel.read();  // get button value; 0 or 1
+  int val = myDigitalInput.read();  // get button value; 0 or 1
   if (val == 1) {
     ellipse (100, 200, 100, 100);
   }

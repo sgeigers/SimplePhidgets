@@ -24,8 +24,9 @@ void draw() {
  
  Event functions:
 
- void stateChange() - called when the channel detects a change in state. See example Digital_Input_Event
- void stateChangeRT() - real-time version of the event. See https://github.com/sgeigers/Phidgets4Processing
+ void positionChange() - called when the servo's position is changed, based on data rate set with setDataRate.
+ void velocityChange() - called when the servo's velocity is changed, based on data rate set with setDataRate.
+ void targetReached() - called when the servo reaches its target position.
 
  Specipic functions for using with DAQ1400 - Versatile Input Phidget:
  

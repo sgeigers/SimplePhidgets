@@ -4,19 +4,19 @@
 
 import shenkar.SimplePhidgets.*;
 
-Channel myLED;
+Channel myDigitalOutput;
 
 void setup() {
   size(200, 200);
-  // connect a LED + to port 0 DO (white) and LED - to port 0 Ground (black)
-  myLED = new Channel(this, "HUB0000", "digitalOutput");
+  // connect the LED + to port 0 DO (white) and LED - to port 0 Ground (black)
+  myDigitalOutput = new Channel(this, "HUB0000", "digitalOutput");
   background(0);
 }
 
 void draw() {
-  myLED.on();
+  myDigitalOutput.on();
   delay(mouseX*5);
-  myLED.off();
+  myDigitalOutput.off();
   delay(mouseX*5);
 }
  

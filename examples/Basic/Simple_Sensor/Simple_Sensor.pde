@@ -1,24 +1,24 @@
 /*
- This example demonstrates the use of a simple sensor (in this case, a light sensor) connected to a VINT hub or an interfaceKit.
+ This example demonstrates the use of a simple sensor (e.g. a light sensor) connected to a VINT hub or an interfaceKit.
  The value of the sensor is read and used for setting the circles's fill color.
  See comments and explanations inside code, and full function descriptions below.
 */
 
 import shenkar.SimplePhidgets.*;
 
-Channel myLightSensor;
+Channel mySimpleSensor;
 
 void setup() {
   size(400, 400);
-  myLightSensor = new Channel(this, "1142");  // opening a channel for the light sensor (https://www.phidgets.com/?prodid=115)
+  mySimpleSensor = new Channel(this, "1142");  // opening a channel for the sensor, using it's part number.
 }
 
 void draw() {
   background (0);
-  int val = myLightSensor.read();  // get sensor value between 0 and 1000
+  int val = mySimpleSensor.read();  // get sensor value between 0 and 1000
   println (val);
   noStroke();
-  fill (val/4, val/4, val/6);  // setting fill color proportional to light. the dividers were set by trial and error
+  fill (val/4, val/4, val/6);  // setting fill color proportional to sensor value. the dividers were set by trial and error
   ellipse (200, 200, 300, 300);
 }
 
