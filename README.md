@@ -118,7 +118,7 @@ A few exceptions:
 <span style="color: #006699;">println</span>(temperatureSensor.getSensorUnit());
 // prints: DEGREE_CELCIUS
 </pre>
-<li>Some functions have their name changed a little (this was mandatory, because of the way this library works - we can't have two functions with different return types have the same name). In case you try to use a function and gets an error that it doesn't exist, find the relevant example and look on the list of all available functions in the comments below.
+<li>Some functions have their names changed a little (this was mandatory, because of the way this library works - we can't have two functions with different return types have the same name). In case you try to use a function and gets an error that it doesn't exist, find the relevant example and look on the list of all available functions in the comments below.
 </ol>
 
 When there is no "Choose a Language" box in the API tab on the product page, the page will refer you to an API that controls the device (e.g. VoltageRatioInput API). You can find the list of functions for this API in the [API page](https://www.phidgets.com/?view=api&lang=Java) - select the stated API from the "Choose an API" box.

@@ -611,10 +611,6 @@ abstract public class Device {
 		System.err.println("setLEDForwardVoltage(String) is not valid for device of type " + deviceType);	
 	}
 
-	public void setAngle(int ang) {
-		System.err.println("setAngle(int) is not valid for device of type " + deviceType);	
-	}
-
 	public void setAngle(float ang) {
 		System.err.println("setAngle(float) is not valid for device of type " + deviceType);	
 	}
@@ -771,5 +767,54 @@ abstract public class Device {
 	public void setVoltage(String vol) {
 		System.err.println("setVoltage(String) is not valid for device of type " + deviceType);	
 	}
-}
 
+	public String getControlMode() {
+		System.err.println("getControlMode() is not valid for device of type " + deviceType);	
+		return "";
+	}
+	
+	public void setControlMode(String mode) {
+		System.err.println("setControlMode(String) is not valid for device of type " + deviceType);	
+	}
+
+	public float getCurrentLimit() {
+		System.err.println("getCurrentLimit() is not valid for device of type " + deviceType);	
+		return 0;
+	}
+
+	public void setCurrentLimit(float curr) {
+		System.err.println("setCurrentLimit(float) is not valid for device of type " + deviceType);	
+	}
+
+	public float getMinCurrentLimit() {
+		System.err.println("getMinCurrentLimit() is not valid for device of type " + deviceType);	
+		return 0;
+	}
+
+	public float getMaxCurrentLimit() {
+		System.err.println("getMaxCurrentLimit() is not valid for device of type " + deviceType);	
+		return 0;
+	}
+
+	public float getHoldingCurrentLimit() {
+		System.err.println("getHoldingCurrentLimit() is not valid for device of type " + deviceType);	
+		return 0;
+	}
+
+	public void setHoldingCurrentLimit(float curr) {
+		System.err.println("setHoldingCurrentLimit(float) is not valid for device of type " + deviceType);	
+	}
+
+	public void addPositionOffset(int offset) {
+		System.err.println("addPositionOffset(int) is not valid for device of type " + deviceType);	
+	}
+
+	public float getRescaleFactor() {
+		System.err.println("getRescaleFactor() is not valid for device of type " + deviceType);	
+		return 0;
+	}
+
+	public void setRescaleFactor(float fctr) {
+		System.err.println("setRescaleFactor(float) is not valid for device of type " + deviceType);	
+	}
+}

@@ -945,7 +945,7 @@ public class P_Spatial extends Device {
 		catch (PhidgetException ex) {
 			System.err.println("Cannot get quaternion from device " + deviceType + " because of error: " + ex);
 		}
-		return new float[4];		
+		return null;		
 	}
 
 	@Override

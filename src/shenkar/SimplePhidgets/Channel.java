@@ -26,13 +26,13 @@ import processing.core.*;
  * @example Basic/LED_Analog
  * @example Basic/Servo_Motor_Basic
  * @example Basic/Simple_Sensor
- * @example Specific/Distance_Sharp_Sensor_1101
- * @example Specific/Spatial
- * @example Specific/HIN1100_Thumbstick
- * @example Advanced/Digital_Input_Event
- * @example Advanced/Multiple_Hubs
- * @example Advanced/Multiple_Sensors_Events
- * @example Advanced/Simple_Sensor_Event
+ * @example Specific_Sensors/Distance_Sharp_Sensor_1101
+ * @example Specific_Sensors/Spatial
+ * @example Specific_Sensors/HIN1100_Thumbstick
+ * @example Advanced_Concepts/Digital_Input_Event
+ * @example Advanced_Concepts/Multiple_Hubs
+ * @example Advanced_Concepts/Multiple_Sensors_Events
+ * @example Advanced_Concepts/Simple_Sensor_Event
  */
 
 public class Channel {
@@ -58,7 +58,7 @@ public class Channel {
 	public int getBridgeGain() {return device.getBridgeGain(); } // 1, 2, 4, 8, 16, 32, 64, 128
 	public void setBridgeGain(int gain) {device.setBridgeGain(gain); } // 1, 2, 4, 8, 16, 32, 64, 128
 
-	// P_Voltage_Ratio, P_Voltage_Input, P_Sound_Sensor, P_Capacitive_Touch, P_Spatial, P_RC_Servo
+	// P_Voltage_Ratio, P_Voltage_Input, P_Sound_Sensor, P_Capacitive_Touch, P_Spatial, P_RC_Servo, P_Stepper
 	public int getDataInterval() {return device.getDataInterval(); }
 	public void setDataInterval(int dataInterval) {device.setDataInterval(dataInterval); }
 	public int getMinDataInterval() {return device.getMinDataInterval(); }  // milliseconds
@@ -185,15 +185,15 @@ public class Channel {
 	public String getLEDForwardVoltage() {return device.getLEDForwardVoltage(); }
 	public void setLEDForwardVoltage(String LEDFV) {device.setLEDForwardVoltage(LEDFV); }
 
-	// P_Digital_Output, P_RC_Servo
+	// P_Digital_Output, P_RC_Servo, P_Stepper
 	public void enableFailsafe(int failsafeTime) {device.enableFailsafe(failsafeTime); }	
 	public int getMinFailsafeTime() {return device.getMinFailsafeTime(); }
 	public int getMaxFailsafeTime() {return device.getMaxFailsafeTime(); }
 	public void resetFailsafe() {device.resetFailsafe(); }	
 
-	// P_RC_SERVO
-	public void setAngle(int ang) {device.setAngle(ang); }
-	public void setAngle(float ang) {device.setAngle(ang); }
+	// P_RC_Servo, P_Stepper
+	public void setTargetPosition(float tgt) {device.setTargetPosition(tgt); }
+	public float getTargetPosition() {return device.getTargetPosition(); }
 	public float getAcceleration() {return device.getAcceleration(); }
 	public void setAcceleration(float accel) {device.setAcceleration(accel); }
 	public float getMinAcceleration() {return device.getMinAcceleration(); }
@@ -202,10 +202,18 @@ public class Channel {
 	public void setEngaged(boolean eng) {device.setEngaged(eng); }
 	public boolean getIsMoving() {return device.getIsMoving(); }
 	public float getPosition() {return device.getPosition(); }
-	public void setMinPosition(float pos) {device.setMinPosition(pos); }
 	public float getMinPosition() {return device.getMinPosition(); }
-	public void setMaxPosition(float pos) {device.setMaxPosition(pos); }
 	public float getMaxPosition() {return device.getMaxPosition(); }
+	public float getVelocity() {return device.getVelocity(); }
+	public float getVelocityLimit() {return device.getVelocityLimit(); }
+	public void setVelocityLimit(float vel) {device.setVelocityLimit(vel); }
+	public float getMinVelocityLimit() {return device.getMinVelocityLimit(); }
+	public float getMaxVelocityLimit() {return device.getMaxVelocityLimit(); }
+
+	// P_RC_Servo
+	public void setAngle(float ang) {device.setAngle(ang); }
+	public void setMinPosition(float pos) {device.setMinPosition(pos); }
+	public void setMaxPosition(float pos) {device.setMaxPosition(pos); }
 	public void setMinPulseWidth(float pls) {device.setMinPulseWidth(pls); }
 	public float getMinPulseWidth() {return device.getMinPulseWidth(); }
 	public void setMaxPulseWidth(float pls) {device.setMaxPulseWidth(pls); }
@@ -214,19 +222,26 @@ public class Channel {
 	public float getMaxPulseWidthLimit() {return device.getMaxPulseWidthLimit(); }
 	public boolean getSpeedRampingState() {return device.getSpeedRampingState(); }
 	public void setSpeedRampingState(boolean state) {device.setSpeedRampingState(state); }
-	public float getTargetPosition() {return device.getTargetPosition(); }
-	public void setTargetPosition(float tgt) {device.setTargetPosition(tgt); }
 	public float getTorque() {return device.getTorque(); }
 	public void setTorque(float trq) {device.setTorque(trq); }
 	public float getMinTorque() {return device.getMinTorque(); }
 	public float getMaxTorque() {return device.getMaxTorque(); }
-	public float getVelocity() {return device.getVelocity(); }
-	public float getVelocityLimit() {return device.getVelocityLimit(); }
-	public void setVelocityLimit(float vel) {device.setVelocityLimit(vel); }
-	public float getMinVelocityLimit() {return device.getMinVelocityLimit(); }
-	public float getMaxVelocityLimit() {return device.getMaxVelocityLimit(); }
 	public String getVoltageString() {return device.getVoltageString(); }
 	public void setVoltage(String vol) {device.setVoltage(vol); }
+	
+	// P_Stepper
+	public String getControlMode() {return device.getControlMode(); }
+	public void setControlMode(String mode) {device.setControlMode(mode); }
+	public float getCurrentLimit() {return device.getCurrentLimit(); }
+	public void setCurrentLimit(float curr) {device.setCurrentLimit(curr); }
+	public float getMinCurrentLimit() {return device.getMinCurrentLimit(); }
+	public float getMaxCurrentLimit() {return device.getMaxCurrentLimit(); }
+	public float getHoldingCurrentLimit() {return device.getHoldingCurrentLimit(); }
+	public void setHoldingCurrentLimit(float curr) {device.setHoldingCurrentLimit(curr); }
+	public void addPositionOffset(int offset) {device.addPositionOffset(offset); }
+	public float getRescaleFactor() {return device.getRescaleFactor(); }
+	public void setRescaleFactor(float fctr) {device.setRescaleFactor(fctr); }
+
 	
 	/**
 	 * minimal constructor
@@ -679,6 +694,16 @@ public class Channel {
 			case "RCC0004":  // PhidgetAdvancedServo 8-Motor
 			case "RCC1000":  // 16x RC Servo Phidget
 				device = new P_RC_Servo(myParent, this, deviceType, serialNum, hubPort, chNum);
+				break;
+
+			case "1062":   // PhidgetStepper Unipolar 4-Motor
+			case "1063":   // PhidgetStepper Bipolar 1-Motor
+			case "1067":   // PhidgetStepper Bipolar HC
+			case "STC1000":  // Stepper Phidget
+			case "STC1001":  // 2.5A Stepper Phidget
+			case "STC1002":  // 8A Stepper Phidget
+			case "STC1003":  // 4A Stepper Phidget
+				device = new P_Stepper(myParent, this, deviceType, serialNum, hubPort, chNum);
 				break;
 
 			default:

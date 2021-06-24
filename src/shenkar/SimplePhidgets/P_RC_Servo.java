@@ -414,28 +414,6 @@ public class P_RC_Servo extends Device {
 	 * 
 	 */
 	@Override
-	public void setAngle(int ang) {
-		try {
-			((RCServo)device).setTargetPosition((double)ang);
-			if (((RCServo)device).getEngaged() == false) {
-				if (firstCall) {
-					((RCServo)device).setVelocityLimit(((RCServo)device).getMaxVelocityLimit());
-					((RCServo)device).setAcceleration(((RCServo)device).getMaxAcceleration());
-					firstCall = false;
-				}
-				((RCServo)device).setEngaged(true);
-			}
-		}
-		catch (PhidgetException ex) {
-			System.err.println("Cannot set device " + deviceType + " to ON state because of error: " + ex);
-		}
-	}
-
-	/*
-	 * most basic way to use the channel. Turns the servo to desired angle
-	 * 
-	 */
-	@Override
 	public void setAngle(float ang) {
 		try {
 			((RCServo)device).setTargetPosition((double)ang);
@@ -934,7 +912,7 @@ public class P_RC_Servo extends Device {
 			System.err.println("Cannot set target position to device " + deviceType + " because of error: " + ex);
 		}
 	}
-	
+
 	// All torque functions have no board using them currently, so not implemented
 	/*
 	@Override
