@@ -29,6 +29,10 @@ public class P_Spatial extends Device {
 	Method magneticFieldChangeEventRTMethod; // magnetoChangeRT
 	Method spatialChangeEventRTMethod; // spatialChangeRT
 	/*NOT TESTED*/	Method algorithmChangeEventRTMethod; // algorithmChangeRT
+	boolean RTAccelerationChangeEventRegister = false;
+	boolean RTAngularRateUpdateEventRegister = false;
+	boolean RTMagneticFieldChangeEventRegister = false;
+	// spatialChange and  algorithmChange are always called RT behind the scenes anyway
 
 	// there are 2 types of spatial sensor boards: accelerometer only or 9DOF. the latter need extra 3 objects inside it to get full functionality from precessing
 	Spatial spatial;
@@ -65,6 +69,7 @@ public class P_Spatial extends Device {
 			}
 		}	catch (PhidgetException ex) {
 			System.err.println("Could not open device " + deviceType + " on port " + portNum + ". See help on github.com/sgeigers/SimplePhidgets#reference");
+			PAppletParent.exit();
 		}
 
 		// device opening
@@ -98,6 +103,7 @@ public class P_Spatial extends Device {
 			}
 			catch (PhidgetException ex) {
 				System.err.println("Could not open device " + deviceType + ". See github.com/sgeigers/SimplePhidgets#reference for help");
+				PAppletParent.exit();
 			}
 			break;
 
@@ -121,6 +127,7 @@ public class P_Spatial extends Device {
 			}
 			catch (PhidgetException ex) {
 				System.err.println("Could not open device " + deviceType + ". See github.com/sgeigers/SimplePhidgets#reference for help");
+				PAppletParent.exit();
 			}
 			break;
 		}
@@ -293,20 +300,8 @@ public class P_Spatial extends Device {
 						System.err.println("Cannot use both accelChange() and accelChangeRT()."); 				
 					}
 					else {
-						((Accelerometer)device).addAccelerationChangeListener(new AccelerometerAccelerationChangeListener() {
-							public void onAccelerationChange(AccelerometerAccelerationChangeEvent e) {
-								//System.out.println(e.toString());
-								try {
-									if (accelerationChangeEventRTMethod != null) {
-										accelerationChangeEventRTMethod.invoke(PAppletParent);
-									}
-								} catch (Exception ex) {
-									System.err.println("Disabling accelChangeRT() for " + deviceType + " because of an error:");
-									ex.printStackTrace();
-									accelerationChangeEventRTMethod = null;
-								}
-							}
-						});
+						RTAccelerationChangeEventRegister = true;
+						accelerationChangeEventReportChannel = false;
 					}
 				}
 			} catch (Exception e) {
@@ -321,20 +316,8 @@ public class P_Spatial extends Device {
 						System.err.println("Cannot use both accelChange() and accelChangeRT()."); 				
 					}
 					else {
-						((Accelerometer)device).addAccelerationChangeListener(new AccelerometerAccelerationChangeListener() {
-							public void onAccelerationChange(AccelerometerAccelerationChangeEvent e) {
-								//System.out.println(e.toString());
-								try {
-									if (accelerationChangeEventRTMethod != null) {
-										accelerationChangeEventRTMethod.invoke(PAppletParent, new Object[] { ChannelParent });
-									}
-								} catch (Exception ex) {
-									System.err.println("Disabling accelChangeRT() for " + deviceType + " because of an error:");
-									ex.printStackTrace();
-									accelerationChangeEventRTMethod = null;
-								}
-							}
-						});
+						RTAccelerationChangeEventRegister = true;
+						accelerationChangeEventReportChannel = true;
 					}
 				}
 			} catch (Exception e) {
@@ -465,20 +448,8 @@ public class P_Spatial extends Device {
 						System.err.println("Cannot use both gyroChange() and gyroChangeRT()."); 				
 					}
 					else {
-						gyroscope.addAngularRateUpdateListener(new GyroscopeAngularRateUpdateListener() {
-							public void onAngularRateUpdate(GyroscopeAngularRateUpdateEvent e) {
-								//System.out.println(e.toString());
-								try {
-									if (angularRateUpdateEventRTMethod != null) {
-										angularRateUpdateEventRTMethod.invoke(PAppletParent);
-									}
-								} catch (Exception ex) {
-									System.err.println("Disabling gyroChangeRT() for " + deviceType + " because of an error:");
-									ex.printStackTrace();
-									angularRateUpdateEventRTMethod = null;
-								}
-							}
-						});
+						RTAngularRateUpdateEventRegister = true;
+						angularRateUpdateEventReportChannel = false;
 					}
 				}
 			} catch (Exception e) {
@@ -493,20 +464,8 @@ public class P_Spatial extends Device {
 						System.err.println("Cannot use both gyroChange() and gyroChangeRT()."); 				
 					}
 					else {
-						gyroscope.addAngularRateUpdateListener(new GyroscopeAngularRateUpdateListener() {
-							public void onAngularRateUpdate(GyroscopeAngularRateUpdateEvent e) {
-								//System.out.println(e.toString());
-								try {
-									if (angularRateUpdateEventRTMethod != null) {
-										angularRateUpdateEventRTMethod.invoke(PAppletParent, new Object[] { ChannelParent });
-									}
-								} catch (Exception ex) {
-									System.err.println("Disabling gyroChangeRT() for " + deviceType + " because of an error:");
-									ex.printStackTrace();
-									angularRateUpdateEventRTMethod = null;
-								}
-							}
-						});
+						RTAngularRateUpdateEventRegister = true;
+						angularRateUpdateEventReportChannel = true;
 					}
 				}
 			} catch (Exception e) {
@@ -553,20 +512,8 @@ public class P_Spatial extends Device {
 						System.err.println("Cannot use both magnetoChange() and magnetoChangeRT()."); 				
 					}
 					else {
-						magnetometer.addMagneticFieldChangeListener(new MagnetometerMagneticFieldChangeListener() {
-							public void onMagneticFieldChange(MagnetometerMagneticFieldChangeEvent e) {
-								//System.out.println(e.toString());
-								try {
-									if (magneticFieldChangeEventRTMethod != null) {
-										magneticFieldChangeEventRTMethod.invoke(PAppletParent);
-									}
-								} catch (Exception ex) {
-									System.err.println("Disabling magnetoChangeRT() for " + deviceType + " because of an error:");
-									ex.printStackTrace();
-									magneticFieldChangeEventRTMethod = null;
-								}
-							}
-						});
+						RTMagneticFieldChangeEventRegister = true;
+						magneticFieldChangeEventReportChannel = false;
 					}
 				}
 			} catch (Exception e) {
@@ -581,20 +528,8 @@ public class P_Spatial extends Device {
 						System.err.println("Cannot use both magnetoChange() and magnetoChangeRT()."); 				
 					}
 					else {
-						magnetometer.addMagneticFieldChangeListener(new MagnetometerMagneticFieldChangeListener() {
-							public void onMagneticFieldChange(MagnetometerMagneticFieldChangeEvent e) {
-								//System.out.println(e.toString());
-								try {
-									if (magneticFieldChangeEventRTMethod != null) {
-										magneticFieldChangeEventRTMethod.invoke(PAppletParent, new Object[] { ChannelParent });
-									}
-								} catch (Exception ex) {
-									System.err.println("Disabling magnetoChangeRT() for " + deviceType + " because of an error:");
-									ex.printStackTrace();
-									magneticFieldChangeEventRTMethod = null;
-								}
-							}
-						});
+						RTMagneticFieldChangeEventRegister = true;
+						magneticFieldChangeEventReportChannel = true;
 					}
 				}
 			} catch (Exception e) {
@@ -697,6 +632,138 @@ public class P_Spatial extends Device {
 		}
 		catch (PhidgetException ex) {
 			System.err.println("Cannot get channel sub class for device " + deviceType + " because of error: " + ex);
+		}
+	}
+
+	@Override
+	public void pre() {
+		// accelChangeRT
+		if (RTAccelerationChangeEventRegister) {
+			RTAccelerationChangeEventRegister = false;
+			try {
+				if (accelerationChangeEventReportChannel) { // accelChangeRT(Channel)
+					((Accelerometer)device).addAccelerationChangeListener(new AccelerometerAccelerationChangeListener() {
+						public void onAccelerationChange(AccelerometerAccelerationChangeEvent e) {
+							//System.out.println(e.toString());
+							try {
+								if (accelerationChangeEventRTMethod != null) {
+									accelerationChangeEventRTMethod.invoke(PAppletParent, new Object[] { ChannelParent });
+								}
+							} catch (Exception ex) {
+								System.err.println("Disabling accelChangeRT() for " + deviceType + " because of an error:");
+								ex.printStackTrace();
+								accelerationChangeEventRTMethod = null;
+							}
+						}
+					});
+				}
+				else { // accelChangeRT()
+					((Accelerometer)device).addAccelerationChangeListener(new AccelerometerAccelerationChangeListener() {
+						public void onAccelerationChange(AccelerometerAccelerationChangeEvent e) {
+							//System.out.println(e.toString());
+							try {
+								if (accelerationChangeEventRTMethod != null) {
+									accelerationChangeEventRTMethod.invoke(PAppletParent);
+								}
+							} catch (Exception ex) {
+								System.err.println("Disabling accelChangeRT() for " + deviceType + " because of an error:");
+								ex.printStackTrace();
+								accelerationChangeEventRTMethod = null;
+							}
+						}
+					});
+				}
+			} catch (Exception ex) {
+		    	System.err.println("Disabling accelChangeRT() for " + deviceType + " because of an error:");
+		    	ex.printStackTrace();
+		    	accelerationChangeEventRTMethod = null;
+		    }
+		}
+
+		// gyroChangeRT
+		if (RTAngularRateUpdateEventRegister) {
+			RTAngularRateUpdateEventRegister = false;
+			try {
+				if (angularRateUpdateEventReportChannel) { // gyroChangeRT(Channel)
+					gyroscope.addAngularRateUpdateListener(new GyroscopeAngularRateUpdateListener() {
+						public void onAngularRateUpdate(GyroscopeAngularRateUpdateEvent e) {
+							//System.out.println(e.toString());
+							try {
+								if (angularRateUpdateEventRTMethod != null) {
+									angularRateUpdateEventRTMethod.invoke(PAppletParent, new Object[] { ChannelParent });
+								}
+							} catch (Exception ex) {
+								System.err.println("Disabling gyroChangeRT() for " + deviceType + " because of an error:");
+								ex.printStackTrace();
+								angularRateUpdateEventRTMethod = null;
+							}
+						}
+					});
+				}
+				else { // gyroChangeRT()
+					gyroscope.addAngularRateUpdateListener(new GyroscopeAngularRateUpdateListener() {
+						public void onAngularRateUpdate(GyroscopeAngularRateUpdateEvent e) {
+							//System.out.println(e.toString());
+							try {
+								if (angularRateUpdateEventRTMethod != null) {
+									angularRateUpdateEventRTMethod.invoke(PAppletParent);
+								}
+							} catch (Exception ex) {
+								System.err.println("Disabling gyroChangeRT() for " + deviceType + " because of an error:");
+								ex.printStackTrace();
+								angularRateUpdateEventRTMethod = null;
+							}
+						}
+					});
+				}
+			} catch (Exception ex) {
+		    	System.err.println("Disabling gyroChangeRT() for " + deviceType + " because of an error:");
+		    	ex.printStackTrace();
+		    	angularRateUpdateEventRTMethod = null;
+		    }
+		}
+
+		// magnetoChangeRT
+		if (RTMagneticFieldChangeEventRegister) {
+			RTMagneticFieldChangeEventRegister = false;
+			try {
+				if (magneticFieldChangeEventReportChannel) { // magnetoChangeRT(Channel)
+					magnetometer.addMagneticFieldChangeListener(new MagnetometerMagneticFieldChangeListener() {
+						public void onMagneticFieldChange(MagnetometerMagneticFieldChangeEvent e) {
+							//System.out.println(e.toString());
+							try {
+								if (magneticFieldChangeEventRTMethod != null) {
+									magneticFieldChangeEventRTMethod.invoke(PAppletParent, new Object[] { ChannelParent });
+								}
+							} catch (Exception ex) {
+								System.err.println("Disabling magnetoChangeRT() for " + deviceType + " because of an error:");
+								ex.printStackTrace();
+								magneticFieldChangeEventRTMethod = null;
+							}
+						}
+					});
+				}
+				else { // magnetoChangeRT()
+					magnetometer.addMagneticFieldChangeListener(new MagnetometerMagneticFieldChangeListener() {
+						public void onMagneticFieldChange(MagnetometerMagneticFieldChangeEvent e) {
+							//System.out.println(e.toString());
+							try {
+								if (magneticFieldChangeEventRTMethod != null) {
+									magneticFieldChangeEventRTMethod.invoke(PAppletParent);
+								}
+							} catch (Exception ex) {
+								System.err.println("Disabling magnetoChangeRT() for " + deviceType + " because of an error:");
+								ex.printStackTrace();
+								magneticFieldChangeEventRTMethod = null;
+							}
+						}
+					});
+				}
+			} catch (Exception ex) {
+		    	System.err.println("Disabling accelChangeRT() for " + deviceType + " because of an error:");
+		    	ex.printStackTrace();
+		    	magneticFieldChangeEventRTMethod = null;
+		    }
 		}
 	}
 
@@ -944,6 +1011,7 @@ public class P_Spatial extends Device {
 		}
 		catch (PhidgetException ex) {
 			System.err.println("Cannot get quaternion from device " + deviceType + " because of error: " + ex);
+			PAppletParent.exit();
 		}
 		return null;		
 	}
@@ -977,6 +1045,7 @@ public class P_Spatial extends Device {
 		}
 		catch (PhidgetException ex) {
 			System.err.println("Cannot get acceleration values from device " + deviceType + " because of error: " + ex);
+			PAppletParent.exit();
 		}
 		return new float[3];		
 	}
@@ -1023,6 +1092,7 @@ public class P_Spatial extends Device {
 			}
 			catch (PhidgetException ex) {
 				System.err.println("Cannot get angular rate values from device " + deviceType + " because of error: " + ex);
+				PAppletParent.exit();
 			}
 		}
 		else {
@@ -1083,6 +1153,7 @@ public class P_Spatial extends Device {
 			}
 			catch (PhidgetException ex) {
 				System.err.println("Cannot get magnetic field values from device " + deviceType + " because of error: " + ex);
+				PAppletParent.exit();
 			}
 		}
 		else {
@@ -1309,6 +1380,7 @@ public class P_Spatial extends Device {
 		}
 		catch (PhidgetException ex) {
 			System.err.println("Cannot get axis count for device " + deviceType + " because of error: " + ex);
+			PAppletParent.exit();
 		}
 		return 0;
 	}
@@ -1321,6 +1393,7 @@ public class P_Spatial extends Device {
 		}
 		catch (PhidgetException ex) {
 			System.err.println("Cannot get timestamp for device " + deviceType + " because of error: " + ex);
+			PAppletParent.exit();
 		}
 		return 0.0f;
 	}
@@ -1333,6 +1406,7 @@ public class P_Spatial extends Device {
 			}
 			catch (PhidgetException ex) {
 				System.err.println("Cannot zero gyro " + deviceType + " because of error: " + ex);
+				PAppletParent.exit();
 			}
 		}
 		else {
@@ -1427,6 +1501,7 @@ public class P_Spatial extends Device {
 			}
 			catch (PhidgetException ex) {
 				System.err.println("Cannot get algorithm for device " + deviceType + " because of error: " + ex);
+				PAppletParent.exit();
 			}
 		}
 		else {
@@ -1455,7 +1530,7 @@ public class P_Spatial extends Device {
 				}
 			}
 			catch (PhidgetException ex) {
-				System.err.println("Cannot get algorithm for device " + deviceType + " because of error: " + ex);
+				System.err.println("Cannot set algorithm for device " + deviceType + " because of error: " + ex);
 			}
 		}
 		else {

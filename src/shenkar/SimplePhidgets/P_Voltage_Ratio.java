@@ -12,6 +12,7 @@ public class P_Voltage_Ratio extends Device {
 	
 	// real-time events
 	Method sensorChangeEventRTMethod;  // sensorChangeRT
+	boolean RTEventRegister = false;
 
 	public P_Voltage_Ratio(PApplet P5Parent, Channel ChParent, String type, int serialNum, int portNum, int chNum) {
 		super(P5Parent, ChParent, type, serialNum, portNum, chNum);
@@ -21,6 +22,7 @@ public class P_Voltage_Ratio extends Device {
 			device = new VoltageRatioInput();
 		}	catch (PhidgetException ex) {
 			System.err.println("Could not open device " + deviceType + " on port " + portNum + ". See help on github.com/sgeigers/SimplePhidgets#reference");
+			PAppletParent.exit();
 		}
 				
 		// device opening
@@ -229,38 +231,8 @@ public class P_Voltage_Ratio extends Device {
 					System.err.println("Cannot use both sensorChange() and sensorChangeRT()."); 
 				}
 				else {
-					if (((VoltageRatioInput)device).getSensorType() == VoltageRatioSensorType.VOLTAGE_RATIO) {
-						((VoltageRatioInput)device).addVoltageRatioChangeListener(new VoltageRatioInputVoltageRatioChangeListener() {
-							public void onVoltageRatioChange(VoltageRatioInputVoltageRatioChangeEvent  e) {								
-								//System.out.println(e.toString());
-								try {
-									if (sensorChangeEventRTMethod != null) {
-										sensorChangeEventRTMethod.invoke(PAppletParent);
-									}
-								} catch (Exception ex) {
-									System.err.println("Disabling sensorChangeRT() for " + deviceType + " because of an error:");
-									ex.printStackTrace();
-									sensorChangeEventRTMethod = null;
-								}
-							}
-						});
-					}
-					else {
-						((VoltageRatioInput)device).addSensorChangeListener(new VoltageRatioInputSensorChangeListener() {
-							public void onSensorChange(VoltageRatioInputSensorChangeEvent e) {
-								//System.out.println(e.toString());
-							    try {
-							    	if (sensorChangeEventRTMethod != null) {
-							    		sensorChangeEventRTMethod.invoke(PAppletParent);
-							    	}
-							    } catch (Exception ex) {
-							    	System.err.println("Disabling sensorChangeRT() for " + deviceType + " because of an error:");
-							    	ex.printStackTrace();
-							    	sensorChangeEventRTMethod = null;
-							    }
-							}
-						});
-					}
+					RTEventRegister = true;
+					sensorChangeEventReportChannel = false;
 				}
 			}
 		} catch (Exception e) {
@@ -275,6 +247,21 @@ public class P_Voltage_Ratio extends Device {
 					System.err.println("Cannot use both sensorChange() and sensorChangeRT()."); 
 				}
 				else {
+					RTEventRegister = true;
+					sensorChangeEventReportChannel = true;
+				}
+			}
+		} catch (Exception e) {
+			// function "sensorChangeRT" not defined
+		}
+	}
+
+	@Override
+	public void pre() {
+		if (RTEventRegister) {
+			RTEventRegister = false;
+			try {
+				if (sensorChangeEventReportChannel) { // sensorChangeRT(Channel)
 					if (((VoltageRatioInput)device).getSensorType() == VoltageRatioSensorType.VOLTAGE_RATIO) {
 						((VoltageRatioInput)device).addVoltageRatioChangeListener(new VoltageRatioInputVoltageRatioChangeListener() {
 							public void onVoltageRatioChange(VoltageRatioInputVoltageRatioChangeEvent  e) {								
@@ -308,9 +295,45 @@ public class P_Voltage_Ratio extends Device {
 						});
 					}
 				}
-			}
-		} catch (Exception e) {
-			// function "sensorChangeRT" not defined
+				else { // sensorChangeRT()
+					if (((VoltageRatioInput)device).getSensorType() == VoltageRatioSensorType.VOLTAGE_RATIO) {
+						((VoltageRatioInput)device).addVoltageRatioChangeListener(new VoltageRatioInputVoltageRatioChangeListener() {
+							public void onVoltageRatioChange(VoltageRatioInputVoltageRatioChangeEvent  e) {								
+								//System.out.println(e.toString());
+								try {
+									if (sensorChangeEventRTMethod != null) {
+										sensorChangeEventRTMethod.invoke(PAppletParent);
+									}
+								} catch (Exception ex) {
+									System.err.println("Disabling sensorChangeRT() for " + deviceType + " because of an error:");
+									ex.printStackTrace();
+									sensorChangeEventRTMethod = null;
+								}
+							}
+						});
+					}
+					else {
+						((VoltageRatioInput)device).addSensorChangeListener(new VoltageRatioInputSensorChangeListener() {
+							public void onSensorChange(VoltageRatioInputSensorChangeEvent e) {
+								//System.out.println(e.toString());
+							    try {
+							    	if (sensorChangeEventRTMethod != null) {
+							    		sensorChangeEventRTMethod.invoke(PAppletParent);
+							    	}
+							    } catch (Exception ex) {
+							    	System.err.println("Disabling sensorChangeRT() for " + deviceType + " because of an error:");
+							    	ex.printStackTrace();
+							    	sensorChangeEventRTMethod = null;
+							    }
+							}
+						});
+					}
+				}
+			} catch (Exception ex) {
+		    	System.err.println("Disabling sensorChangeRT() for " + deviceType + " because of an error:");
+		    	ex.printStackTrace();
+		    	sensorChangeEventRTMethod = null;
+		    }
 		}
 	}
 
@@ -351,6 +374,7 @@ public class P_Voltage_Ratio extends Device {
 			}
 			catch (PhidgetException ex) {
 				System.err.println("Cannot get value from device " + deviceType + " because of error: " + ex);
+				PAppletParent.exit();
 			}
 		}
 		return 0; 
@@ -368,6 +392,7 @@ public class P_Voltage_Ratio extends Device {
 		}
 		catch (PhidgetException ex) {
 			System.err.println("Cannot get BridgeEnabled value from device " + deviceType + " because of error: " + ex);
+			PAppletParent.exit();
 		}
 		return false;
 	}
@@ -384,6 +409,7 @@ public class P_Voltage_Ratio extends Device {
 		}
 		catch (PhidgetException ex) {
 			System.err.println("Cannot set BridgeEnabled value to device " + deviceType + " because of error: " + ex);
+			PAppletParent.exit();
 		}
 	}
 
@@ -549,7 +575,7 @@ public class P_Voltage_Ratio extends Device {
 			}
 		}
 		catch (PhidgetException ex) {
-			System.err.println("Cannot get sensor type value from device " + deviceType + " because of error: " + ex);
+			System.err.println("Cannot get sensor type from device " + deviceType + " because of error: " + ex);
 		}
 		return "";
 	}
@@ -846,6 +872,8 @@ public class P_Voltage_Ratio extends Device {
 		try {
 			((VoltageRatioInput)device).setSensorType(nSensorType);
 			attachListeners();
+			// if not in setup() and real-time event is registered - run the pre() function to re-create it if needed
+			if (RTEventRegister && (PAppletParent.frameCount > 0)) pre();
 		}
 		catch (PhidgetException ex) {
 			System.err.println("Cannot set sensor type for device " + deviceType + " because of error: " + ex);
@@ -882,6 +910,7 @@ public class P_Voltage_Ratio extends Device {
 			}
 			else {
 				System.err.println("Cannot get sensor value for device " + deviceType + " because of error: " + ex);
+				PAppletParent.exit();
 			}
 		}
 		return 0.0f;
@@ -904,6 +933,7 @@ public class P_Voltage_Ratio extends Device {
 			}
 			else {
 				System.err.println("Cannot check sensor value validity for device " + deviceType + " because of error: " + ex);
+				PAppletParent.exit();
 			}
 		}
 		return false;
@@ -937,6 +967,7 @@ public class P_Voltage_Ratio extends Device {
 		}
 		catch (PhidgetException ex) {
 			System.err.println("Cannot get voltage ratio for device " + deviceType + " because of error: " + ex);
+			PAppletParent.exit();
 		}
 		return 0.0f;
 	}

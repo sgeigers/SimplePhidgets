@@ -22,6 +22,9 @@ public class P_RC_Servo extends Device {
 	Method positionChangeEventRTMethod;  // positionChangeRT
 	Method velocityChangeEventRTMethod;  // velocityChangeRT
 	Method targetReachedEventRTMethod;   // targetReachedRT
+	boolean RTPositionChangeEventRegister = false;
+	boolean RTVelocityChangeEventRegister = false;
+	boolean RTTargetReachedEventRegister = false;
 
 	public P_RC_Servo(PApplet P5Parent, Channel ChParent, String type, int serialNum, int portNum, int chNum) {
 		super(P5Parent, ChParent, type, serialNum, portNum, chNum);
@@ -31,6 +34,7 @@ public class P_RC_Servo extends Device {
 			device = new RCServo();
 		}	catch (PhidgetException ex) {
 			System.err.println("Could not open device " + deviceType + " on port " + portNum + ". See help on github.com/sgeigers/SimplePhidgets#reference");
+			PAppletParent.exit();
 		}
 
 		// device opening
@@ -98,20 +102,8 @@ public class P_RC_Servo extends Device {
 					System.err.println("Cannot use both positionChange() and positionChangeRT()."); 
 				}
 				else {
-					((RCServo)device).addPositionChangeListener(new RCServoPositionChangeListener() {
-						public void onPositionChange(RCServoPositionChangeEvent e) {
-							//System.out.println(e.toString());
-							try {
-								if (positionChangeEventRTMethod != null) {
-									positionChangeEventRTMethod.invoke(PAppletParent);
-								}
-							} catch (Exception ex) {
-								System.err.println("Disabling positionChangeRT() for " + deviceType + " because of an error:");
-								ex.printStackTrace();
-								positionChangeEventRTMethod = null;
-							}
-						}
-					});
+					RTPositionChangeEventRegister = true;
+					positionChangeEventReportChannel = false;
 				}
 			}
 		} catch (Exception e) {
@@ -126,20 +118,8 @@ public class P_RC_Servo extends Device {
 					System.err.println("Cannot use both positionChange() and positionChangeRT()."); 
 				}
 				else {
-					((RCServo)device).addPositionChangeListener(new RCServoPositionChangeListener() {
-						public void onPositionChange(RCServoPositionChangeEvent e) {
-							//System.out.println(e.toString());
-							try {
-								if (positionChangeEventRTMethod != null) {
-									positionChangeEventRTMethod.invoke(PAppletParent, new Object[] { ChannelParent });
-								}
-							} catch (Exception ex) {
-								System.err.println("Disabling positionChangeRT() for " + deviceType + " because of an error:");
-								ex.printStackTrace();
-								positionChangeEventRTMethod = null;
-							}
-						}
-					});
+					RTPositionChangeEventRegister = true;
+					positionChangeEventReportChannel = false;
 				}
 			}
 		} catch (Exception e) {
@@ -192,20 +172,8 @@ public class P_RC_Servo extends Device {
 						System.err.println("Cannot use both velocityChange() and velocityChangeRT()."); 
 					}
 					else {
-						((RCServo)device).addVelocityChangeListener(new RCServoVelocityChangeListener() {
-							public void onVelocityChange(RCServoVelocityChangeEvent e) {
-								//System.out.println(e.toString());
-								try {
-									if (velocityChangeEventRTMethod != null) {
-										velocityChangeEventRTMethod.invoke(PAppletParent);
-									}
-								} catch (Exception ex) {
-									System.err.println("Disabling velocityChangeRT() for " + deviceType + " because of an error:");
-									ex.printStackTrace();
-									velocityChangeEventRTMethod = null;
-								}
-							}
-						});
+						RTVelocityChangeEventRegister = true;
+						velocityChangeEventReportChannel = false;
 					}
 				}
 			} catch (Exception e) {
@@ -220,20 +188,8 @@ public class P_RC_Servo extends Device {
 						System.err.println("Cannot use both velocityChange() and velocityChangeRT()."); 
 					}
 					else {
-						((RCServo)device).addVelocityChangeListener(new RCServoVelocityChangeListener() {
-							public void onVelocityChange(RCServoVelocityChangeEvent e) {
-								//System.out.println(e.toString());
-								try {
-									if (velocityChangeEventRTMethod != null) {
-										velocityChangeEventRTMethod.invoke(PAppletParent, new Object[] { ChannelParent });
-									}
-								} catch (Exception ex) {
-									System.err.println("Disabling velocityChangeRT() for " + deviceType + " because of an error:");
-									ex.printStackTrace();
-									velocityChangeEventRTMethod = null;
-								}
-							}
-						});
+						RTVelocityChangeEventRegister = true;
+						velocityChangeEventReportChannel = true;
 					}
 				}
 			} catch (Exception e) {
@@ -280,20 +236,8 @@ public class P_RC_Servo extends Device {
 						System.err.println("Cannot use both velocityChange() and velocityChangeRT()."); 
 					}
 					else {
-						((RCServo)device).addTargetPositionReachedListener(new RCServoTargetPositionReachedListener() {
-							public void onTargetPositionReached(RCServoTargetPositionReachedEvent e) {
-								//System.out.println(e.toString());
-								try {
-									if (targetReachedEventRTMethod != null) {
-										targetReachedEventRTMethod.invoke(PAppletParent);
-									}
-								} catch (Exception ex) {
-									System.err.println("Disabling targetReachedRT() for " + deviceType + " because of an error:");
-									ex.printStackTrace();
-									targetReachedEventRTMethod = null;
-								}
-							}
-						});
+						RTTargetReachedEventRegister = true;
+						targetReachedEventReportChannel = false;
 					}
 				}
 			} catch (Exception e) {
@@ -308,20 +252,8 @@ public class P_RC_Servo extends Device {
 						System.err.println("Cannot use both velocityChange() and velocityChangeRT()."); 
 					}
 					else {
-						((RCServo)device).addTargetPositionReachedListener(new RCServoTargetPositionReachedListener() {
-							public void onTargetPositionReached(RCServoTargetPositionReachedEvent e) {
-								//System.out.println(e.toString());
-								try {
-									if (targetReachedEventRTMethod != null) {
-										targetReachedEventRTMethod.invoke(PAppletParent, new Object[] { ChannelParent });
-									}
-								} catch (Exception ex) {
-									System.err.println("Disabling targetReachedRT() for " + deviceType + " because of an error:");
-									ex.printStackTrace();
-									targetReachedEventRTMethod = null;
-								}
-							}
-						});
+						RTTargetReachedEventRegister = true;
+						targetReachedEventReportChannel = true;
 					}
 				}
 			} catch (Exception e) {
@@ -330,6 +262,138 @@ public class P_RC_Servo extends Device {
 		}
 	}
 
+	@Override
+	public void pre() {
+		// positionChangeRT
+		if (RTPositionChangeEventRegister) {
+			RTPositionChangeEventRegister = false;
+			try {
+				if (positionChangeEventReportChannel) { // positionChangeRT(Channel)
+					((RCServo)device).addPositionChangeListener(new RCServoPositionChangeListener() {
+						public void onPositionChange(RCServoPositionChangeEvent e) {
+							//System.out.println(e.toString());
+							try {
+								if (positionChangeEventRTMethod != null) {
+									positionChangeEventRTMethod.invoke(PAppletParent, new Object[] { ChannelParent });
+								}
+							} catch (Exception ex) {
+								System.err.println("Disabling positionChangeRT() for " + deviceType + " because of an error:");
+								ex.printStackTrace();
+								positionChangeEventRTMethod = null;
+							}
+						}
+					});
+				}
+				else { // positionChangeRT()
+					((RCServo)device).addPositionChangeListener(new RCServoPositionChangeListener() {
+						public void onPositionChange(RCServoPositionChangeEvent e) {
+							//System.out.println(e.toString());
+							try {
+								if (positionChangeEventRTMethod != null) {
+									positionChangeEventRTMethod.invoke(PAppletParent);
+								}
+							} catch (Exception ex) {
+								System.err.println("Disabling positionChangeRT() for " + deviceType + " because of an error:");
+								ex.printStackTrace();
+								positionChangeEventRTMethod = null;
+							}
+						}
+					});
+				}
+			} catch (Exception ex) {
+		    	System.err.println("Disabling positionChangeRT() for " + deviceType + " because of an error:");
+		    	ex.printStackTrace();
+		    	positionChangeEventRTMethod = null;
+		    }
+		}
+
+		// velocityChangeRT
+		if (RTVelocityChangeEventRegister) {
+			RTVelocityChangeEventRegister = false;
+			try {
+				if (velocityChangeEventReportChannel) { // velocityChangeRT(Channel)
+					((RCServo)device).addVelocityChangeListener(new RCServoVelocityChangeListener() {
+						public void onVelocityChange(RCServoVelocityChangeEvent e) {
+							//System.out.println(e.toString());
+							try {
+								if (velocityChangeEventRTMethod != null) {
+									velocityChangeEventRTMethod.invoke(PAppletParent, new Object[] { ChannelParent });
+								}
+							} catch (Exception ex) {
+								System.err.println("Disabling velocityChangeRT() for " + deviceType + " because of an error:");
+								ex.printStackTrace();
+								velocityChangeEventRTMethod = null;
+							}
+						}
+					});
+				}
+				else { // velocityChangeRT()
+					((RCServo)device).addVelocityChangeListener(new RCServoVelocityChangeListener() {
+						public void onVelocityChange(RCServoVelocityChangeEvent e) {
+							//System.out.println(e.toString());
+							try {
+								if (velocityChangeEventRTMethod != null) {
+									velocityChangeEventRTMethod.invoke(PAppletParent);
+								}
+							} catch (Exception ex) {
+								System.err.println("Disabling velocityChangeRT() for " + deviceType + " because of an error:");
+								ex.printStackTrace();
+								velocityChangeEventRTMethod = null;
+							}
+						}
+					});
+				}
+			} catch (Exception ex) {
+		    	System.err.println("Disabling velocityChangeRT() for " + deviceType + " because of an error:");
+		    	ex.printStackTrace();
+		    	velocityChangeEventRTMethod = null;
+		    }
+		}
+
+		// targetReachedRT
+		if (RTTargetReachedEventRegister) {
+			RTTargetReachedEventRegister = false;
+			try {
+				if (targetReachedEventReportChannel) { // targetReachedRT(Channel)
+					((RCServo)device).addTargetPositionReachedListener(new RCServoTargetPositionReachedListener() {
+						public void onTargetPositionReached(RCServoTargetPositionReachedEvent e) {
+							//System.out.println(e.toString());
+							try {
+								if (targetReachedEventRTMethod != null) {
+									targetReachedEventRTMethod.invoke(PAppletParent, new Object[] { ChannelParent });
+								}
+							} catch (Exception ex) {
+								System.err.println("Disabling targetReachedRT() for " + deviceType + " because of an error:");
+								ex.printStackTrace();
+								targetReachedEventRTMethod = null;
+							}
+						}
+					});
+				}
+				else { // targetReachedRT()
+					((RCServo)device).addTargetPositionReachedListener(new RCServoTargetPositionReachedListener() {
+						public void onTargetPositionReached(RCServoTargetPositionReachedEvent e) {
+							//System.out.println(e.toString());
+							try {
+								if (targetReachedEventRTMethod != null) {
+									targetReachedEventRTMethod.invoke(PAppletParent);
+								}
+							} catch (Exception ex) {
+								System.err.println("Disabling targetReachedRT() for " + deviceType + " because of an error:");
+								ex.printStackTrace();
+								targetReachedEventRTMethod = null;
+							}
+						}
+					});
+				}
+			} catch (Exception ex) {
+		    	System.err.println("Disabling targetReachedRT() for " + deviceType + " because of an error:");
+		    	ex.printStackTrace();
+		    	targetReachedEventRTMethod = null;
+		    }
+		}
+	}
+	
 	/**
 	 * handles events. Do not call.
 	 * 
@@ -405,6 +469,7 @@ public class P_RC_Servo extends Device {
 			}
 			catch (PhidgetException ex) {
 				System.err.println("Could not close device " + deviceType + ". See github.com/sgeigers/SimplePhidgets#reference for help");
+				PAppletParent.exit();
 			}
 		}
 	}
@@ -428,6 +493,7 @@ public class P_RC_Servo extends Device {
 		}
 		catch (PhidgetException ex) {
 			System.err.println("Cannot set device " + deviceType + " to ON state because of error: " + ex);
+			PAppletParent.exit();
 		}
 	}
 
@@ -466,6 +532,7 @@ public class P_RC_Servo extends Device {
 			}
 			catch (PhidgetException ex) {
 				System.err.println("Cannot set acceleration value to device " + deviceType + " because of error: " + ex);
+				PAppletParent.exit();
 			}
 			break;
 
@@ -613,6 +680,7 @@ public class P_RC_Servo extends Device {
 		}
 		catch (PhidgetException ex) {
 			System.err.println("Cannot get engaged state from device " + deviceType + " because of error: " + ex);
+			PAppletParent.exit();
 		}
 		return false;
 	}
@@ -625,6 +693,7 @@ public class P_RC_Servo extends Device {
 		}
 		catch (PhidgetException ex) {
 			System.err.println("Cannot set engaged state to device " + deviceType + " because of error: " + ex);
+			PAppletParent.exit();
 		}
 	}
 	
@@ -642,11 +711,13 @@ public class P_RC_Servo extends Device {
 			}
 			catch (PhidgetException ex) {
 				System.err.println("Cannot set failsafe for device " + deviceType + " because of error: " + ex);
+				PAppletParent.exit();
 			}
 			break;
 
 		default:
 			System.err.println("enableFailsafe(int) is not valid for device of type " + deviceType);	
+			PAppletParent.exit();
 			break;
 		}
 	}	
@@ -712,11 +783,13 @@ public class P_RC_Servo extends Device {
 			}
 			catch (PhidgetException ex) {
 				System.err.println("Cannot reset failsafe timer for device " + deviceType + " because of error: " + ex);
+				PAppletParent.exit();
 			}
 			break;
 
 		default:
 			System.err.println("resetFailsafe() is not valid for device of type " + deviceType);				
+			PAppletParent.exit();
 			break;
 		}
 	}	
@@ -733,11 +806,13 @@ public class P_RC_Servo extends Device {
 			}
 			catch (PhidgetException ex) {
 				System.err.println("Cannot get \"is moving\" state from device " + deviceType + " because of error: " + ex);
+				PAppletParent.exit();
 			}
 			break;
 
 		default:
 			System.err.println("getIsMoving() is not valid for device of type " + deviceType);				
+			PAppletParent.exit();
 			break;
 		}
 		return false;
@@ -750,6 +825,7 @@ public class P_RC_Servo extends Device {
 		}
 		catch (PhidgetException ex) {
 			System.err.println("Cannot get position value from device " + deviceType + " because of error: " + ex);
+			PAppletParent.exit();
 		}
 		return 0;
 	}
@@ -899,6 +975,7 @@ public class P_RC_Servo extends Device {
 		}
 		catch (PhidgetException ex) {
 			System.err.println("Cannot get target position from device " + deviceType + " because of error: " + ex);
+			PAppletParent.exit();
 		}
 		return 0;
 	}
@@ -910,6 +987,7 @@ public class P_RC_Servo extends Device {
 		}
 		catch (PhidgetException ex) {
 			System.err.println("Cannot set target position to device " + deviceType + " because of error: " + ex);
+			PAppletParent.exit();
 		}
 	}
 
@@ -944,11 +1022,13 @@ public class P_RC_Servo extends Device {
 			}
 			catch (PhidgetException ex) {
 				System.err.println("Cannot get velocity value from device " + deviceType + " because of error: " + ex);
+				PAppletParent.exit();
 			}
 			break;
 
 		default:
 			System.err.println("getVelocity() is not valid for device of type " + deviceType);				
+			PAppletParent.exit();
 			break;
 		}
 		return 0;

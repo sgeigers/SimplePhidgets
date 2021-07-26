@@ -5,13 +5,14 @@ import java.lang.reflect.Method;
 import com.phidget22.*;
 
 public class P_Sound_Sensor extends Device {
-	// event
-	Method SoundSensorSPLChangeEventMethod;  // soundChange
+	// events
+	Method SoundSensorSPLChangeEventMethod;  // sensorChange
 	boolean soundChangeFlag = false;
 	boolean SoundSensorSPLChangeEventReportChannel = false;
 	
 	// real-time event
-	Method SoundSensorSPLChangeEventMethodRT;  // soundChangeRT
+	Method SoundSensorSPLChangeEventRTMethod;  // sensorChangeRT
+	boolean RTEventRegister = false;
 
 	public P_Sound_Sensor(PApplet P5Parent, Channel ChParent, String type, int serialNum, int portNum, int chNum) {
 		super(P5Parent, ChParent, type, serialNum, portNum, chNum);
@@ -21,6 +22,7 @@ public class P_Sound_Sensor extends Device {
 			device = new SoundSensor();
 		}	catch (PhidgetException ex) {
 			System.err.println("Could not open device " + deviceType + " on port " + portNum + ". See help on github.com/sgeigers/SimplePhidgets#reference");
+			PAppletParent.exit();
 		}
 				
 		// device opening
@@ -39,9 +41,9 @@ public class P_Sound_Sensor extends Device {
 
 	// check if "soundChange()" was defined in the sketch and create a listener for it.
 	void attachListeners() {
-		// soundChange()
+		// sensorChange()
 		try {
-			SoundSensorSPLChangeEventMethod =  PAppletParent.getClass().getMethod("soundChange");
+			SoundSensorSPLChangeEventMethod =  PAppletParent.getClass().getMethod("sensorChange");
 			if (SoundSensorSPLChangeEventMethod != null) {
 				SoundSensorSPLChangeEventReportChannel = false;
 				((SoundSensor)device).addSPLChangeListener(new SoundSensorSPLChangeListener() {
@@ -52,12 +54,12 @@ public class P_Sound_Sensor extends Device {
 				});
 			}
 		} catch (Exception e) {
-			// function "soundChange()" not defined
+			// function "sensorChange()" not defined
 		}
 
-		// soundChange(Channel)
+		// sensorChange(Channel)
 		try {
-			SoundSensorSPLChangeEventMethod =  PAppletParent.getClass().getMethod("soundChange", new Class<?>[] { Channel.class });
+			SoundSensorSPLChangeEventMethod =  PAppletParent.getClass().getMethod("sensorChange", new Class<?>[] { Channel.class });
 			if (SoundSensorSPLChangeEventMethod != null) {
 				SoundSensorSPLChangeEventReportChannel = true;
 				((SoundSensor)device).addSPLChangeListener(new SoundSensorSPLChangeListener() {
@@ -68,53 +70,84 @@ public class P_Sound_Sensor extends Device {
 				});
 			}
 		} catch (Exception e) {
-			// function "soundChange(Channel)" not defined
+			// function "sensorChange(Channel)" not defined
 		}
 
-		// soundChangeRT()
+		// sensorChangeRT()
 		try {
-			SoundSensorSPLChangeEventMethod =  PAppletParent.getClass().getMethod("soundChangeRT");
-			if (SoundSensorSPLChangeEventMethod != null) {
-				((SoundSensor)device).addSPLChangeListener(new SoundSensorSPLChangeListener() {
-					public void onSPLChange(SoundSensorSPLChangeEvent  e) {
-						//System.out.println(e.toString());
-						try {
-							if (SoundSensorSPLChangeEventMethod != null) {
-								SoundSensorSPLChangeEventMethod.invoke(PAppletParent);
-							}
-						} catch (Exception ex) {
-							System.err.println("Disabling soundChange() for " + deviceType + " because of an error:");
-							ex.printStackTrace();
-							SoundSensorSPLChangeEventMethod = null;
-						}
-					}
-				});
+			SoundSensorSPLChangeEventRTMethod =  PAppletParent.getClass().getMethod("soundChangeRT");
+			if (SoundSensorSPLChangeEventRTMethod != null) {
+				if (SoundSensorSPLChangeEventMethod != null) {
+					System.err.println("Cannot use both sensorChange() and sensorChangeRT()."); 
+				}
+				else {
+					RTEventRegister = true;
+					SoundSensorSPLChangeEventReportChannel = false;
+				}
 			}
 		} catch (Exception e) {
-			// function "soundChangeRT()" not defined
+			// function "sensorChangeRT()" not defined
 		}
 
-		// soundChangeRT(Channel)
+		// sensorChangeRT(Channel)
 		try {
-			SoundSensorSPLChangeEventMethod =  PAppletParent.getClass().getMethod("soundChangeRT", new Class<?>[] { Channel.class });
-			if (SoundSensorSPLChangeEventMethod != null) {
-				((SoundSensor)device).addSPLChangeListener(new SoundSensorSPLChangeListener() {
-					public void onSPLChange(SoundSensorSPLChangeEvent  e) {
-						//System.out.println(e.toString());
-						try {
-							if (SoundSensorSPLChangeEventMethod != null) {
-								SoundSensorSPLChangeEventMethod.invoke(PAppletParent, new Object[] { ChannelParent });
-							}
-						} catch (Exception ex) {
-							System.err.println("Disabling soundChange() for " + deviceType + " because of an error:");
-							ex.printStackTrace();
-							SoundSensorSPLChangeEventMethod = null;
-						}
-					}
-				});
+			SoundSensorSPLChangeEventRTMethod =  PAppletParent.getClass().getMethod("soundChangeRT", new Class<?>[] { Channel.class });
+			if (SoundSensorSPLChangeEventRTMethod != null) {
+				if (SoundSensorSPLChangeEventMethod != null) {
+					System.err.println("Cannot use both sensorChange() and sensorChangeRT()."); 
+				}
+				else {
+					RTEventRegister = true;
+					SoundSensorSPLChangeEventReportChannel = true;
+				}
 			}
 		} catch (Exception e) {
-			// function "soundChangeRT(Channel)" not defined
+			// function "sensorChangeRT(Channel)" not defined
+		}
+	}
+
+	@Override
+	public void pre() {
+		if (RTEventRegister) {
+			RTEventRegister = false;
+			try {
+				if (SoundSensorSPLChangeEventReportChannel) { // sensorChangeRT(Channel)
+					((SoundSensor)device).addSPLChangeListener(new SoundSensorSPLChangeListener() {
+						public void onSPLChange(SoundSensorSPLChangeEvent  e) {
+							//System.out.println(e.toString());
+							try {
+								if (SoundSensorSPLChangeEventRTMethod != null) {
+									SoundSensorSPLChangeEventRTMethod.invoke(PAppletParent, new Object[] { ChannelParent });
+								}
+							} catch (Exception ex) {
+								System.err.println("Disabling soundChangeRT(Channel) for " + deviceType + " because of an error:");
+								ex.printStackTrace();
+								SoundSensorSPLChangeEventRTMethod = null;
+							}
+						}
+					});
+				}
+				else { // sensorChangeRT()
+					((SoundSensor)device).addSPLChangeListener(new SoundSensorSPLChangeListener() {
+						public void onSPLChange(SoundSensorSPLChangeEvent  e) {
+							//System.out.println(e.toString());
+							try {
+								if (SoundSensorSPLChangeEventRTMethod != null) {
+									SoundSensorSPLChangeEventRTMethod.invoke(PAppletParent);
+								}
+							} catch (Exception ex) {
+								System.err.println("Disabling soundChangeRT() for " + deviceType + " because of an error:");
+								ex.printStackTrace();
+								SoundSensorSPLChangeEventRTMethod = null;
+							}
+						}
+					});
+				}
+			} catch (Exception ex) {
+		    	System.err.println("Disabling sensorChangeRT() for " + deviceType + " because of an error:");
+		    	ex.printStackTrace();
+		    	SoundSensorSPLChangeEventRTMethod = null;
+		    }
 		}
 	}
 
@@ -132,7 +165,7 @@ public class P_Sound_Sensor extends Device {
 					}
 				}
 			} catch (Exception ex) {
-				System.err.println("Disabling soundChange() for " + deviceType + " because of an error:");
+				System.err.println("Disabling sensorChange() for " + deviceType + " because of an error:");
 				ex.printStackTrace();
 				SoundSensorSPLChangeEventMethod = null;
 			}
@@ -148,6 +181,7 @@ public class P_Sound_Sensor extends Device {
 		}
 		catch (PhidgetException ex) {
 			System.err.println("Cannot get value from device " + deviceType + " because of error: " + ex);
+			PAppletParent.exit();
 		}
 		return 0; 
 	}
@@ -206,6 +240,7 @@ public class P_Sound_Sensor extends Device {
 			}
 			else {
 				System.err.println("Cannot get sound level (dB) for device " + deviceType + " because of error: " + ex);
+				PAppletParent.exit();
 			}
 		}
 		return 0.0f;
@@ -233,6 +268,7 @@ public class P_Sound_Sensor extends Device {
 			}
 			else {
 				System.err.println("Cannot get sound level (dBA) for device " + deviceType + " because of error: " + ex);
+				PAppletParent.exit();
 			}
 		}
 		return 0.0f;
@@ -249,6 +285,7 @@ public class P_Sound_Sensor extends Device {
 			}
 			else {
 				System.err.println("Cannot get sound level (dBC) for device " + deviceType + " because of error: " + ex);
+				PAppletParent.exit();
 			}
 		}
 		return 0.0f;
@@ -276,7 +313,8 @@ public class P_Sound_Sensor extends Device {
 			return fOct;
 		}
 		catch (PhidgetException ex) {
-			System.err.println("Cannot get noise floor for device " + deviceType + " because of error: " + ex);
+			System.err.println("Cannot get octaves data for device " + deviceType + " because of error: " + ex);
+			PAppletParent.exit();
 		}
 		return null;
 	}

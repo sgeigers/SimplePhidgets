@@ -20,6 +20,9 @@ public class P_Stepper extends Device {
 	Method positionChangeEventRTMethod;  // positionChangeRT
 	Method velocityChangeEventRTMethod;  // velocityChangeRT
 	Method stoppedEventRTMethod;   // stoppedRT
+	boolean RTPositionChangeEventRegister = false;
+	boolean RTVelocityChangeEventRegister = false;
+	boolean RTStoppedEventRegister = false;
 
 	public P_Stepper(PApplet P5Parent, Channel ChParent, String type, int serialNum, int portNum, int chNum) {
 		super(P5Parent, ChParent, type, serialNum, portNum, chNum);
@@ -29,6 +32,7 @@ public class P_Stepper extends Device {
 			device = new Stepper();
 		}	catch (PhidgetException ex) {
 			System.err.println("Could not open device " + deviceType + " on port " + portNum + ". See help on github.com/sgeigers/SimplePhidgets#reference");
+			PAppletParent.exit();
 		}
 
 		// device opening
@@ -97,20 +101,8 @@ public class P_Stepper extends Device {
 					System.err.println("Cannot use both positionChange() and positionChangeRT()."); 
 				}
 				else {
-					((Stepper)device).addPositionChangeListener(new StepperPositionChangeListener() {
-						public void onPositionChange(StepperPositionChangeEvent e) {
-							//System.out.println(e.toString());
-							try {
-								if (positionChangeEventRTMethod != null) {
-									positionChangeEventRTMethod.invoke(PAppletParent);
-								}
-							} catch (Exception ex) {
-								System.err.println("Disabling positionChangeRT() for " + deviceType + " because of an error:");
-								ex.printStackTrace();
-								positionChangeEventRTMethod = null;
-							}
-						}
-					});
+					RTPositionChangeEventRegister = true;
+					positionChangeEventReportChannel = false;
 				}
 			}
 		} catch (Exception e) {
@@ -125,20 +117,8 @@ public class P_Stepper extends Device {
 					System.err.println("Cannot use both positionChange() and positionChangeRT()."); 
 				}
 				else {
-					((Stepper)device).addPositionChangeListener(new StepperPositionChangeListener() {
-						public void onPositionChange(StepperPositionChangeEvent e) {
-							//System.out.println(e.toString());
-							try {
-								if (positionChangeEventRTMethod != null) {
-									positionChangeEventRTMethod.invoke(PAppletParent, new Object[] { ChannelParent });
-								}
-							} catch (Exception ex) {
-								System.err.println("Disabling positionChangeRT() for " + deviceType + " because of an error:");
-								ex.printStackTrace();
-								positionChangeEventRTMethod = null;
-							}
-						}
-					});
+					RTPositionChangeEventRegister = true;
+					positionChangeEventReportChannel = true;
 				}
 			}
 		} catch (Exception e) {
@@ -185,20 +165,8 @@ public class P_Stepper extends Device {
 					System.err.println("Cannot use both velocityChange() and velocityChangeRT()."); 
 				}
 				else {
-					((Stepper)device).addVelocityChangeListener(new StepperVelocityChangeListener() {
-						public void onVelocityChange(StepperVelocityChangeEvent e) {
-							//System.out.println(e.toString());
-							try {
-								if (velocityChangeEventRTMethod != null) {
-									velocityChangeEventRTMethod.invoke(PAppletParent);
-								}
-							} catch (Exception ex) {
-								System.err.println("Disabling velocityChangeRT() for " + deviceType + " because of an error:");
-								ex.printStackTrace();
-								velocityChangeEventRTMethod = null;
-							}
-						}
-					});
+					RTVelocityChangeEventRegister = true;
+					velocityChangeEventReportChannel = false;
 				}
 			}
 		} catch (Exception e) {
@@ -213,20 +181,8 @@ public class P_Stepper extends Device {
 					System.err.println("Cannot use both velocityChange() and velocityChangeRT()."); 
 				}
 				else {
-					((Stepper)device).addVelocityChangeListener(new StepperVelocityChangeListener() {
-						public void onVelocityChange(StepperVelocityChangeEvent e) {
-							//System.out.println(e.toString());
-							try {
-								if (velocityChangeEventRTMethod != null) {
-									velocityChangeEventRTMethod.invoke(PAppletParent, new Object[] { ChannelParent });
-								}
-							} catch (Exception ex) {
-								System.err.println("Disabling velocityChangeRT() for " + deviceType + " because of an error:");
-								ex.printStackTrace();
-								velocityChangeEventRTMethod = null;
-							}
-						}
-					});
+					RTVelocityChangeEventRegister = true;
+					velocityChangeEventReportChannel = true;
 				}
 			}
 		} catch (Exception e) {
@@ -267,26 +223,14 @@ public class P_Stepper extends Device {
 
 		//  stoppedRT()
 		try {
-			 stoppedEventRTMethod =  PAppletParent.getClass().getMethod(" stoppedRT");
+			 stoppedEventRTMethod =  PAppletParent.getClass().getMethod("stoppedRT");
 			if (stoppedEventRTMethod != null) {
 				if (velocityChangeEventMethod != null) {
 					System.err.println("Cannot use both velocityChange() and velocityChangeRT()."); 
 				}
 				else {
-					((Stepper)device).addStoppedListener(new StepperStoppedListener() {
-						public void onStopped(StepperStoppedEvent e) {
-							//System.out.println(e.toString());
-							try {
-								if (stoppedEventRTMethod != null) {
-									stoppedEventRTMethod.invoke(PAppletParent);
-								}
-							} catch (Exception ex) {
-								System.err.println("Disabling stoppedRT() for " + deviceType + " because of an error:");
-								ex.printStackTrace();
-								stoppedEventRTMethod = null;
-							}
-						}
-					});
+					RTStoppedEventRegister = true;
+					stoppedEventReportChannel = false;
 				}
 			}
 		} catch (Exception e) {
@@ -295,12 +239,114 @@ public class P_Stepper extends Device {
 
 		//  stoppedRT(Channel)
 		try {
-			 stoppedEventRTMethod =  PAppletParent.getClass().getMethod(" stoppedRT", new Class<?>[] { Channel.class });
+			 stoppedEventRTMethod =  PAppletParent.getClass().getMethod("stoppedRT", new Class<?>[] { Channel.class });
 			if (stoppedEventRTMethod != null) {
 				if (velocityChangeEventMethod != null) {
 					System.err.println("Cannot use both velocityChange() and velocityChangeRT()."); 
 				}
 				else {
+					RTStoppedEventRegister = true;
+					stoppedEventReportChannel = true;
+				}
+			}
+		} catch (Exception e) {
+			// function "stoppedRT(Channel)" not defined
+		}
+	}
+
+	@Override
+	public void pre() {
+		// positionChangeRT
+		if (RTPositionChangeEventRegister) {
+			RTPositionChangeEventRegister = false;
+			try {
+				if (positionChangeEventReportChannel) { // positionChangeRT(Channel)
+					((Stepper)device).addPositionChangeListener(new StepperPositionChangeListener() {
+						public void onPositionChange(StepperPositionChangeEvent e) {
+							//System.out.println(e.toString());
+							try {
+								if (positionChangeEventRTMethod != null) {
+									positionChangeEventRTMethod.invoke(PAppletParent, new Object[] { ChannelParent });
+								}
+							} catch (Exception ex) {
+								System.err.println("Disabling positionChangeRT() for " + deviceType + " because of an error:");
+								ex.printStackTrace();
+								positionChangeEventRTMethod = null;
+							}
+						}
+					});
+				}
+				else { // positionChangeRT()
+					((Stepper)device).addPositionChangeListener(new StepperPositionChangeListener() {
+						public void onPositionChange(StepperPositionChangeEvent e) {
+							//System.out.println(e.toString());
+							try {
+								if (positionChangeEventRTMethod != null) {
+									positionChangeEventRTMethod.invoke(PAppletParent);
+								}
+							} catch (Exception ex) {
+								System.err.println("Disabling positionChangeRT() for " + deviceType + " because of an error:");
+								ex.printStackTrace();
+								positionChangeEventRTMethod = null;
+							}
+						}
+					});
+				}
+			} catch (Exception ex) {
+		    	System.err.println("Disabling positionChangeRT() for " + deviceType + " because of an error:");
+		    	ex.printStackTrace();
+		    	positionChangeEventRTMethod = null;
+		    }
+		}
+
+		// velocityChangeRT
+		if (RTVelocityChangeEventRegister) {
+			RTVelocityChangeEventRegister = false;
+			try {
+				if (velocityChangeEventReportChannel) { // velocityChangeRT(Channel)
+					((Stepper)device).addVelocityChangeListener(new StepperVelocityChangeListener() {
+						public void onVelocityChange(StepperVelocityChangeEvent e) {
+							//System.out.println(e.toString());
+							try {
+								if (velocityChangeEventRTMethod != null) {
+									velocityChangeEventRTMethod.invoke(PAppletParent, new Object[] { ChannelParent });
+								}
+							} catch (Exception ex) {
+								System.err.println("Disabling velocityChangeRT() for " + deviceType + " because of an error:");
+								ex.printStackTrace();
+								velocityChangeEventRTMethod = null;
+							}
+						}
+					});
+				}
+				else { // velocityChangeRT()
+					((Stepper)device).addVelocityChangeListener(new StepperVelocityChangeListener() {
+						public void onVelocityChange(StepperVelocityChangeEvent e) {
+							//System.out.println(e.toString());
+							try {
+								if (velocityChangeEventRTMethod != null) {
+									velocityChangeEventRTMethod.invoke(PAppletParent);
+								}
+							} catch (Exception ex) {
+								System.err.println("Disabling velocityChangeRT() for " + deviceType + " because of an error:");
+								ex.printStackTrace();
+								velocityChangeEventRTMethod = null;
+							}
+						}
+					});
+				}
+			} catch (Exception ex) {
+		    	System.err.println("Disabling velocityChangeRT() for " + deviceType + " because of an error:");
+		    	ex.printStackTrace();
+		    	velocityChangeEventRTMethod = null;
+		    }
+		}
+
+		// stoppedRT
+		if (RTStoppedEventRegister) {
+			RTStoppedEventRegister = false;
+			try {
+				if (stoppedEventReportChannel) { // stoppedRT(Channel)
 					((Stepper)device).addStoppedListener(new StepperStoppedListener() {
 						public void onStopped(StepperStoppedEvent e) {
 							//System.out.println(e.toString());
@@ -316,12 +362,30 @@ public class P_Stepper extends Device {
 						}
 					});
 				}
-			}
-		} catch (Exception e) {
-			// function "stoppedRT(Channel)" not defined
+				else { // stoppedRT()
+					((Stepper)device).addStoppedListener(new StepperStoppedListener() {
+						public void onStopped(StepperStoppedEvent e) {
+							//System.out.println(e.toString());
+							try {
+								if (stoppedEventRTMethod != null) {
+									stoppedEventRTMethod.invoke(PAppletParent);
+								}
+							} catch (Exception ex) {
+								System.err.println("Disabling stoppedRT() for " + deviceType + " because of an error:");
+								ex.printStackTrace();
+								stoppedEventRTMethod = null;
+							}
+						}
+					});
+				}
+			} catch (Exception ex) {
+		    	System.err.println("Disabling stoppedRT() for " + deviceType + " because of an error:");
+		    	ex.printStackTrace();
+		    	stoppedEventRTMethod = null;
+		    }
 		}
 	}
-
+	
 	/**
 	 * handles events. Do not call.
 	 * 
@@ -397,6 +461,7 @@ public class P_Stepper extends Device {
 			}
 			catch (PhidgetException ex) {
 				System.err.println("Could not close device " + deviceType + ". See github.com/sgeigers/SimplePhidgets#reference for help");
+				PAppletParent.exit();
 			}
 		}
 	}
@@ -418,6 +483,7 @@ public class P_Stepper extends Device {
 		}
 		catch (PhidgetException ex) {
 			System.err.println("Cannot set target position to device " + deviceType + " because of error: " + ex);
+			PAppletParent.exit();
 		}
 	}
 
@@ -599,6 +665,7 @@ public class P_Stepper extends Device {
 		}
 		catch (PhidgetException ex) {
 			System.err.println("Cannot get engaged state from device " + deviceType + " because of error: " + ex);
+			PAppletParent.exit();
 		}
 		return false;
 	}
@@ -610,6 +677,7 @@ public class P_Stepper extends Device {
 		}
 		catch (PhidgetException ex) {
 			System.err.println("Cannot set engaged state to device " + deviceType + " because of error: " + ex);
+			PAppletParent.exit();
 		}
 	}
 	
@@ -630,11 +698,13 @@ public class P_Stepper extends Device {
 			}
 			catch (PhidgetException ex) {
 				System.err.println("Cannot set failsafe for device " + deviceType + " because of error: " + ex);
+				PAppletParent.exit();
 			}
 			break;
 
 		default:
 			System.err.println("enableFailsafe(int) is not valid for device of type " + deviceType);	
+			PAppletParent.exit();
 			break;
 		}
 	}	
@@ -709,11 +779,13 @@ public class P_Stepper extends Device {
 			}
 			catch (PhidgetException ex) {
 				System.err.println("Cannot reset failsafe timer for device " + deviceType + " because of error: " + ex);
+				PAppletParent.exit();
 			}
 			break;
 
 		default:
 			System.err.println("resetFailsafe() is not valid for device of type " + deviceType);				
+			PAppletParent.exit();
 			break;
 		}
 	}	
@@ -768,6 +840,7 @@ public class P_Stepper extends Device {
 		}
 		catch (PhidgetException ex) {
 			System.err.println("Cannot get \"is moving\" state from device " + deviceType + " because of error: " + ex);
+			PAppletParent.exit();
 		}
 		return false;
 	}
@@ -779,6 +852,7 @@ public class P_Stepper extends Device {
 		}
 		catch (PhidgetException ex) {
 			System.err.println("Cannot get position value from device " + deviceType + " because of error: " + ex);
+			PAppletParent.exit();
 		}
 		return 0;
 	}
@@ -843,6 +917,7 @@ public class P_Stepper extends Device {
 		}
 		catch (PhidgetException ex) {
 			System.err.println("Cannot get target Position for device " + deviceType + " because of error: " + ex);
+			PAppletParent.exit();
 		}
 		return 0;
 	}
@@ -854,6 +929,7 @@ public class P_Stepper extends Device {
 		}
 		catch (PhidgetException ex) {
 			System.err.println("Cannot get velocity value from device " + deviceType + " because of error: " + ex);
+			PAppletParent.exit();
 		}
 		return 0;
 	}

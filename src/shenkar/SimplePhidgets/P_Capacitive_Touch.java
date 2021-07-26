@@ -16,6 +16,8 @@ public class P_Capacitive_Touch extends Device {
 	// real-time events
 	Method touchEventRTMethod;  // capacitiveTouched
 	Method touchEndEventRTMethod; // capacitiveReleased
+	boolean RTTouchEventRegister = false;
+	boolean RTTouchEndEventRegister = false;
 	
 	public P_Capacitive_Touch(PApplet P5Parent, Channel ChParent, String type, int serialNum, int portNum, int chNum) {
 		super(P5Parent, ChParent, type, serialNum, portNum, chNum);
@@ -25,6 +27,7 @@ public class P_Capacitive_Touch extends Device {
 			device = new CapacitiveTouch();
 		}	catch (PhidgetException ex) {
 			System.err.println("Could not open device " + deviceType + " on port " + portNum + ". See help on github.com/sgeigers/SimplePhidgets#reference");
+			PAppletParent.exit();
 		}
 				
 		// device opening
@@ -77,22 +80,15 @@ public class P_Capacitive_Touch extends Device {
 
 		// capacitiveTouchedRT()
 		try {
-			touchEventMethod =  PAppletParent.getClass().getMethod("capacitiveTouchedRT");
-			if (touchEventMethod != null) {
-				((CapacitiveTouch)device).addTouchListener(new CapacitiveTouchTouchListener() {
-					public void onTouch(CapacitiveTouchTouchEvent e) {
-						//System.out.println(e.toString());
-						try {
-							if (touchEventMethod != null) {
-								touchEventMethod.invoke(PAppletParent);
-							}
-						} catch (Exception ex) {
-							System.err.println("Disabling capacitiveTouched() for " + deviceType + " because of an error:");
-							ex.printStackTrace();
-							touchEventMethod = null;
-						}
-					}
-				});
+			touchEventRTMethod =  PAppletParent.getClass().getMethod("capacitiveTouchedRT");
+			if (touchEventRTMethod != null) {
+				if (touchEventMethod != null) {
+					System.err.println("Cannot use both capacitiveTouched() and capacitiveTouchedRT()."); 
+				}
+				else {			
+					RTTouchEventRegister = true;
+					touchEventReportChannel = false;
+				}
 			}
 		} catch (Exception e) {
 			// function "capacitiveTouchedRT" not defined
@@ -100,25 +96,18 @@ public class P_Capacitive_Touch extends Device {
 
 		// capacitiveTouchedRT(Channel)
 		try {
-			touchEventMethod =  PAppletParent.getClass().getMethod("capacitiveTouchedRT", new Class<?>[] { Channel.class });
-			if (touchEventMethod != null) {
-				((CapacitiveTouch)device).addTouchListener(new CapacitiveTouchTouchListener() {
-					public void onTouch(CapacitiveTouchTouchEvent e) {
-						//System.out.println(e.toString());
-						try {
-							if (touchEventMethod != null) {
-								touchEventMethod.invoke(PAppletParent, new Object[] { ChannelParent });
-							}
-						} catch (Exception ex) {
-							System.err.println("Disabling capacitiveTouched() for " + deviceType + " because of an error:");
-							ex.printStackTrace();
-							touchEventMethod = null;
-						}
-					}
-				});
+			touchEventRTMethod =  PAppletParent.getClass().getMethod("capacitiveTouchedRT", new Class<?>[] { Channel.class });
+			if (touchEventRTMethod != null) {
+				if (touchEventMethod != null) {
+					System.err.println("Cannot use both capacitiveTouched() and capacitiveTouchedRT()."); 
+				}
+				else {			
+					RTTouchEventRegister = true;
+					touchEventReportChannel = true;
+				}
 			}
 		} catch (Exception e) {
-			// function "capacitiveTouchedRT" not defined
+			// function "capacitiveTouchedRT(channel)" not defined
 		}
 
 		// capacitiveReleased()
@@ -134,7 +123,7 @@ public class P_Capacitive_Touch extends Device {
 				});
 			}
 		} catch (Exception e) {
-			// function "capacitiveReleasedRT" not defined
+			// function "capacitiveReleased" not defined
 		}
 
 		// capacitiveReleased(Channel)
@@ -150,27 +139,20 @@ public class P_Capacitive_Touch extends Device {
 				});
 			}
 		} catch (Exception e) {
-			// function "capacitiveReleasedRT" not defined
+			// function "capacitiveReleased(channel)" not defined
 		}
 
 		// capacitiveReleasedRT()
 		try {
-			touchEndEventMethod =  PAppletParent.getClass().getMethod("capacitiveReleasedRT");
-			if (touchEndEventMethod != null) {
-				((CapacitiveTouch)device).addTouchEndListener(new CapacitiveTouchTouchEndListener() {
-					public void onTouchEnd(CapacitiveTouchTouchEndEvent e) {
-						//System.out.println(e.toString());
-						try {
-							if (touchEndEventMethod != null) {
-								touchEndEventMethod.invoke(PAppletParent);
-							}
-						} catch (Exception ex) {
-							System.err.println("Disabling capacitiveReleased() for " + deviceType + " because of an error:");
-							ex.printStackTrace();
-							touchEndEventMethod = null;
-						}
-					}
-				});
+			touchEndEventRTMethod =  PAppletParent.getClass().getMethod("capacitiveReleasedRT");
+			if (touchEndEventRTMethod != null) {
+				if (touchEndEventMethod != null) {
+					System.err.println("Cannot use both capacitiveReleased() and capacitiveReleasedRT()."); 
+				}
+				else {			
+					RTTouchEndEventRegister = true;
+					touchEndEventReportChannel = false;
+				}
 			}
 		} catch (Exception e) {
 			// function "capacitiveReleasedRT" not defined
@@ -178,28 +160,107 @@ public class P_Capacitive_Touch extends Device {
 
 		// capacitiveReleasedRT(Channel)
 		try {
-			touchEndEventMethod =  PAppletParent.getClass().getMethod("capacitiveReleasedRT", new Class<?>[] { Channel.class });
-			if (touchEndEventMethod != null) {
-				((CapacitiveTouch)device).addTouchEndListener(new CapacitiveTouchTouchEndListener() {
-					public void onTouchEnd(CapacitiveTouchTouchEndEvent e) {
-						//System.out.println(e.toString());
-						try {
-							if (touchEndEventMethod != null) {
-								touchEndEventMethod.invoke(PAppletParent, new Object[] { ChannelParent });
-							}
-						} catch (Exception ex) {
-							System.err.println("Disabling capacitiveReleased() for " + deviceType + " because of an error:");
-							ex.printStackTrace();
-							touchEndEventMethod = null;
-						}
-					}
-				});
+			touchEndEventRTMethod =  PAppletParent.getClass().getMethod("capacitiveReleasedRT", new Class<?>[] { Channel.class });
+			if (touchEndEventRTMethod != null) {
+				if (touchEndEventMethod != null) {
+					System.err.println("Cannot use both capacitiveReleased() and capacitiveReleasedRT()."); 
+				}
+				else {			
+					RTTouchEndEventRegister = true;
+					touchEndEventReportChannel = true;
+				}
 			}
 		} catch (Exception e) {
 			// function "capacitiveReleasedRT" not defined
 		}
 	}
 
+	@Override
+	public void pre() {
+		if (RTTouchEventRegister) {
+			RTTouchEventRegister = false;
+			try {
+				if (touchEventReportChannel) { // capacitiveTouchedRT(Channel)
+					((CapacitiveTouch)device).addTouchListener(new CapacitiveTouchTouchListener() {
+						public void onTouch(CapacitiveTouchTouchEvent e) {
+							//System.out.println(e.toString());
+							try {
+								if (touchEventRTMethod != null) {
+									touchEventRTMethod.invoke(PAppletParent, new Object[] { ChannelParent });
+								}
+							} catch (Exception ex) {
+								System.err.println("Disabling capacitiveTouchedRT() for " + deviceType + " because of an error:");
+								ex.printStackTrace();
+								touchEventRTMethod = null;
+							}
+						}
+					});
+				} else { // capacitiveTouchedRT()
+					((CapacitiveTouch)device).addTouchListener(new CapacitiveTouchTouchListener() {
+						public void onTouch(CapacitiveTouchTouchEvent e) {
+							//System.out.println(e.toString());
+							try {
+								if (touchEventRTMethod != null) {
+									touchEventRTMethod.invoke(PAppletParent);
+								}
+							} catch (Exception ex) {
+								System.err.println("Disabling capacitiveTouchedRT() for " + deviceType + " because of an error:");
+								ex.printStackTrace();
+								touchEventRTMethod = null;
+							}
+						}
+					});
+				}
+			} catch (Exception ex) {
+		    	System.err.println("Disabling capacitiveTouchedRTRT() for " + deviceType + " because of an error:");
+		    	ex.printStackTrace();
+		    	touchEventRTMethod = null;
+		    }
+		}
+		
+		if (RTTouchEndEventRegister) {
+			RTTouchEndEventRegister = false;
+			try {
+				if (touchEndEventReportChannel) { // capacitiveReleasedRT(Channel)
+					((CapacitiveTouch)device).addTouchEndListener(new CapacitiveTouchTouchEndListener() {
+						public void onTouchEnd(CapacitiveTouchTouchEndEvent e) {
+							//System.out.println(e.toString());
+							try {
+								if (touchEndEventRTMethod != null) {
+									touchEndEventRTMethod.invoke(PAppletParent, new Object[] { ChannelParent });
+								}
+							} catch (Exception ex) {
+								System.err.println("Disabling capacitiveReleasedRT() for " + deviceType + " because of an error:");
+								ex.printStackTrace();
+								touchEndEventRTMethod = null;
+							}
+						}
+					});
+				}
+				else {  // capacitiveReleasedRT
+					((CapacitiveTouch)device).addTouchEndListener(new CapacitiveTouchTouchEndListener() {
+						public void onTouchEnd(CapacitiveTouchTouchEndEvent e) {
+							//System.out.println(e.toString());
+							try {
+								if (touchEndEventRTMethod != null) {
+									touchEndEventRTMethod.invoke(PAppletParent);
+								}
+							} catch (Exception ex) {
+								System.err.println("Disabling capacitiveReleasedRT() for " + deviceType + " because of an error:");
+								ex.printStackTrace();
+								touchEndEventRTMethod = null;
+							}
+						}
+					});
+				}
+			} catch (Exception ex) {
+		    	System.err.println("Disabling capacitiveReleasedRT() for " + deviceType + " because of an error:");
+		    	ex.printStackTrace();
+		    	touchEndEventRTMethod = null;
+		    }
+		}
+	}
+	
 	@Override
 	public void draw() {
 		if (touchFlag) {
@@ -251,6 +312,7 @@ public class P_Capacitive_Touch extends Device {
 				return 0;
 			}
 			System.err.println("Cannot get value from device " + deviceType + " because of error: " + ex);
+			PAppletParent.exit();
 		}
 		return 0; 
 	}
@@ -305,6 +367,7 @@ public class P_Capacitive_Touch extends Device {
 		}
 		catch (PhidgetException ex) {
 			System.err.println("Cannot get \"is touched\" value from device " + deviceType + " because of error: " + ex);
+			PAppletParent.exit();
 		}
 		return false;
 	}
@@ -363,6 +426,7 @@ public class P_Capacitive_Touch extends Device {
 				return 0.0f;
 			}
 			System.err.println("Cannot get touch value for device " + deviceType + " because of error: " + ex);
+			PAppletParent.exit();
 		}
 		return 0.0f;
 	}

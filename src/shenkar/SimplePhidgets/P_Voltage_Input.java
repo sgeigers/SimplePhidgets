@@ -12,6 +12,7 @@ public class P_Voltage_Input extends Device {
 
 	// real-time events
 	Method sensorChangeEventRTMethod;  // sensorChangeRT
+	boolean RTEventRegister = false;
 
 
 	public P_Voltage_Input(PApplet P5Parent, Channel ChParent, String type, int serialNum, int portNum, int chNum) {
@@ -22,8 +23,9 @@ public class P_Voltage_Input extends Device {
 			device = new VoltageInput();
 		}	catch (PhidgetException ex) {
 			System.err.println("Could not open device " + deviceType + " on port " + portNum + ". See help on github.com/sgeigers/SimplePhidgets#reference");
+			PAppletParent.exit();
 		}
-
+		
 		// device opening
 		switch (deviceType) {
 		case "1058": // PhidgetPhSensor
@@ -41,9 +43,11 @@ public class P_Voltage_Input extends Device {
 
 		// post-opening setup
 		try {
-			// set maximum data rate as default
-			((VoltageInput)device).setDataInterval(((VoltageInput)device).getMinDataInterval());
-
+			if (!deviceType.equals("MOT2002")) {
+				System.out.println("Setting Max Datarate");
+				// set maximum data rate as default, but not for MOT2002 - this may causes problems...
+				((VoltageInput)device).setDataInterval(((VoltageInput)device).getMinDataInterval());
+			}
 			// set sensor type - for "sensorValue" function and "sensorChange" event.
 			switch (deviceType) {
 			case "1114": // Temperature Sensor
@@ -155,7 +159,7 @@ public class P_Voltage_Input extends Device {
 	}
 
 	// check if "sensorChange()" or "sensorChangeRT()" were defined in the sketch and create a listener for it.
-	// also - if sensor type changes, the event might need to change between VoltageRatioChange and SensorValueChange
+	// also - if sensor type changes, the event might need to change between VoltageChange and SensorValueChange
 	void attachListeners() {
 		// sensorChange()
 		try {
@@ -217,38 +221,8 @@ public class P_Voltage_Input extends Device {
 					System.err.println("Cannot use both sensorChange() and sensorChangeRT(Channel)."); 
 				}
 				else {
-					if (((VoltageInput)device).getSensorType() == VoltageSensorType.VOLTAGE) {
-						((VoltageInput)device).addVoltageChangeListener(new VoltageInputVoltageChangeListener() {
-							public void onVoltageChange(VoltageInputVoltageChangeEvent  e) {
-								//System.out.println(e.toString());
-								try {
-									if (sensorChangeEventRTMethod != null) {
-										sensorChangeEventRTMethod.invoke(PAppletParent);
-									}
-								} catch (Exception ex) {
-									System.err.println("Disabling sensorChangeRT() for " + deviceType + " because of an error:");
-									ex.printStackTrace();
-									sensorChangeEventRTMethod = null;
-								}
-							}
-						});
-					}
-					else {
-						((VoltageInput)device).addSensorChangeListener(new VoltageInputSensorChangeListener() {
-							public void onSensorChange(VoltageInputSensorChangeEvent  e) {
-								//System.out.println(e.toString());
-								try {
-									if (sensorChangeEventRTMethod != null) {
-										sensorChangeEventRTMethod.invoke(PAppletParent);
-									}
-								} catch (Exception ex) {
-									System.err.println("Disabling sensorChangeRT() for " + deviceType + " because of an error:");
-									ex.printStackTrace();
-									sensorChangeEventRTMethod = null;
-								}
-							}
-						});
-					}
+					RTEventRegister = true;
+					sensorChangeEventReportChannel = false;
 				}
 			}
 		} catch (Exception e) {
@@ -263,6 +237,42 @@ public class P_Voltage_Input extends Device {
 					System.err.println("Cannot use both sensorChange() and sensorChangeRT()."); 
 				}
 				else {
+					RTEventRegister = true;
+					sensorChangeEventReportChannel = true;
+				}
+			}
+		} catch (Exception e) {
+			// function "sensorChangeRT" not defined
+		}
+	}
+
+	@Override
+	public void draw() {
+		if (sensorChangeFlag) {
+			sensorChangeFlag = false;
+			try {
+				if (sensorChangeEventMethod != null) {
+					if (sensorChangeEventReportChannel) {
+						sensorChangeEventMethod.invoke(PAppletParent, new Object[] { ChannelParent });
+					}
+					else {
+						sensorChangeEventMethod.invoke(PAppletParent);
+					}
+				}
+			} catch (Exception ex) {
+				System.err.println("Disabling sensorChange() for " + deviceType + " because of an error:");
+				ex.printStackTrace();
+				sensorChangeEventMethod = null;
+			}
+		}
+	}
+
+	@Override
+	public void pre() {
+		if (RTEventRegister) {
+			RTEventRegister = false;
+			try {
+				if (sensorChangeEventReportChannel) { // sensorChangeRT(Channel)
 					if (((VoltageInput)device).getSensorType() == VoltageSensorType.VOLTAGE) {
 						((VoltageInput)device).addVoltageChangeListener(new VoltageInputVoltageChangeListener() {
 							public void onVoltageChange(VoltageInputVoltageChangeEvent  e) {
@@ -296,25 +306,45 @@ public class P_Voltage_Input extends Device {
 						});
 					}
 				}
-			}
-		} catch (Exception e) {
-			// function "sensorChangeRT" not defined
-		}
-	}
-
-	@Override
-	public void draw() {
-		if (sensorChangeFlag) {
-			sensorChangeFlag = false;
-			try {
-				if (sensorChangeEventMethod != null) {
-					sensorChangeEventMethod.invoke(PAppletParent);
+				else { // sensorChangeRT()
+					if (((VoltageInput)device).getSensorType() == VoltageSensorType.VOLTAGE) {
+						((VoltageInput)device).addVoltageChangeListener(new VoltageInputVoltageChangeListener() {
+							public void onVoltageChange(VoltageInputVoltageChangeEvent  e) {
+								//System.out.println(e.toString());
+								try {
+									if (sensorChangeEventRTMethod != null) {
+										sensorChangeEventRTMethod.invoke(PAppletParent);
+									}
+								} catch (Exception ex) {
+									System.err.println("Disabling sensorChangeRT() for " + deviceType + " because of an error:");
+									ex.printStackTrace();
+									sensorChangeEventRTMethod = null;
+								}
+							}
+						});
+					}
+					else {
+						((VoltageInput)device).addSensorChangeListener(new VoltageInputSensorChangeListener() {
+							public void onSensorChange(VoltageInputSensorChangeEvent  e) {
+								//System.out.println(e.toString());
+								try {
+									if (sensorChangeEventRTMethod != null) {
+										sensorChangeEventRTMethod.invoke(PAppletParent);
+									}
+								} catch (Exception ex) {
+									System.err.println("Disabling sensorChangeRT() for " + deviceType + " because of an error:");
+									ex.printStackTrace();
+									sensorChangeEventRTMethod = null;
+								}
+							}
+						});
+					}
 				}
 			} catch (Exception ex) {
-				System.err.println("Disabling sensorChange() for " + deviceType + " because of an error:");
-				ex.printStackTrace();
-				sensorChangeEventMethod = null;
-			}
+		    	System.err.println("Disabling sensorChangeRT() for " + deviceType + " because of an error:");
+		    	ex.printStackTrace();
+		    	sensorChangeEventRTMethod = null;
+		    }
 		}
 	}
 
@@ -328,6 +358,7 @@ public class P_Voltage_Input extends Device {
 		}
 		catch (PhidgetException ex) {
 			System.err.println("Cannot get value from device " + deviceType + " because of error: " + ex);
+			PAppletParent.exit();
 		}
 		return 0; 
 	}
@@ -335,7 +366,7 @@ public class P_Voltage_Input extends Device {
 	@Override
 	public int getDataInterval() {
 		try {
-			return ((VoltageRatioInput)device).getDataInterval();
+			return ((VoltageInput)device).getDataInterval();
 		}
 		catch (PhidgetException ex) {
 			System.err.println("Cannot get data interval value from device " + deviceType + " because of error: " + ex);
@@ -346,7 +377,7 @@ public class P_Voltage_Input extends Device {
 	@Override
 	public void setDataInterval(int dataInterval) {
 		try {
-			((VoltageRatioInput)device).setDataInterval(dataInterval);
+			((VoltageInput)device).setDataInterval(dataInterval);
 		}
 		catch (PhidgetException ex) {
 			System.err.println("Cannot set data interval value to device " + deviceType + " because of error: " + ex);
@@ -356,7 +387,7 @@ public class P_Voltage_Input extends Device {
 	@Override
 	public int getMinDataInterval() {
 		try {
-			return ((VoltageRatioInput)device).getMinDataInterval();
+			return ((VoltageInput)device).getMinDataInterval();
 		}
 		catch (PhidgetException ex) {
 			System.err.println("Cannot get min data interval value from device " + deviceType + " because of error: " + ex);
@@ -367,7 +398,7 @@ public class P_Voltage_Input extends Device {
 	@Override
 	public int getMaxDataInterval() {
 		try {
-			return ((VoltageRatioInput)device).getMaxDataInterval();
+			return ((VoltageInput)device).getMaxDataInterval();
 		}
 		catch (PhidgetException ex) {
 			System.err.println("Cannot get max data interval value from device " + deviceType + " because of error: " + ex);
@@ -475,6 +506,7 @@ public class P_Voltage_Input extends Device {
 				case PN_MOT2002_LOW: return "MOT2002"; // Motion Sensor Low Sensitivity
 				case PN_MOT2002_MED: return "MOT2002"; // Motion Sensor Medium Sensitivity
 				case PN_MOT2002_HIGH: return "MOT2002"; // Motion Sensor High Sensitivity
+				case PN_VCP4114: return "VCP4114"; // Clip-on Current Transducer 25A
 				}
 			}
 			catch (PhidgetException ex) {
@@ -656,6 +688,9 @@ public class P_Voltage_Input extends Device {
 			case "HIGH": // Motion Sensor High Sensitivity
 				nSensorType = VoltageSensorType.PN_MOT2002_HIGH;
 				break;
+			case "VCP4114": // Clip-on Current Transducer 25A
+				nSensorType = VoltageSensorType.PN_VCP4114;
+				break;
 
 			default:
 				System.err.println("Cannot set sensor type to " + sensorType +". See documentation for correct usage");		
@@ -664,6 +699,8 @@ public class P_Voltage_Input extends Device {
 			try {
 				((VoltageInput)device).setSensorType(nSensorType);
 				attachListeners();
+				// if not in setup() and real-time event is registered - run the pre() function to re-create it if needed
+				if (RTEventRegister && (PAppletParent.frameCount > 0)) pre();
 			}
 			catch (PhidgetException ex) {
 				System.err.println("Cannot set sensor type for device " + deviceType + " because of error: " + ex);
@@ -706,6 +743,7 @@ public class P_Voltage_Input extends Device {
 				}
 				else {
 					System.err.println("Cannot get sensor value for device " + deviceType + " because of error: " + ex);
+					PAppletParent.exit();
 				}
 			}
 		}
@@ -733,6 +771,7 @@ public class P_Voltage_Input extends Device {
 				}
 				else {
 					System.err.println("Cannot check sensor value validity for device " + deviceType + " because of error: " + ex);
+					PAppletParent.exit();
 				}
 			}
 		}
@@ -777,6 +816,7 @@ public class P_Voltage_Input extends Device {
 		}
 		catch (PhidgetException ex) {
 			System.err.println("Cannot get voltage for device " + deviceType + " because of error: " + ex);
+			PAppletParent.exit();
 		}
 		return 0.0f;
 	}

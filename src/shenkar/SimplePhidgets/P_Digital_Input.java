@@ -12,6 +12,7 @@ public class P_Digital_Input extends Device {
 
 	// real-time event
 	Method stateChangeEventRTMethod;  // stateChangeRT
+	boolean RTEventRegister = false;
 
 	public P_Digital_Input(PApplet P5Parent, Channel ChParent, String type, int serialNum, int portNum, int chNum) {
 		super(P5Parent, ChParent, type, serialNum, portNum, chNum);
@@ -21,6 +22,7 @@ public class P_Digital_Input extends Device {
 			device = new DigitalInput();
 		}	catch (PhidgetException ex) {
 			System.err.println("Could not open device " + deviceType + " on port " + portNum + ". See help on github.com/sgeigers/SimplePhidgets#reference");
+			PAppletParent.exit();
 		}
 
 		// device opening
@@ -111,20 +113,8 @@ public class P_Digital_Input extends Device {
 					System.err.println("Cannot use both stateChange() and stateChangeRT()."); 
 				}
 				else {
-					((DigitalInput)device).addStateChangeListener(new DigitalInputStateChangeListener() {
-						public void onStateChange(DigitalInputStateChangeEvent e) {
-							//System.out.println(e.toString());
-							try {
-								if (stateChangeEventRTMethod != null) {
-									stateChangeEventRTMethod.invoke(PAppletParent);
-								}
-							} catch (Exception ex) {
-								System.err.println("Disabling stateChangeRT() for " + deviceType + " because of an error:");
-								ex.printStackTrace();
-								stateChangeEventRTMethod = null;
-							}
-						}
-					});
+					RTEventRegister = true;
+					stateChangeEventReportChannel = false;
 				}
 			}
 		} catch (Exception e) {
@@ -139,6 +129,20 @@ public class P_Digital_Input extends Device {
 					System.err.println("Cannot use both stateChange() and stateChangeRT()."); 
 				}
 				else {
+					RTEventRegister = true;
+					stateChangeEventReportChannel = true;
+				}
+			}
+		} catch (Exception e) {
+			// function "stateChangeRT()" not defined
+		}
+	}
+
+	public void pre() {
+		if (RTEventRegister) {
+			RTEventRegister = false;
+			try {
+				if (stateChangeEventReportChannel) { // stateChangeRT(Channel)
 					((DigitalInput)device).addStateChangeListener(new DigitalInputStateChangeListener() {
 						public void onStateChange(DigitalInputStateChangeEvent e) {
 							//System.out.println(e.toString());
@@ -154,12 +158,30 @@ public class P_Digital_Input extends Device {
 						}
 					});
 				}
-			}
-		} catch (Exception e) {
-			// function "stateChangeRT()" not defined
+				else { // stateChangeRT()
+					((DigitalInput)device).addStateChangeListener(new DigitalInputStateChangeListener() {
+						public void onStateChange(DigitalInputStateChangeEvent e) {
+							//System.out.println(e.toString());
+							try {
+								if (stateChangeEventRTMethod != null) {
+									stateChangeEventRTMethod.invoke(PAppletParent);
+								}
+							} catch (Exception ex) {
+								System.err.println("Disabling stateChangeRT() for " + deviceType + " because of an error:");
+								ex.printStackTrace();
+								stateChangeEventRTMethod = null;
+							}
+						}
+					});
+				}
+			} catch (Exception ex) {
+		    	System.err.println("Disabling stateChangeRT() for " + deviceType + " because of an error:");
+		    	ex.printStackTrace();
+		    	stateChangeEventRTMethod = null;
+		    }
 		}
 	}
-
+	
 	/**
 	 * handles events. Do not call.
 	 * 
@@ -200,6 +222,7 @@ public class P_Digital_Input extends Device {
 		}
 		catch (PhidgetException ex) {
 			System.err.println("Cannot get state of device " + deviceType + " because of error: " + ex);
+			PAppletParent.exit();
 		}
 		return 0; 
 	}
@@ -337,6 +360,7 @@ public class P_Digital_Input extends Device {
 		}
 		catch (PhidgetException ex) {
 			System.err.println("Cannot get state of device " + deviceType + " because of error: " + ex);
+			PAppletParent.exit();
 		}
 		return false; 
 	}

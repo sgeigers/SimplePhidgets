@@ -1,14 +1,18 @@
 package shenkar.SimplePhidgets;
 
+import com.phidget22.*;
+import processing.core.*;
+
 /* ToDos:
- * - Check if possible to open both DCMotor and MotorPositionController at the same time for one device.
+ * - MAJOR: add PAppletParent.exit(); after most error messages
+ * - check "simple sensor event" example - the event shouldn't been read until after the end of setup() (maybe the problem is sensor setting)
+ * - [PROBABLY OK] if dual usage of same event function name fails - for every event (which has dual usage) check type of channel before invoking
+ * - [CHECKED. NOT POSSIBLE] Check if possible to open both DCMotor and MotorPositionController at the same time for one device.
  * - Check where specific function screening for specific devices can be done using getChannelSubClass
  * - document MOT2002 as unique - defaultly checked as medium sensitivity, but can be changed
  * - spatial: check quaternion update with applicable device (probably only 1044_1)
- * - digital: expand secondaryIO to secondaryIO, or change scheme, for example for 1065 motor controller, which has motor control + analog + encoder + digital...
  */
 
-import processing.core.*;
 //import sun.text.normalizer.UnicodeSet.SpanCondition;
 
 //import java.io.*;
@@ -44,7 +48,7 @@ public class Channel {
 	String deviceType;
 	Device device;
 
-	// P_Voltage_Ratio, 
+	// P_Voltage_Ratio, P_Voltage_Input, P_Temperature_Sensor
 	/**
 	 * most basic use for sensors. returns an integer between 0 an 1000 coresponding to reading of the sensor.
 	 * 
@@ -58,7 +62,7 @@ public class Channel {
 	public int getBridgeGain() {return device.getBridgeGain(); } // 1, 2, 4, 8, 16, 32, 64, 128
 	public void setBridgeGain(int gain) {device.setBridgeGain(gain); } // 1, 2, 4, 8, 16, 32, 64, 128
 
-	// P_Voltage_Ratio, P_Voltage_Input, P_Sound_Sensor, P_Capacitive_Touch, P_Spatial, P_RC_Servo, P_Stepper
+	// P_Voltage_Ratio, P_Voltage_Input, P_Sound_Sensor, P_Capacitive_Touch, P_Spatial, P_RC_Servo, P_Stepper, P_Temperature_Sensor
 	public int getDataInterval() {return device.getDataInterval(); }
 	public void setDataInterval(int dataInterval) {device.setDataInterval(dataInterval); }
 	public int getMinDataInterval() {return device.getMinDataInterval(); }  // milliseconds
@@ -67,14 +71,16 @@ public class Channel {
 	// P_Voltage_Ratio, P_Voltage_Input, P_Sound_Sensor, P_Capacitive_Touch
 	public void setReadChangeTrigger(int readChangeTrigger) {device.setReadChangeTrigger(readChangeTrigger); }
 
-	// P_Voltage_Ratio, P_Voltage_Input	
-	public String getSensorType() {return device.getSensorType(); }
-	public void setSensorType(String sensorType) {device.setSensorType(sensorType); }
-	public String getSensorUnit() {return device.getSensorUnit(); }
+	// P_Voltage_Ratio, P_Voltage_Input, P_Temperature_Sensor
 	public float getSensorValue() {return device.getSensorValue(); }
 	public boolean getSensorValueValidity() {return device.getSensorValueValidity(); }  // to avoid getting an error every time the reading is outside scale (like when connecting Sharp proximity sensors)
 	public float getSensorValueChangeTrigger() {return device.getSensorValueChangeTrigger(); }
 	public void setSensorValueChangeTrigger(float sensorValueChangeTrigger) {device.setSensorValueChangeTrigger(sensorValueChangeTrigger); }
+	public String getSensorUnit() {return device.getSensorUnit(); }
+
+	// P_Voltage_Ratio, P_Voltage_Input	
+	public String getSensorType() {return device.getSensorType(); }
+	public void setSensorType(String sensorType) {device.setSensorType(sensorType); }
 
 	// P_Voltage_Ratio	
 	public float getVoltageRatio() {return device.getVoltageRatio(); }
@@ -128,6 +134,21 @@ public class Channel {
 	public float getMinTouchValueChangeTrigger() {return device.getMinTouchValueChangeTrigger(); }
 	public float getMaxTouchValueChangeTrigger() {return device.getMaxTouchValueChangeTrigger(); }
 
+	// P_Temperature_Sensor
+	public float getTemperature() {return device.getTemperature(); }
+	public float getMinTemperature() {return device.getMinTemperature(); }
+	public float getMaxTemperature() {return device.getMaxTemperature(); }
+	public String getRTDType() {return device.getRTDType(); }
+	public void setRTDType(String sensorType) {device.setRTDType(sensorType); }
+	public int getRTDWireSetup() {return device.getRTDWireSetup(); }
+	public void getRTDWireSetup(int setup) {device.getRTDWireSetup(setup); }
+	public float getTemperatureChangeTrigger() {return device.getTemperatureChangeTrigger(); }
+	public void setTemperatureChangeTrigger(float changeTrigger) {device.setTemperatureChangeTrigger(changeTrigger); }
+	public float getMinTemperatureChangeTrigger() {return device.getMinTemperatureChangeTrigger(); }
+	public float getMaxTemperatureChangeTrigger() {return device.getMaxTemperatureChangeTrigger(); }
+	public String getThermocoupleType() {return device.getThermocoupleType(); }
+	public void setThermocoupleType(String tcType) {device.setThermocoupleType(tcType); }
+	
 	// P_Spatial
 	public float getRoll() {return device.getRoll(); }
 	public float getPitch() {return device.getPitch(); }
@@ -405,6 +426,7 @@ public class Channel {
 	 */
 	public Channel(PApplet theParent, String type, int serialNum, int hubPort, int chNum, String secondaryIO) {
 		myParent = theParent;
+		myParent.registerMethod("pre", this);
 		myParent.registerMethod("draw", this);
 		myParent.registerMethod("dispose", this);
 		if (hubPort > 9999) {
@@ -521,7 +543,23 @@ public class Channel {
 					case "ADP1000": // pH Phidget
 					case "SAF1000": // Programmable Power Guard Phidget
 					case "TMP1100": // Isolated Thermocouple Phidget
+					case "TMP1101": // 4x Thermocouple Phidget
 						device = new P_Voltage_Input(myParent, this, deviceType, serialNum, hubPort, chNum);
+						break;
+						
+					default:
+						System.out.println("device " + deviceType + " has no secondary I/O of type \"voltageInput\"");	
+						break;
+				}
+				break;
+
+			case "TEMPERATURESENSOR":
+				switch (deviceType) {
+					case "DCC1000": // DC Motor Phidget
+					case "DCC1100": // Brushless DC Motor Phidget
+					case "HUM1000": // pH PhidgetHumidity Phidget
+					case "SAF1000": // Programmable Power Guard Phidget
+						device = new P_Temperature_Sensor(myParent, this, deviceType, serialNum, hubPort, chNum);
 						break;
 						
 					default:
@@ -641,6 +679,7 @@ public class Channel {
 			case "3588": // +-100A DC Current Transducer
 			case "3589": // +-250A DC Current Transducer
 			case "MOT2002": // Motion Sensor (PIR)
+			case "VCP4114": // Clip-on Current Transducer 25A
 				device = new P_Voltage_Input(myParent, this, deviceType, serialNum, hubPort, chNum);
 				break;
 
@@ -649,6 +688,10 @@ public class Channel {
 			case "1032": // PhidgetLED-64 Advanced
 			case "LED1000": // 32x Isolated LED Phidget
 			case "OUT1100": // 4x Digital Output Phidget
+			case "PSU1000": // Power Plug Phidget
+			case "PSU2000": // DC Power Source 5V
+			case "PSU2001": // DC Power Source 1.5 - 5V
+			case "PSU2002": // DC Power Source 5 - 24V
 			case "REL1000": // 4x Relay Phidget
 			case "REL1100": // 4x Isolated Solid State Relay Phidget
 			case "REL1101": // 16x Isolated Solid State Relay Phidget
@@ -706,6 +749,16 @@ public class Channel {
 				device = new P_Stepper(myParent, this, deviceType, serialNum, hubPort, chNum);
 				break;
 
+			case "1045": // PhidgetTemperatureSensor IR
+			case "1048": // PhidgetTemperatureSensor 4-Input
+			case "1051": // PhidgetTemperatureSensor 1-Input
+			case "TMP1000": // Temperature Phidget
+			case "TMP1100": // Isolated Thermocouple Phidget
+			case "TMP1101": // 4x Thermocouple Phidget
+			case "TMP1200": // RTD Phidget
+				device = new P_Temperature_Sensor(myParent, this, deviceType, serialNum, hubPort, chNum);
+				break;
+				
 			default:
 				System.out.println("Device type " + deviceType + " not supported yet");
 				break;
@@ -723,11 +776,11 @@ public class Channel {
 	}
 
 	/**
-	 * close the Phidget channel object
+	 * register real time events if defined by user
 	 * 
 	 */
-	public void dispose() {
-		device.close();
+	public void pre() {
+		device.pre();
 	}
 
 	/**
@@ -738,6 +791,14 @@ public class Channel {
 		device.draw();
 	}
 	
+	/**
+	 * close the Phidget channel object
+	 * 
+	 */
+	public void dispose() {
+		device.close();
+	}
+
 	
 	/**
 	 * print general help message to the console.

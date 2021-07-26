@@ -1,5 +1,5 @@
 /*
- This example demonstrates using events when more than 1 "simple sensor" is connected.
+ This example demonstrates using events when more than one "simple sensor" is connected.
  The event can be called by any of the opened channels of an applicable type (e.g "sensorChange()" might be triggered by any simple sensor).
  To know which channel triggerd the event, we add (Channel ch) to creating the event (see below). Then we can compare ch to relevant opened channels and know which one triggered the event.
  We can also use this ch for getting data from the channel which triggered the event. If we know which channel it is, this is equivalent to using the channel name itself.

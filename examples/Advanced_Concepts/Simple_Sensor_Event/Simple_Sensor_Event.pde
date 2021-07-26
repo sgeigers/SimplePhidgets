@@ -2,9 +2,10 @@
  This example demonstrates the use of events with simple sensors (in this case, a motion sensor).
  Events are functions that are automatically called when something happens. In this example - the event sensorChange is called when the sensor "read" value changes by more than 100.
  Processing has many built in events (e.g keyPressed and mouseDragged) so there are plenty of examples for general use of events.
- Using events let you sketch's draw function stay small and simple.
+ Using events let your sketch's draw function stay small and simple.
  
- In this example, we use a one-time event for drawing a red circle when the sensor detects an intruder. The sensor "raises a flag" when a motion is detected. See more comments and explanations in the code.
+ In this example, we use a one-time event for drawing a red circle when the sensor detects an intruder. The sensor "raises a flag" (sets a boolean variable to "true") when a motion
+ is detected. See more comments and explanations in the code.
 */
 
 import shenkar.SimplePhidgets.*;
@@ -27,7 +28,7 @@ void draw() {
 }
 
 void sensorChange() {
-  // the event is triggered a few times before the "setReadChangeTrigger" is registered, so we ignore it for the first 2 seconds
+  // this sensor needs time to "sattle down", so we ignore it for the first 2 seconds
   if (millis()>2000) {
     println(myMotionSensor.read());
     alarm = true;

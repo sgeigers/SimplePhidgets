@@ -12,6 +12,7 @@ public class P_Digital_Output extends Device {
 			device = new DigitalOutput();
 		}	catch (PhidgetException ex) {
 			System.err.println("Could not open device " + deviceType + " on port " + portNum + ". See help on github.com/sgeigers/SimplePhidgets#reference");
+			PAppletParent.exit();
 		}
 
 		// device opening
@@ -42,6 +43,10 @@ public class P_Digital_Output extends Device {
 
 		case "LED1000": // 32x Isolated LED Phidget
 		case "OUT1100": // 4x Digital Output Phidget
+		case "PSU1000": // Power Plug Phidget
+		case "PSU2000": // DC Power Source 5V
+		case "PSU2001": // DC Power Source 1.5 - 5V
+		case "PSU2002": // DC Power Source 5 - 24V
 		case "REL1000": // 4x Relay Phidget
 		case "REL1100": // 4x Isolated Solid State Relay Phidget
 		case "REL1101": // 16x Isolated Solid State Relay Phidget
@@ -70,6 +75,7 @@ public class P_Digital_Output extends Device {
 		}
 		catch (PhidgetException ex) {
 			System.err.println("Cannot set device " + deviceType + " to ON state because of error: " + ex);
+			PAppletParent.exit();
 		}
 	}
 
@@ -84,6 +90,7 @@ public class P_Digital_Output extends Device {
 		}
 		catch (PhidgetException ex) {
 			System.err.println("Cannot set device " + deviceType + " to OFF state because of error: " + ex);
+			PAppletParent.exit();
 		}
 	}
 
@@ -102,10 +109,12 @@ public class P_Digital_Output extends Device {
 			}
 			else {
 				System.err.println("analogWrite(int) is not valid for device of type " + deviceType);				
+				PAppletParent.exit();
 			}
 		}
 		catch (PhidgetException ex) {
 			System.err.println("Cannot analog write for device " + deviceType + " because of error: " + ex);
+			PAppletParent.exit();
 		}
 	}
 
@@ -122,10 +131,12 @@ public class P_Digital_Output extends Device {
 			}
 			else {
 				System.err.println("getDutyCycle() is not valid for device of type " + deviceType);				
+				PAppletParent.exit();
 			}
 		}
 		catch (PhidgetException ex) {
 			System.err.println("Cannot get duty cycle from device " + deviceType + " because of error: " + ex);
+			PAppletParent.exit();
 		}
 		return 0;
 	}
@@ -143,10 +154,12 @@ public class P_Digital_Output extends Device {
 			}
 			else {
 				System.err.println("setDutyCycle(float) is not valid for device of type " + deviceType);				
+				PAppletParent.exit();
 			}
 		}
 		catch (PhidgetException ex) {
 			System.err.println("Cannot set duty cycle for device " + deviceType + " because of error: " + ex);
+			PAppletParent.exit();
 		}
 	}
 
@@ -207,10 +220,12 @@ public class P_Digital_Output extends Device {
 			}
 			catch (PhidgetException ex) {
 				System.err.println("Cannot set failsafe for device " + deviceType + " because of error: " + ex);
+				PAppletParent.exit();
 			}
 		}
 		else {
 			System.err.println("enableFailsafe(int) is not valid for device of type " + deviceType);				
+			PAppletParent.exit();
 		}
 	}	
 
@@ -274,10 +289,12 @@ public class P_Digital_Output extends Device {
 			}
 			catch (PhidgetException ex) {
 				System.err.println("Cannot reset failsafe timer for device " + deviceType + " because of error: " + ex);
+				PAppletParent.exit();
 			}
 		}
 		else {
 			System.err.println("resetFailsafe() is not valid for device of type " + deviceType);				
+			PAppletParent.exit();
 		}
 	}	
 
@@ -294,10 +311,12 @@ public class P_Digital_Output extends Device {
 			}
 			catch (PhidgetException ex) {
 				System.err.println("Cannot get frequency from device " + deviceType + " because of error: " + ex);
+				PAppletParent.exit();
 			}
 		}
 		else {
 			System.err.println("getFrequency() is not valid for device of type " + deviceType);				
+			PAppletParent.exit();
 		}
 		return 0;
 	}
@@ -315,10 +334,12 @@ public class P_Digital_Output extends Device {
 			}
 			catch (PhidgetException ex) {
 				System.err.println("Cannot set frequency for device " + deviceType + " because of error: " + ex);
+				PAppletParent.exit();
 			}
 		}
 		else {
 			System.err.println("setFrequency(float) is not valid for device of type " + deviceType);				
+			PAppletParent.exit();
 		}
 	}
 
@@ -377,10 +398,12 @@ public class P_Digital_Output extends Device {
 			}
 			else {
 				System.err.println("getLEDCurrentLimit() is not valid for device of type " + deviceType);				
+				PAppletParent.exit();
 			}
 		}
 		catch (PhidgetException ex) {
 			System.err.println("Cannot get LED current limit from device " + deviceType + " because of error: " + ex);
+			PAppletParent.exit();
 		}
 		return 0;
 	}
@@ -398,10 +421,12 @@ public class P_Digital_Output extends Device {
 			}
 			else {
 				System.err.println("setLEDCurrentLimit(float) is not valid for device of type " + deviceType);				
+				PAppletParent.exit();
 			}
 		}
 		catch (PhidgetException ex) {
 			System.err.println("Cannot set LED current limit for device " + deviceType + " because of error: " + ex);
+			PAppletParent.exit();
 		}
 	}
 

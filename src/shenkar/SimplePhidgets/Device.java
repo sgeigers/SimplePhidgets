@@ -39,7 +39,8 @@ abstract public class Device {
 					device.open(1000);
 				}
 				catch (PhidgetException ex) {
-					System.err.println("Could not open device " + deviceType + ". See github.com/sgeigers/SimplePhidgets#reference for help");				
+					System.err.println("Could not open device " + deviceType + ". See github.com/sgeigers/SimplePhidgets#reference for help");
+					PAppletParent.exit();
 				}
 			}
 			else {
@@ -59,6 +60,7 @@ abstract public class Device {
 		catch (PhidgetException e) {
 			System.err.println("Could not open device " + deviceType + ". See github.com/sgeigers/SimplePhidgets#reference for help");
 			System.err.println("Error: " + e);
+			PAppletParent.exit();
 		}
 	}
 	
@@ -70,10 +72,14 @@ abstract public class Device {
 			}
 			catch (PhidgetException ex) {
 				System.err.println("Could not close device " + deviceType + ". See github.com/sgeigers/SimplePhidgets#reference for help");
+				PAppletParent.exit();
 			}
 		}
 	}
 
+	public void pre() {
+	}
+	
 	public void draw() {
 	}
 	
@@ -816,5 +822,66 @@ abstract public class Device {
 
 	public void setRescaleFactor(float fctr) {
 		System.err.println("setRescaleFactor(float) is not valid for device of type " + deviceType);	
+	}
+	
+	public float getTemperature() {
+		System.err.println("getTemperature() is not valid for device of type " + deviceType);	
+		return 0;
+	}
+	
+	public float getMinTemperature() {
+		System.err.println("getMinTemperature() is not valid for device of type " + deviceType);	
+		return 0;	
+	}
+	
+	public float getMaxTemperature() {
+		System.err.println("getMaxTemperature() is not valid for device of type " + deviceType);	
+		return 0;	
+	}
+	
+	public String getRTDType() {
+		System.err.println("getRTDType() is not valid for device of type " + deviceType);	
+		return "";
+	}
+	
+	public void setRTDType(String sensorType) {
+		System.err.println("setRTDType(String) is not valid for device of type " + deviceType);	
+	}
+	
+	public int getRTDWireSetup() {
+		System.err.println("getRTDWireSetup() is not valid for device of type " + deviceType);	
+		return 0;
+	}
+	
+	public void getRTDWireSetup(int setup) {
+		System.err.println("getRTDWireSetup(int) is not valid for device of type " + deviceType);	
+	}
+	
+	public float getTemperatureChangeTrigger() {
+		System.err.println("getTemperatureChangeTrigger() is not valid for device of type " + deviceType);	
+		return 0;
+	}
+	
+	public void setTemperatureChangeTrigger(float changeTrigger) {
+		System.err.println("setTemperatureChangeTrigger(float) is not valid for device of type " + deviceType);	
+	}
+	
+	public float getMinTemperatureChangeTrigger() {
+		System.err.println("getMinTemperatureChangeTrigger() is not valid for device of type " + deviceType);	
+		return 0;
+	}
+	
+	public float getMaxTemperatureChangeTrigger() {
+		System.err.println("getMaxTemperatureChangeTrigger() is not valid for device of type " + deviceType);	
+		return 0;
+	}
+	
+	public String getThermocoupleType() {
+		System.err.println("getThermocoupleType() is not valid for device of type " + deviceType);	
+		return "";
+	}
+	
+	public void setThermocoupleType(String tcType) {
+		System.err.println("setThermocoupleType(String) is not valid for device of type " + deviceType);	
 	}
 }
