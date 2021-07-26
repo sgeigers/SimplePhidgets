@@ -4,12 +4,9 @@ import com.phidget22.*;
 import processing.core.*;
 
 /* ToDos:
- * - MAJOR: add PAppletParent.exit(); after most error messages
- * - check "simple sensor event" example - the event shouldn't been read until after the end of setup() (maybe the problem is sensor setting)
  * - [PROBABLY OK] if dual usage of same event function name fails - for every event (which has dual usage) check type of channel before invoking
  * - [CHECKED. NOT POSSIBLE] Check if possible to open both DCMotor and MotorPositionController at the same time for one device.
  * - Check where specific function screening for specific devices can be done using getChannelSubClass
- * - document MOT2002 as unique - defaultly checked as medium sensitivity, but can be changed
  * - spatial: check quaternion update with applicable device (probably only 1044_1)
  */
 
