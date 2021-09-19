@@ -884,4 +884,32 @@ abstract public class Device {
 	public void setThermocoupleType(String tcType) {
 		System.err.println("setThermocoupleType(String) is not valid for device of type " + deviceType);	
 	}
+	
+	public boolean getTagPresent() {
+		System.err.println("getTagPresent() is not valid for device of type " + deviceType);	
+		return false;
+	}
+
+	public String getLastTagString() {
+		System.err.println("getLastTagString() is not valid for device of type " + deviceType);	
+		return "";
+	}
+
+	public String getLastTagProtocol() {
+		System.err.println("getLastTagProtocol() is not valid for device of type " + deviceType);	
+		return "";
+	}
+	
+	public void write(String tagString, String prot, boolean lock) {
+		System.err.println("write(String, String, boolean) is not valid for device of type " + deviceType);	
+	}
+
+	public boolean getAntennaEnabled() {
+		System.err.println("getAntennaEnabled() is not valid for device of type " + deviceType);	
+		return false;
+	}
+
+	public void setAntennaEnabled(boolean ant) {
+		System.err.println("setAntennaEnabled(boolean) is not valid for device of type " + deviceType);	
+	}
 }

@@ -50,7 +50,7 @@ public class P_Capacitive_Touch extends Device {
 		try {
 			touchEventMethod =  PAppletParent.getClass().getMethod("capacitiveTouched");
 			if (touchEventMethod != null) {
-				touchEndEventReportChannel = false;
+				touchEventReportChannel = false;
 				((CapacitiveTouch)device).addTouchListener(new CapacitiveTouchTouchListener() {
 					public void onTouch(CapacitiveTouchTouchEvent e) {
 						//System.out.println(e.toString());
@@ -66,7 +66,7 @@ public class P_Capacitive_Touch extends Device {
 		try {
 			touchEventMethod =  PAppletParent.getClass().getMethod("capacitiveTouched", new Class<?>[] { Channel.class });
 			if (touchEventMethod != null) {
-				touchEndEventReportChannel = true;
+				touchEventReportChannel = true;
 				((CapacitiveTouch)device).addTouchListener(new CapacitiveTouchTouchListener() {
 					public void onTouch(CapacitiveTouchTouchEvent e) {
 						//System.out.println(e.toString());
@@ -212,7 +212,7 @@ public class P_Capacitive_Touch extends Device {
 					});
 				}
 			} catch (Exception ex) {
-		    	System.err.println("Disabling capacitiveTouchedRTRT() for " + deviceType + " because of an error:");
+		    	System.err.println("Disabling capacitiveTouchedRT() for " + deviceType + " because of an error:");
 		    	ex.printStackTrace();
 		    	touchEventRTMethod = null;
 		    }

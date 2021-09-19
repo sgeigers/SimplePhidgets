@@ -1,9 +1,10 @@
 package shenkar.SimplePhidgets;
 
-import com.phidget22.*;
 import processing.core.*;
 
 /* ToDos:
+ * - Test RFID example + events. Create an example for RFID events
+ * - Capacitive example?
  * - [PROBABLY OK] if dual usage of same event function name fails - for every event (which has dual usage) check type of channel before invoking
  * - [CHECKED. NOT POSSIBLE] Check if possible to open both DCMotor and MotorPositionController at the same time for one device.
  * - Check where specific function screening for specific devices can be done using getChannelSubClass
@@ -51,7 +52,7 @@ public class Channel {
 	 * 
 	 * @return int
 	 */
-	public int read() {return device.read(); } // returns sensor value, between 0 and 1000
+	public int read() {return device.read(); } // returns sensor value, between 0 and 1000. for digital sensors: 0 or 1.
 
 	// P_Voltage_Ratio
 	public boolean getBridgeEnabled() {return device.getBridgeEnabled(); }
@@ -259,6 +260,14 @@ public class Channel {
 	public void addPositionOffset(int offset) {device.addPositionOffset(offset); }
 	public float getRescaleFactor() {return device.getRescaleFactor(); }
 	public void setRescaleFactor(float fctr) {device.setRescaleFactor(fctr); }
+	
+	// P_RFID
+	public boolean getTagPresent() {return device.getTagPresent(); }
+	public String getLastTagString() {return device.getLastTagString(); }
+	public String getLastTagProtocol() {return device.getLastTagProtocol(); }
+	public void write(String tagString, String prot, boolean lock) {device.write(tagString, prot, lock); }
+	public boolean getAntennaEnabled() {return device.getAntennaEnabled(); }
+	public void setAntennaEnabled(boolean ant) {device.setAntennaEnabled(ant); }
 
 	
 	/**
@@ -754,6 +763,10 @@ public class Channel {
 			case "TMP1101": // 4x Thermocouple Phidget
 			case "TMP1200": // RTD Phidget
 				device = new P_Temperature_Sensor(myParent, this, deviceType, serialNum, hubPort, chNum);
+				break;
+				
+			case "1024": // PhidgetRFID Read-Write
+				device = new P_RFID(myParent, this, deviceType, serialNum, hubPort, chNum);
 				break;
 				
 			default:
