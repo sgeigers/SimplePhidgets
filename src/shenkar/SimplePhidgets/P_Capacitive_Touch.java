@@ -14,8 +14,8 @@ public class P_Capacitive_Touch extends Device {
 	boolean touchEndEventReportChannel = false;
 
 	// real-time events
-	Method touchEventRTMethod;  // capacitiveTouched
-	Method touchEndEventRTMethod; // capacitiveReleased
+	Method touchEventRTMethod;  // capacitiveTouchedRT
+	Method touchEndEventRTMethod; // capacitiveReleasedRT
 	boolean RTTouchEventRegister = false;
 	boolean RTTouchEndEventRegister = false;
 	
