@@ -47,7 +47,7 @@ Unfortunately, Phidgets do not provide classic JavaDoc, so documentation is a bi
 [Events](#events)
 
 ## General
-The Simple Phidgets library is based on channels. Inside your sketch, you should open a channel (Channel object) for every data channel with your Phidget device.
+The Simple Phidgets library is based on channels. Inside your sketch, you should open a channel (Channel object) for every data channel you need of your Phidget device.
 For example, if you connect a light sensor to a VINT hub, you should open a channel to get the data from this sensor (light intensity). This channel can also be used for changing relevant setting, e.g. data interval (update frequency), as well as getting additional information, e.g. name of measurement units for this sensor.
 There are many ways to open a channel, depending on the devices used and system configuration (e.g. how many devices are connected to the hub or interface kit).
 The most basic way is to state the type of device you are using (without the type of hub or interface kit used). This is a 4 digit number or 3 letters an 4 digits written on the board or case of the device. This number is usually followed by a '_' and a single digit or a digit and a letter, which states the version of the board. In older boards, the version is written inside a box following device type number. The version can usually be omitted, because there is usually no difference in software between versions.
@@ -68,7 +68,7 @@ lightSensor = <span style="color: #33997E;">new</span> Channel(<span style="colo
 
 The <code><span style="color: #33997E;">this</span></code> in this command is necessary evil. It is necessary for enabling events (explained [below](#events)).
 
-If you connect a device to a port other then 0, you should add the port number to the opening command:
+If you connect a device to a VINT port other then 0, you should add the port number to the opening command:
 
 <pre>
 lightSensor = <span style="color: #33997E;">new</span> Channel(<span style="color: #33997E;">this</span>, <span style="color: #7D4793;">"1142"</span>, 3);
@@ -89,7 +89,7 @@ bridge = <span style="color: #33997E;">new</span> Channel(<span style="color: #3
 Some boards have "secondary" input or output channels. For example, DC Motor Phidget DCC1000 has, in addition to the DCMotor channel, which controls the speed and direction of the motor, also an encoder channel, an analog channel (voltage or voltage ratio measurement), a temperature sensor channel, a current sensor channel and a motor position controller, which enables a more advanced control of the motor when it's connected to an encoder. These channels do not have specific numbers so when you normally open a channel for such a device, it will open the "main" channel. for the DCC1000, for example, it will open a DCMotor channel. If you want to open a different channel of the device, you should add the channel type to the opening command:
 
 <pre>
-motorSensor = <span style="color: #33997E;">new</span> Channel(<span style="color: #33997E;">this</span>, <span style="color: #7D4793;">"DAQ1500"</span>, "analogInput");
+motorSensor = <span style="color: #33997E;">new</span> Channel(<span style="color: #33997E;">this</span>, <span style="color: #7D4793;">"DCC1000"</span>, "analogInput");
 </pre>
 
 The secondary I/O type can be added anywhere in the command after the device type (e.g. before or after port number and channel number).
@@ -103,7 +103,7 @@ Most of the sensors have the same basic simplified interface, with the <code><sp
 <span style="color: #006699;">println</span>(lightSensor.read());
 </pre>
 
-All sensors have other functions for reading or changing different settings. These can be found in the [Phidgets website](https://www.phidgets.com/). Search for you sensor, then select the API tab below. If the option is presented, select Java in the "Choose a Language" box (if not - see below). If the sensor has more than one input channel (see [secondary Inputs and Outputs](#secondary-inputs-and-outputs) below), you can choose the desired input type on the right box (ignore the "Phidget API" in that box). Now you can see all available functions for this device.
+All sensors have other functions for reading or changing different settings. These can be found in the different examples that come with the library - below the code of each example. for more elaborate help on each function, check [Phidgets website](https://www.phidgets.com/). Search for you sensor, then select the API tab below. If the option is presented, select Java in the "Choose a Language" box (if not - see below). If the sensor has more than one input channel (see [secondary Inputs and Outputs](#secondary-inputs-and-outputs) below), you can choose the desired input type on the right box (ignore the "Phidget API" in that box). Now you can see all available functions for this device.
 You can use most of these functions "as is", with a few exceptions described below. e.g:
 
 <pre>
@@ -138,6 +138,13 @@ This allows to turn on or off an output device connected to a channel (usually u
 
 ### voltageInput
 Opens a VoltageInput channel as secondary I/O. This fits some sensors that has extra specific possibilities over the default VoltageRatioInput.
+
+### temperatureSensor
+Opens a TemperatureSensor channel as secondary I/O. This fits some boards that have a temperature sensor in addition to their main function (e.g. motor drivers)
+
+### encoder
+Opens an Encoder channel as secondary I/O. This fits some boards that have encoder interface in addition to their main function (e.g. some DC motor drivers)
+
 
 ## Using ports as digital or analog inputs
 Sometimes you need to use a hub port or an interfaceKit connector directly. This is needed in these cases:
@@ -178,7 +185,7 @@ When we use events, we can add <code><span style="color: #000000;">(Channel ch)<
 ### Real Time Events
 
 The event functions shown above let you do anything you want with them, including adding drawing elements etc. They do so by being triggered at the same frame-rate of <code><span style="color: #33997E;">void</span> <span style="color: #006699;"><b>draw</b></span><span style="color: #000000;">()</span></code>, after all the functions inside it where executed. This means, if you have a sensor that triggers faster than the sketch frame rate, you lose some of that data. If it is important for you to not lose any data, you can use the real-time variation of the function, which has the same name, but with RT added (e.g. <code><span style="color: #000000;">sensorChangeRT()</span></code>.
-This event function will be called asynchronously from <code><span style="color: #006699;"><b>draw</b></span><span style="color: #000000;">()</span></code>, which means the functions inside it can be executed a few times (or even many times) for every frame. The cost is, you cannot write any drawing functions inside it - only update variables and so calculations - so use this option only when really needed.
+This event function will be called asynchronously from <code><span style="color: #006699;"><b>draw</b></span><span style="color: #000000;">()</span></code>, which means the functions inside it can be executed a few times (or even many times) for every frame. The cost is, you cannot write any drawing functions inside it - only update variables and do calculations - so use this option only when really needed.
 In real-time events you can also choose to add <code><span style="color: #000000;">(Channel ch)</span></code>, if you need to know which channel triggered the event.
 Note that printing messages to the console inside a real-time event might overflow the editor, because the rate of data may be too high for it to handle.
 

@@ -58,7 +58,9 @@ public class P_Spatial extends Device {
 			case "1042":  // PhidgetSpatial 3/3/3 Basic
 			case "1044":  // PhidgetSpatial Precision 3/3/3 High Resolution
 			case "1056":  // PhidgetSpatial 3/3/3
+			case "MOT0109":	 // PhidgetSpatial Precision 3/3/3
 			case "MOT1101":  // Spatial Phidget
+			case "MOT1102":  // Spatial Phidget
 				spatial = new Spatial();
 				gyroscope = new Gyroscope();
 				magnetometer = new Magnetometer();
@@ -90,6 +92,7 @@ public class P_Spatial extends Device {
 		case "1042":  // PhidgetSpatial 3/3/3 Basic
 		case "1044":  // PhidgetSpatial Precision 3/3/3 High Resolution
 		case "1056":  // PhidgetSpatial 3/3/3
+		case "MOT0109":	 // PhidgetSpatial Precision 3/3/3
 			initNoHub();
 			try {
 				if (serial > -1) {
@@ -108,6 +111,7 @@ public class P_Spatial extends Device {
 			break;
 
 		case "MOT1101":  // Spatial Phidget
+		case "MOT1102":  // Spatial Phidget
 			init(false);
 			try {
 				spatial.setHubPort(hubPort);
@@ -141,7 +145,9 @@ public class P_Spatial extends Device {
 			case "1042":  // PhidgetSpatial 3/3/3 Basic
 			case "1044":  // PhidgetSpatial Precision 3/3/3 High Resolution
 			case "1056":  // PhidgetSpatial 3/3/3
+			case "MOT0109":	 // PhidgetSpatial Precision 3/3/3
 			case "MOT1101":  // Spatial Phidget
+			case "MOT1102":  // Spatial Phidget
 				spatial.setDataInterval(spatial.getMinDataInterval());
 				gyroscope.setDataInterval(gyroscope.getMinDataInterval());
 				magnetometer.setDataInterval(magnetometer.getMinDataInterval());
@@ -259,7 +265,9 @@ public class P_Spatial extends Device {
 		case "1042":  // PhidgetSpatial 3/3/3 Basic
 		case "1044":  // PhidgetSpatial Precision 3/3/3 High Resolution
 		case "1056":  // PhidgetSpatial 3/3/3
+		case "MOT0109":	 // PhidgetSpatial Precision 3/3/3
 		case "MOT1101":  // Spatial Phidget
+		case "MOT1102":  // Spatial Phidget
 			// accelChange()
 			try {
 				accelerationChangeEventMethod = PAppletParent.getClass().getMethod("accelChange");
@@ -982,7 +990,7 @@ public class P_Spatial extends Device {
 
 	@Override
 	public float getYaw() {
-		if ((deviceType=="1042") || (deviceType=="1044") || (deviceType=="1056") || (deviceType=="MOT1101")) { 
+		if (magnetometer != null) { 
 			return (float)yawAngle;
 		}
 		else {
@@ -1082,7 +1090,7 @@ public class P_Spatial extends Device {
 
 	@Override
 	public float[] getAngularRate() {
-		if ((deviceType=="1042") || (deviceType=="1044") || (deviceType=="1056") || (deviceType=="MOT1101")) { 
+		if (gyroscope != null) { 
 			try {
 				double[] anrd = gyroscope.getAngularRate();
 				float[] anrf = new float[3];
@@ -1103,7 +1111,7 @@ public class P_Spatial extends Device {
 
 	@Override
 	public float[] getMinAngularRate() {
-		if ((deviceType=="1042") || (deviceType=="1044") || (deviceType=="1056") || (deviceType=="MOT1101")) { 
+		if (gyroscope != null) { 
 			try {
 				double[] anrd = gyroscope.getMinAngularRate();
 				float[] anrf = new float[3];
@@ -1123,7 +1131,7 @@ public class P_Spatial extends Device {
 
 	@Override
 	public float[] getMaxAngularRate() {
-		if ((deviceType=="1042") || (deviceType=="1044") || (deviceType=="1056") || (deviceType=="MOT1101")) { 
+		if (gyroscope != null) { 
 			try {
 				double[] anrd = gyroscope.getMaxAngularRate();
 				float[] anrf = new float[3];
@@ -1143,7 +1151,7 @@ public class P_Spatial extends Device {
 
 	@Override
 	public float[] getMagneticField() {
-		if ((deviceType=="1042") || (deviceType=="1044") || (deviceType=="1056") || (deviceType=="MOT1101")) { 
+		if (magnetometer != null) { 
 			try {
 				double[] magd = magnetometer.getMagneticField();
 				float[] magf = new float[3];
@@ -1164,7 +1172,7 @@ public class P_Spatial extends Device {
 
 	@Override
 	public float[] getMinMagneticField() {
-		if ((deviceType=="1042") || (deviceType=="1044") || (deviceType=="1056") || (deviceType=="MOT1101")) { 
+		if (magnetometer != null) { 
 			try {
 				double[] magd = magnetometer.getMinMagneticField();
 				float[] magf = new float[3];
@@ -1184,7 +1192,7 @@ public class P_Spatial extends Device {
 
 	@Override
 	public float[] getMaxMagneticField() {
-		if ((deviceType=="1042") || (deviceType=="1044") || (deviceType=="1056") || (deviceType=="MOT1101")) { 
+		if (magnetometer != null) { 
 			try {
 				double[] magd = magnetometer.getMaxMagneticField();
 				float[] magf = new float[3];
@@ -1218,19 +1226,11 @@ public class P_Spatial extends Device {
 	public void setDataInterval(int dataInterval) {
 		try {
 			((Accelerometer)device).setDataInterval(dataInterval);
-
-			switch (deviceType) {			
-			case "1042":  // PhidgetSpatial 3/3/3 Basic
-			case "1044":  // PhidgetSpatial Precision 3/3/3 High Resolution
-			case "1056":  // PhidgetSpatial 3/3/3
-			case "MOT1101":  // Spatial Phidget
+			
+			if (spatial != null) {
 				spatial.setDataInterval(dataInterval);
 				gyroscope.setDataInterval(dataInterval);
 				magnetometer.setDataInterval(dataInterval);
-				break;
-
-			default:
-				break;
 			}
 		}
 		catch (PhidgetException ex) {
@@ -1323,7 +1323,7 @@ public class P_Spatial extends Device {
 
 	@Override
 	public void setMagneticFieldChangeTrigger(float magneticFieldChangeTrigger) {
-		if ((deviceType=="1042") || (deviceType=="1044") || (deviceType=="1056") || (deviceType=="MOT1101")) { 
+		if (magnetometer != null) { 
 			try {
 				magnetometer.setMagneticFieldChangeTrigger((double)magneticFieldChangeTrigger);
 			}
@@ -1338,7 +1338,7 @@ public class P_Spatial extends Device {
 
 	@Override
 	public float getMinMagneticFieldChangeTrigger() {
-		if ((deviceType=="1042") || (deviceType=="1044") || (deviceType=="1056") || (deviceType=="MOT1101")) { 
+		if (magnetometer != null) { 
 			try {
 				return (float)(magnetometer.getMinMagneticFieldChangeTrigger());
 			}
@@ -1354,7 +1354,7 @@ public class P_Spatial extends Device {
 
 	@Override
 	public float getMaxMagneticFieldChangeTrigger() {
-		if ((deviceType=="1042") || (deviceType=="1044") || (deviceType=="1056") || (deviceType=="MOT1101")) { 
+		if (magnetometer != null) { 
 			try {
 				return (float)(magnetometer.getMaxMagneticFieldChangeTrigger());
 			}
@@ -1372,7 +1372,7 @@ public class P_Spatial extends Device {
 	public int getAxisCount() {
 		try {
 			int c = ((Accelerometer)device).getAxisCount();
-			if ((deviceType=="1042") || (deviceType=="1044") || (deviceType=="1056") || (deviceType=="MOT1101")) {
+			if (magnetometer != null) {
 				c += gyroscope.getAxisCount();
 				c += magnetometer.getAxisCount();
 			}
@@ -1400,7 +1400,7 @@ public class P_Spatial extends Device {
 
 	@Override
 	public void zeroGyro() {
-		if ((deviceType=="1042") || (deviceType=="1044") || (deviceType=="1056") || (deviceType=="MOT1101")) { 
+		if (gyroscope != null) { 
 			try {
 				gyroscope.zero();
 			}
@@ -1429,7 +1429,7 @@ public class P_Spatial extends Device {
 			float T3,
 			float T4,
 			float T5) {
-		if ((deviceType=="1042") || (deviceType=="1044") || (deviceType=="1056") || (deviceType=="MOT1101")) { 
+		if (magnetometer != null) { 
 			try {
 				magnetometer.setCorrectionParameters(
 						(double) magneticField,
@@ -1457,7 +1457,7 @@ public class P_Spatial extends Device {
 
 	@Override
 	public void resetMagnetometerCorrectionParameters() {
-		if ((deviceType=="1042") || (deviceType=="1044") || (deviceType=="1056") || (deviceType=="MOT1101")) { 
+		if (magnetometer != null) { 
 			try {
 				magnetometer.resetCorrectionParameters();
 			}
@@ -1472,7 +1472,7 @@ public class P_Spatial extends Device {
 
 	@Override
 	public void saveMagnetometerCorrectionParameters() {
-		if ((deviceType=="1042") || (deviceType=="1044") || (deviceType=="1056") || (deviceType=="MOT1101")) { 
+		if (magnetometer != null) { 
 			try {
 				magnetometer.saveCorrectionParameters();
 			}
@@ -1487,7 +1487,7 @@ public class P_Spatial extends Device {
 
 	@Override
 	public String getAlgorithm() {  // NONE, IMU or AHRS   -   this seems to do nothing currently...
-		if ((deviceType=="1042") || (deviceType=="1044") || (deviceType=="1056") || (deviceType=="MOT1101")) { 
+		if (spatial != null) { 
 			try {
 				SpatialAlgorithm alg = spatial.getAlgorithm();
 				switch (alg) {
@@ -1512,26 +1512,28 @@ public class P_Spatial extends Device {
 
 	@Override
 	public void setAlgorithm(String alg) {  // NONE, IMU or AHRS   -   this seems to do nothing currently...
-		if ((deviceType=="1042") || (deviceType=="1044") || (deviceType=="1056")) { 
+		if (spatial != null) { 
 			try {
-				switch (alg) {
-				case "NONE":
-					spatial.setAlgorithm(SpatialAlgorithm.NONE);
-					break;
-				case "AHRS":
-					spatial.setAlgorithm(SpatialAlgorithm.AHRS);
-					break;
-				case "IMU":
-					spatial.setAlgorithm(SpatialAlgorithm.IMU);
-					break;
-				default:
-					System.err.println("Algorithm \"" + alg + "\" not applicable for device " + deviceType + ". use only \"NONE\", \"AHRS\" or \"IMU\".");
-					break;
+				if (spatial.getChannelSubclass() == ChannelSubclass.SPATIAL_AHRS) {
+					switch (alg) {
+					case "NONE":
+						spatial.setAlgorithm(SpatialAlgorithm.NONE);
+						break;
+					case "AHRS":
+						spatial.setAlgorithm(SpatialAlgorithm.AHRS);
+						break;
+					case "IMU":
+						spatial.setAlgorithm(SpatialAlgorithm.IMU);
+						break;
+					default:
+						System.err.println("Algorithm \"" + alg + "\" not applicable for device " + deviceType + ". use only \"NONE\", \"AHRS\" or \"IMU\".");
+						break;
+					}
 				}
 			}
 			catch (PhidgetException ex) {
 				System.err.println("Cannot set algorithm for device " + deviceType + " because of error: " + ex);
-			}
+			}			
 		}
 		else {
 			System.err.println("setAlgorithm() is not valid for device of type " + deviceType);	
@@ -1540,9 +1542,11 @@ public class P_Spatial extends Device {
 
 	@Override
 	public void zeroAlgorithm() {
-		if ((deviceType=="1042") || (deviceType=="1044") || (deviceType=="1056")) { 
+		if (spatial != null) { 
 			try {
-				spatial.zeroAlgorithm();
+				if (spatial.getChannelSubclass() == ChannelSubclass.SPATIAL_AHRS) {
+					spatial.zeroAlgorithm();
+				}
 			}
 			catch (PhidgetException ex) {
 				System.err.println("Cannot reset algorithm for device" + deviceType + " because of error: " + ex);

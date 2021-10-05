@@ -4,11 +4,11 @@ import processing.core.*;
 
 /* ToDos:
  * - Test RFID example + events. Create an example for RFID events
- * - Capacitive example?
+ * - Update README - all examples have full functions available for each device type
  * - [PROBABLY OK] if dual usage of same event function name fails - for every event (which has dual usage) check type of channel before invoking
  * - [CHECKED. NOT POSSIBLE] Check if possible to open both DCMotor and MotorPositionController at the same time for one device.
  * - Check where specific function screening for specific devices can be done using getChannelSubClass
- * - spatial: check quaternion update with applicable device (probably only 1044_1)
+ * - spatial: check quaternion update with applicable device (1044_1, MOT0109, MOT1102)
  */
 
 //import sun.text.normalizer.UnicodeSet.SpanCondition;
@@ -60,7 +60,7 @@ public class Channel {
 	public int getBridgeGain() {return device.getBridgeGain(); } // 1, 2, 4, 8, 16, 32, 64, 128
 	public void setBridgeGain(int gain) {device.setBridgeGain(gain); } // 1, 2, 4, 8, 16, 32, 64, 128
 
-	// P_Voltage_Ratio, P_Voltage_Input, P_Sound_Sensor, P_Capacitive_Touch, P_Spatial, P_RC_Servo, P_Stepper, P_Temperature_Sensor
+	// P_Voltage_Ratio, P_Voltage_Input, P_Sound_Sensor, P_Capacitive_Touch, P_Spatial, P_RC_Servo, P_Stepper, P_Temperature_Sensor, P_Encoder
 	public int getDataInterval() {return device.getDataInterval(); }
 	public void setDataInterval(int dataInterval) {device.setDataInterval(dataInterval); }
 	public int getMinDataInterval() {return device.getMinDataInterval(); }  // milliseconds
@@ -269,6 +269,19 @@ public class Channel {
 	public boolean getAntennaEnabled() {return device.getAntennaEnabled(); }
 	public void setAntennaEnabled(boolean ant) {device.setAntennaEnabled(ant); }
 
+	// P_Encoder
+	public boolean getEnabled() {return device.getEnabled(); }
+	public void setEnabled(boolean en) {device.setEnabled(en); }
+	public long getIndexPosition() {return device.getIndexPosition(); }
+	public String getIOMode() {return device.getIOMode(); }
+	public void setIOMode(String em) {device.setIOMode(em); }
+	public long getEncPosition() {return device.getEncPosition(); }
+	public void setEncPosition(long pos	) {device.setEncPosition(pos); }
+	public int getPositionChangeTrigger() {return device.getPositionChangeTrigger(); }
+	public void setPositionChangeTrigger(int trigger) {device.setPositionChangeTrigger(trigger); }
+	public int getMinPositionChangeTrigger() {return device.getMinPositionChangeTrigger(); }
+	public int getMaxPositionChangeTrigger() {return device.getMaxPositionChangeTrigger(); }
+	
 	
 	/**
 	 * minimal constructor
@@ -532,10 +545,10 @@ public class Channel {
 			
 			case "ANALOGINPUT":
 				switch (deviceType) {
-/*					case "HIN1100": // Thumbstick Phidget
-						device = new P_Digital_Input(myParent, this, deviceType, serialNum, hubPort, chNum);
+					case "DCC1000": // Thumbstick Phidget
+						device = new P_Voltage_Ratio(myParent, this, deviceType, serialNum, hubPort, chNum);
 						break;
-*/						
+						
 					default:
 						System.out.println("device " + deviceType + " has no secondary I/O of type \"analogInput\"");	
 						break;
@@ -559,11 +572,14 @@ public class Channel {
 				}
 				break;
 
+			case "TEMP":
+			case "TEMPERATURE":
 			case "TEMPERATURESENSOR":
 				switch (deviceType) {
 					case "DCC1000": // DC Motor Phidget
 					case "DCC1100": // Brushless DC Motor Phidget
 					case "HUM1000": // pH PhidgetHumidity Phidget
+					case "MOT1102":  // Spatial Phidget
 					case "SAF1000": // Programmable Power Guard Phidget
 						device = new P_Temperature_Sensor(myParent, this, deviceType, serialNum, hubPort, chNum);
 						break;
@@ -574,6 +590,21 @@ public class Channel {
 				}
 				break;
 
+			case "ENC":
+			case "ENCODER":
+				switch (deviceType) {
+					case "1065": // PhidgetMotorControl 1-Motor
+					case "DCC1000": // DC Motor Phidget
+					case "DCC1001": // 2A DC Motor Phidget
+					case "DCC1002": // 4A DC Motor Phidget
+						device = new P_Encoder(myParent, this, deviceType, serialNum, hubPort, chNum);
+						break;
+
+					default:
+						System.out.println("device " + deviceType + " has no secondary I/O of type \"Encoder\"");	
+						break;
+}
+				
 			default:
 				System.out.println("unknown secondary I/O: " + secondaryIO + ". currently, possible secondary I/Os are: digitalInput, digitalOutput, analogInput and voltageInput.");	
 				break;
@@ -731,8 +762,10 @@ public class Channel {
 			case "1053":  // PhidgetAccelerometer 2-Axis
 			case "1056":  // PhidgetSpatial 3/3/3
 			case "1059":  // PhidgetAccelerometer 3-Axis
+			case "MOT0109":	 // PhidgetSpatial Precision 3/3/3
 			case "MOT1100":  // Accelerometer Phidget
 			case "MOT1101":  // Spatial Phidget
+			case "MOT1102":  // Spatial Phidget
 				device = new P_Spatial(myParent, this, deviceType, serialNum, hubPort, chNum);
 				break;
 
@@ -769,8 +802,17 @@ public class Channel {
 				device = new P_RFID(myParent, this, deviceType, serialNum, hubPort, chNum);
 				break;
 				
+			case "1047": // PhidgetEncoder HighSpeed 4-Input
+			case "1052": // PhidgetEncoder
+			case "1057": // PhidgetEncoder HighSpeed
+			case "ENC1000": // Quadrature Encoder Phidget
+			case "HIN1101": // Dial Phidget
+				device = new P_Encoder(myParent, this, deviceType, serialNum, hubPort, chNum);
+				break;
+
 			default:
 				System.out.println("Device type " + deviceType + " not supported yet");
+				myParent.exit();
 				break;
 			}	
 		}

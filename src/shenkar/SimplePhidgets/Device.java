@@ -912,4 +912,55 @@ abstract public class Device {
 	public void setAntennaEnabled(boolean ant) {
 		System.err.println("setAntennaEnabled(boolean) is not valid for device of type " + deviceType);	
 	}
+
+	public boolean getEnabled() {
+		System.err.println("getEnabled() is not valid for device of type " + deviceType);	
+		return false;
+	}
+
+	public void setEnabled(boolean en) {
+		System.err.println("setEnabled(boolean) is not valid for device of type " + deviceType);	
+	}
+
+	public long getIndexPosition() {
+		System.err.println("getIndexPosition() is not valid for device of type " + deviceType);	
+		return 0;
+	}
+	
+	public String getIOMode() { 
+		System.err.println("getIOMode() is not valid for device of type " + deviceType);	
+		return "";
+	}
+
+	public void setIOMode(String em) {
+		System.err.println("setIOMode(String) is not valid for device of type " + deviceType);	
+	}
+
+	public long getEncPosition() {
+		System.err.println("getEncPosition() is not valid for device of type " + deviceType);	
+		return 0;
+	}
+	
+	public void setEncPosition(long pos	) {
+		System.err.println("setEncPosition(long) is not valid for device of type " + deviceType);	
+	}
+	
+	public int getPositionChangeTrigger() {
+		System.err.println("getPositionChangeTrigger() is not valid for device of type " + deviceType);	
+		return 0;
+	}
+
+	public void setPositionChangeTrigger(int trigger) {
+		System.err.println("setPositionChangeTrigger(int) is not valid for device of type " + deviceType);	
+	}
+
+	public int getMinPositionChangeTrigger() {
+		System.err.println("getMinPositionChangeTrigger() is not valid for device of type " + deviceType);	
+		return 0;
+	}
+
+	public int getMaxPositionChangeTrigger() {
+		System.err.println("getMaxPositionChangeTrigger() is not valid for device of type " + deviceType);	
+		return 0;
+	}
 }
