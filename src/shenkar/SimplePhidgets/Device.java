@@ -963,4 +963,119 @@ abstract public class Device {
 		System.err.println("getMaxPositionChangeTrigger() is not valid for device of type " + deviceType);	
 		return 0;
 	}
+	
+	public float getIlluminance() {
+		System.err.println("getIlluminance() is not valid for device of type " + deviceType);	
+		return 0;
+	}
+	
+	public float getMinIlluminance() {
+		System.err.println("getMinIlluminance() is not valid for device of type " + deviceType);	
+		return 0;
+	}
+	
+	public float getMaxIlluminance() {
+		System.err.println("getMaxIlluminance() is not valid for device of type " + deviceType);	
+		return 0;
+	}
+	
+	public float getIlluminanceChangeTrigger() {
+		System.err.println("getIlluminanceChangeTrigger() is not valid for device of type " + deviceType);	
+		return 0;
+	}
+	
+	public void setIlluminanceChangeTrigger(float sensorValueChangeTrigger) {
+		System.err.println("setIlluminanceChangeTrigger(float) is not valid for device of type " + deviceType);	
+	}
+	
+	public float getMinIlluminanceChangeTrigger() {
+		System.err.println("getMinIlluminanceChangeTrigger() is not valid for device of type " + deviceType);	
+		return 0;
+	}
+	
+	public float getMaxIlluminanceChangeTrigger() {
+		System.err.println("getMaxIlluminanceChangeTrigger() is not valid for device of type " + deviceType);	
+		return 0;
+	}
+
+	public long getCount() {
+		System.err.println("getCount() is not valid for device of type " + deviceType);	
+		return 0;
+	}
+	
+	public String getFilterType() { 
+		System.err.println("getFilterType() is not valid for device of type " + deviceType);	
+		return "";
+	}
+	
+	public void setFilterType(String ft) {
+		System.err.println("setFilterType((String) is not valid for device of type " + deviceType);	
+	}
+	
+	public float getFrequencyCutoff() {
+		System.err.println("getFrequencyCutoff() is not valid for device of type " + deviceType);	
+		return 0;
+	}
+	
+	public void setFrequencyCutoff(float cutoff) {
+		System.err.println("setFrequencyCutoff((float) is not valid for device of type " + deviceType);	
+	}
+	
+	public float getMinFrequencyCutoff() {
+		System.err.println("getMinFrequencyCutoff() is not valid for device of type " + deviceType);	
+		return 0;
+	}
+	
+	public float getMaxFrequencyCutoff() {
+		System.err.println("getMaxFrequencyCutoff() is not valid for device of type " + deviceType);	
+		return 0;
+	}
+	
+	public void reset() {
+		System.err.println("reset() is not valid for device of type " + deviceType);	
+	}
+	
+	public float getTimeElapsed() {
+		System.err.println("getTimeElapsed() is not valid for device of type " + deviceType);	
+		return 0;
+	}
+
+	public float getCurrent() {
+		System.err.println("getCurrent() is not valid for device of type " + deviceType);	
+		return 0;
+	}
+	
+	public float getMinCurrent() {
+		System.err.println("getMinCurrent() is not valid for device of type " + deviceType);	
+		return 0;
+	}
+	
+	public float getMaxCurrent() {
+		System.err.println("getMaxCurrent() is not valid for device of type " + deviceType);	
+		return 0;
+	}
+	
+	public boolean getCurrentValidity() {
+		System.err.println("getCurrentValidity() is not valid for device of type " + deviceType);	
+		return false;
+	}
+	
+	public float getCurrentChangeTrigger() {
+		System.err.println("getCurrentChangeTrigger() is not valid for device of type " + deviceType);	
+		return 0;
+	}
+	
+	public void setCurrentChangeTrigger(float changeTrigger) {
+		System.err.println("setCurrentChangeTrigger(float) is not valid for device of type " + deviceType);	
+	}
+	
+	public float getMinCurrentChangeTrigger() {
+		System.err.println("getMinCurrentChangeTrigger() is not valid for device of type " + deviceType);	
+		return 0;
+	}
+	
+	public float getMaxCurrentChangeTrigger() {
+		System.err.println("getMaxCurrentChangeTrigger() is not valid for device of type " + deviceType);	
+		return 0;
+	}
 }

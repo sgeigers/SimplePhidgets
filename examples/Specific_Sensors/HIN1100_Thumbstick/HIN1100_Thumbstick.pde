@@ -11,22 +11,20 @@ Channel buttonChan;
 
 void setup() {
   size(400, 400);
-  xChan = new Channel(this, "HIN1100", 0, 0);
-  yChan = new Channel(this, "HIN1100", 0, 1);
-  buttonChan = new Channel(this, "HIN1100", 0, 0, "digitalInput");  
+  xChan = new Channel(this, "HIN1100", 0, 0);  // open a channel for the x axis of the thumbstick
+  yChan = new Channel(this, "HIN1100", 0, 1);  // open a channel for the y axis of the thumbstick
+  buttonChan = new Channel(this, "HIN1100", 0, 0, "digitalInput");  // open a chennel for the switch (pressing the thumbstick). this is a secondary input of this device. see https://github.com/sgeigers/SimplePhidgets#secondary-inputs-and-outputs
 }
 
 void draw() {
   background(0);
   noStroke();
   fill(200,200,0);
-  int x = xChan.read()/5;
-  int y = yChan.read()/5;
-  int d;
-  if (buttonChan.read() == 1) {
+  int x = xChan.read()/5;        // set x location for circle according tho thumbstick x
+  int y = yChan.read()/5;        // set y location for circle according tho thumbstick y
+  int d = 15;                    // set initial radius for circle
+  if (buttonChan.read() == 1) {  // change the radius of the circle when the switch is pressed
     d = 50;
-  } else {
-    d = 15;
   }
   ellipse (200 + x, 200 + y, d, d);
 }

@@ -25,7 +25,7 @@ void draw() {
  
  read() - most basic way to use the channel. returns current "tick" of the encoder (the number of ticks counted since loading) (int)
  getEnabled() - get the enable state of the encoder (boolean)
- setEnabled() - set the enable state.
+ setEnabled(boolean) - set the enable state.
  getIndexPosition() - the most recent position of the index channel calculated by the library (only for encoders with an index pin) (long)
  getIOMode() - get the encoder electronic interface mode (type of encoder attached) (string)
  setIOMode(String) - change the board interface mode to fir the connected encoder.
@@ -43,6 +43,7 @@ void draw() {
  getPositionChangeTrigger() - returns minimum change for triggering the event. If this is 0 (default for most boards), the event is called in a constant rate, set by setDataInterval(int).
  getMinPositionChangeTrigger() - returns minimum value for position change trigger
  getMaxPositionChangeTrigger() - returns maximum value for position change trigger
+ getDataInterval() - returns current minimum data interval between event calls (int)
  setDataInterval(int) - allows to set minimum interval in milliseconds between event triggers
  getMinDataInterval() - return minimum possible data interval for opened device
  getMaxDataInterval() - return maximum possible data interval for opened device

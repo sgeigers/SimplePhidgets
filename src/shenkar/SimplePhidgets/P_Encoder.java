@@ -86,7 +86,7 @@ public class P_Encoder extends Device {
 			// function "positionChange(Channel)" not defined
 		}
 
-		// stateChangeRT()
+		// positionChangeRT()
 		try {
 			positionChangeEventRTMethod =  PAppletParent.getClass().getMethod("positionChangeRT");
 			if (positionChangeEventRTMethod != null) {
@@ -102,7 +102,7 @@ public class P_Encoder extends Device {
 			// function "positionChangeRT()" not defined
 		}
 
-		// stateChangeRT(Channel)
+		// positionChangeRT(Channel)
 		try {
 			positionChangeEventRTMethod =  PAppletParent.getClass().getMethod("positionChangeRT", new Class<?>[] { Channel.class });
 			if (positionChangeEventRTMethod != null) {

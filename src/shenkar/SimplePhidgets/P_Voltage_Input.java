@@ -44,7 +44,6 @@ public class P_Voltage_Input extends Device {
 		// post-opening setup
 		try {
 			if (!deviceType.equals("MOT2002")) {
-				System.out.println("Setting Max Datarate");
 				// set maximum data rate as default, but not for MOT2002 - this may causes problems...
 				((VoltageInput)device).setDataInterval(((VoltageInput)device).getMinDataInterval());
 			}
@@ -210,7 +209,7 @@ public class P_Voltage_Input extends Device {
 				}
 			}
 		} catch (Exception e) {
-			// function "sensorChange" not defined
+			// function "sensorChange(Channel)" not defined
 		}
 
 		// sensorChangeRT()
@@ -242,7 +241,7 @@ public class P_Voltage_Input extends Device {
 				}
 			}
 		} catch (Exception e) {
-			// function "sensorChangeRT" not defined
+			// function "sensorChangeRT(Channel)" not defined
 		}
 	}
 
@@ -408,10 +407,7 @@ public class P_Voltage_Input extends Device {
 
 	@Override
 	public int getPowerSupply() {  // in V; 12, 24 or 0 for OFF
-		if (deviceType == "1058") {
-			System.err.println("getPowerSupply() is not valid for device of type " + deviceType);				
-		}
-		else {
+		if (deviceType == "DAQ1400") {
 			try {
 				PowerSupply ps = (((VoltageInput)device).getPowerSupply());
 				switch (ps) {
@@ -427,15 +423,15 @@ public class P_Voltage_Input extends Device {
 				System.err.println("Cannot get power supply from device " + deviceType + " because of error: " + ex);
 			}
 		}
+		else {
+			System.err.println("getPowerSupply() is not valid for device of type " + deviceType);				
+		}
 		return 0;
 	}
 
 	@Override
 	public void setPowerSupply(int ps) {
-		if (deviceType == "1058") {
-			System.err.println("setPowerSupply(int) is not valid for device of type " + deviceType);				
-		}
-		else {
+		if (deviceType == "DAQ1400") {
 			try {
 				PowerSupply p = PowerSupply.OFF;
 				switch (ps) {
@@ -456,6 +452,9 @@ public class P_Voltage_Input extends Device {
 			catch (PhidgetException ex) {
 				System.err.println("Cannot set power supply to device " + deviceType);
 			}
+		}
+		else {
+			System.err.println("setPowerSupply(int) is not valid for device of type " + deviceType);							
 		}
 	}
 

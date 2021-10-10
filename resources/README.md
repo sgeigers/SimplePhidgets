@@ -29,8 +29,10 @@ This library was written in the [Kadar Design and Technology Center](https://int
 
 ## Reference
 Beginners are encouraged to open the examples from within the Processing environment (File -> Examples -> Contributed Libraries -> Simple Phidgets).<br>
-If you need something that you don't find in the examples - you might find it further below, or in the [Phidgets JAVA API documentation](https://www.phidgets.com/?view=api&lang=Java) - select desired board.
-Unfortunately, Phidgets do not provide classic JavaDoc, so documentation is a bit combursome for experienced java programmers.
+A good place to start is the Basic -> Simple_Sensor example.<br>
+It is also recommended to read further down here, to get to know the principles of how to use this library.
+If you need something that you don't find here or in the examples - you will probably find it in the [Phidgets JAVA API documentation](https://www.phidgets.com/?view=api&lang=Java) - just select desired board from the list.
+For experienced Java programmers - Phidgets do not provide classic JavaDoc, but their documentation is full and very usefull.
 
 
 ## Table Of Contents
@@ -124,7 +126,14 @@ A few exceptions:
 When there is no "Choose a Language" box in the API tab on the product page, the page will refer you to an API that controls the device (e.g. VoltageRatioInput API). You can find the list of functions for this API in the [API page](https://www.phidgets.com/?view=api&lang=Java) - select the stated API from the "Choose an API" box.
 
 ## Secondary Inputs and Outputs
-currently, only these secondary inputs and outputs are implemented (others to follow):
+Some boards have "secondary" input or output channels. For example, DC Motor Phidget DCC1000 has, in addition to the DCMotor channel, which controls the speed and direction of the motor, also an encoder channel, an analog channel (voltage or voltage ratio measurement), a temperature sensor channel, a current sensor channel and a motor position controller, which enables a more advanced control of the motor when it's connected to an encoder. These channels do not have specific numbers so when you normally open a channel for such a device, it will open the "main" channel. for the DCC1000, for example, it will open a DCMotor channel. If you want to open a different channel of the device, you should add the channel type to the opening command:
+
+<pre>
+motorSensor = <span style="color: #33997E;">new</span> Channel(<span style="color: #33997E;">this</span>, <span style="color: #7D4793;">"DCC1000"</span>, "analogInput");
+</pre>
+
+The secondary I/O type can be added anywhere in the command after the device type (e.g. before or after port number and channel number).
+currently, these secondary inputs and outputs are implemented (others to follow):
 
 ### digitalInput
 Allows to connect buttons and other switches to digital ports, as well as digital input of specific devices (e.g. Thumbstick Phidget HIN1100 - depressing the stick).
@@ -144,6 +153,12 @@ Opens a TemperatureSensor channel as secondary I/O. This fits some boards that h
 
 ### encoder
 Opens an Encoder channel as secondary I/O. This fits some boards that have encoder interface in addition to their main function (e.g. some DC motor drivers)
+
+### frequencyCounter
+Opens a frequency counter channel as secondary I/O. This currently fits the versatile input Phidget (DAQ1400) when you want to use it as frequency counter.
+
+### currentInput
+Opens a current input channel as secondary I/O. This is mostly used in some motor driver boards, for sensing motor current.Q
 
 
 ## Using ports as digital or analog inputs

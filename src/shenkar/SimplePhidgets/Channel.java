@@ -3,8 +3,8 @@ package shenkar.SimplePhidgets;
 import processing.core.*;
 
 /* ToDos:
+ * - Write an example for advanced functions (not event) in Sensor_Full_Doc
  * - Test RFID example + events. Create an example for RFID events
- * - Update README - all examples have full functions available for each device type
  * - [PROBABLY OK] if dual usage of same event function name fails - for every event (which has dual usage) check type of channel before invoking
  * - [CHECKED. NOT POSSIBLE] Check if possible to open both DCMotor and MotorPositionController at the same time for one device.
  * - Check where specific function screening for specific devices can be done using getChannelSubClass
@@ -23,23 +23,11 @@ import processing.core.*;
  * For most actuators, the simplified functions of "on" and "off" are implemented, or using other Phidget's functions.
  * Many initialization methods are possible, depending on system setup. See github.com/sgeigers/SimplePhidgets#reference for details
  * 
- * @example Basic/Digital_Input
- * @example Basic/Digital_Output
- * @example Basic/LED_Analog
- * @example Basic/Servo_Motor_Basic
- * @example Basic/Simple_Sensor
- * @example Specific_Sensors/Distance_Sharp_Sensor_1101
- * @example Specific_Sensors/Spatial
- * @example Specific_Sensors/HIN1100_Thumbstick
- * @example Advanced_Concepts/Digital_Input_Event
- * @example Advanced_Concepts/Multiple_Hubs
- * @example Advanced_Concepts/Multiple_Sensors_Events
- * @example Advanced_Concepts/Simple_Sensor_Event
- */
+**/
 
 public class Channel {
 
-	public final static String VERSION = "1.0.0";
+	public final static String VERSION = "1.0.9";
 
 	// myParent is a reference to the parent sketch
 	PApplet myParent;
@@ -60,7 +48,7 @@ public class Channel {
 	public int getBridgeGain() {return device.getBridgeGain(); } // 1, 2, 4, 8, 16, 32, 64, 128
 	public void setBridgeGain(int gain) {device.setBridgeGain(gain); } // 1, 2, 4, 8, 16, 32, 64, 128
 
-	// P_Voltage_Ratio, P_Voltage_Input, P_Sound_Sensor, P_Capacitive_Touch, P_Spatial, P_RC_Servo, P_Stepper, P_Temperature_Sensor, P_Encoder
+	// P_Voltage_Ratio, P_Voltage_Input, P_Sound_Sensor, P_Capacitive_Touch, P_Spatial, P_RC_Servo, P_Stepper, P_Temperature_Sensor, P_Encoder, P_Light_Sensor, P_Current_Input
 	public int getDataInterval() {return device.getDataInterval(); }
 	public void setDataInterval(int dataInterval) {device.setDataInterval(dataInterval); }
 	public int getMinDataInterval() {return device.getMinDataInterval(); }  // milliseconds
@@ -69,7 +57,7 @@ public class Channel {
 	// P_Voltage_Ratio, P_Voltage_Input, P_Sound_Sensor, P_Capacitive_Touch
 	public void setReadChangeTrigger(int readChangeTrigger) {device.setReadChangeTrigger(readChangeTrigger); }
 
-	// P_Voltage_Ratio, P_Voltage_Input, P_Temperature_Sensor
+	// P_Voltage_Ratio, P_Voltage_Input, P_Temperature_Sensor, P_Light_Sensor
 	public float getSensorValue() {return device.getSensorValue(); }
 	public boolean getSensorValueValidity() {return device.getSensorValueValidity(); }  // to avoid getting an error every time the reading is outside scale (like when connecting Sharp proximity sensors)
 	public float getSensorValueChangeTrigger() {return device.getSensorValueChangeTrigger(); }
@@ -89,7 +77,7 @@ public class Channel {
 	public float getMinVoltageRatioChangeTrigger() {return device.getMinVoltageRatioChangeTrigger(); }
 	public float getMaxVoltageRatioChangeTrigger() {return device.getMaxVoltageRatioChangeTrigger(); }
 
-	// P_Voltage_Input, P_Digital_Input
+	// P_Voltage_Input, P_Digital_Input, P_Frequency_Counter, P_Current_Input
 	public int getPowerSupply() { return device.getPowerSupply(); }
 	public void setPowerSupply(int gain) {device.setPowerSupply(gain); } // 0, 12, 24
 
@@ -180,9 +168,11 @@ public class Channel {
 	public void zeroAlgorithm() {device.zeroAlgorithm(); }
 	public void setAlgorithm(String alg) {device.setAlgorithm(alg); }
 
-	// P_Digital_Input
+	// P_Digital_Input, P_Frequency_Counter
 	public String getInputMode() {return device.getInputMode(); }
 	public void setInputMode(String im) {device.setInputMode(im); }
+
+	// P_Digital_Input
 	public boolean getState() {return device.getState(); }
 	
 	// P_Digital_Output
@@ -193,16 +183,18 @@ public class Channel {
 	public void setDutyCycle(float dutyCycle) {device.setDutyCycle(dutyCycle); }
 	public float getMinDutyCycle() {return device.getMinDutyCycle(); }
 	public float getMaxDutyCycle() {return device.getMaxDutyCycle(); }
-	public float getFrequency() {return device.getFrequency(); }
-	public void setFrequency(float frequency) {device.setFrequency(frequency); }
-	public float getMinFrequency() {return device.getMinFrequency(); }
-	public float getMaxFrequency() {return device.getMaxFrequency(); }
 	public float getLEDCurrentLimit() {return device.getLEDCurrentLimit(); }
 	public void setLEDCurrentLimit(float LEDCurrentLimit) {device.setLEDCurrentLimit(LEDCurrentLimit); }
 	public float getMinLEDCurrentLimit() {return device.getMinLEDCurrentLimit(); }
 	public float getMaxLEDCurrentLimit() {return device.getMaxLEDCurrentLimit(); }
 	public String getLEDForwardVoltage() {return device.getLEDForwardVoltage(); }
 	public void setLEDForwardVoltage(String LEDFV) {device.setLEDForwardVoltage(LEDFV); }
+	public void setFrequency(float frequency) {device.setFrequency(frequency); }
+	public float getMinFrequency() {return device.getMinFrequency(); }
+
+	// P_Digital_Output, P_Frequency_Counter
+	public float getFrequency() {return device.getFrequency(); }
+	public float getMaxFrequency() {return device.getMaxFrequency(); }
 
 	// P_Digital_Output, P_RC_Servo, P_Stepper
 	public void enableFailsafe(int failsafeTime) {device.enableFailsafe(failsafeTime); }	
@@ -281,6 +273,36 @@ public class Channel {
 	public void setPositionChangeTrigger(int trigger) {device.setPositionChangeTrigger(trigger); }
 	public int getMinPositionChangeTrigger() {return device.getMinPositionChangeTrigger(); }
 	public int getMaxPositionChangeTrigger() {return device.getMaxPositionChangeTrigger(); }
+	
+	// P_Light_Sensor
+	public float getIlluminance() {return device.getIlluminance(); }	
+	public float getMinIlluminance() {return device.getMinIlluminance(); }
+	public float getMaxIlluminance() {return device.getMaxIlluminance(); }	
+	public float getIlluminanceChangeTrigger() {return device.getIlluminanceChangeTrigger(); }	
+	public void setIlluminanceChangeTrigger(float sensorValueChangeTrigger) {device.setIlluminanceChangeTrigger(sensorValueChangeTrigger); }	
+	public float getMinIlluminanceChangeTrigger() {return device.getMinIlluminanceChangeTrigger(); }	
+	public float getMaxIlluminanceChangeTrigger() {return device.getMaxIlluminanceChangeTrigger(); }
+
+	// P_Frequency_Counter
+	public long getCount() {return device.getCount(); }
+	public String getFilterType() {return device.getFilterType(); }
+	public void setFilterType(String ft) {device.setFilterType(ft); }
+	public float getFrequencyCutoff() {return device.getFrequencyCutoff();}
+	public void setFrequencyCutoff(float cutoff) {device.setFrequencyCutoff(cutoff); }
+	public float getMinFrequencyCutoff() {return device.getMinFrequencyCutoff(); }
+	public float getMaxFrequencyCutoff() {return device.getMaxFrequencyCutoff(); }
+	public void reset() {device.reset(); }
+	public float getTimeElapsed() {return device.getTimeElapsed(); }
+	
+	// P_Current_Input
+	public float getCurrent() {return device.getCurrent(); }
+	public float getMinCurrent() {return device.getMinCurrent(); }
+	public float getMaxCurrent() {return device.getMaxCurrent(); }
+	public boolean getCurrentValidity() {return device.getCurrentValidity(); }
+	public float getCurrentChangeTrigger() {return device.getCurrentChangeTrigger(); }
+	public void setCurrentChangeTrigger(float changeTrigger) {device.setCurrentChangeTrigger(changeTrigger); }
+	public float getMinCurrentChangeTrigger() {return device.getMinCurrentChangeTrigger(); }
+	public float getMaxCurrentChangeTrigger() {return device.getMaxCurrentChangeTrigger(); }
 	
 	
 	/**
@@ -544,8 +566,11 @@ public class Channel {
 				break;
 			
 			case "ANALOGINPUT":
+			case "VOLTAGERATIO":
 				switch (deviceType) {
-					case "DCC1000": // Thumbstick Phidget
+					case "DAQ1000": // 8x Voltage Input Phidget
+					case "DCC1000": // DC Motor Phidget
+					case "HIN1100": // Thumbstick Phidget
 						device = new P_Voltage_Ratio(myParent, this, deviceType, serialNum, hubPort, chNum);
 						break;
 						
@@ -555,11 +580,13 @@ public class Channel {
 				}
 				break;
 
+			case "VOLTAGE":
 			case "VOLTAGEINPUT":
 				switch (deviceType) {
 					case "1051": // PhidgetTemperatureSensor 1-Input
 					case "1058": // PhidgetPhSensor
 					case "ADP1000": // pH Phidget
+					case "DAQ1000": // 8x Voltage Input Phidget
 					case "SAF1000": // Programmable Power Guard Phidget
 					case "TMP1100": // Isolated Thermocouple Phidget
 					case "TMP1101": // 4x Thermocouple Phidget
@@ -603,10 +630,49 @@ public class Channel {
 					default:
 						System.out.println("device " + deviceType + " has no secondary I/O of type \"Encoder\"");	
 						break;
-}
+				}
+				break;
+				
+			case "FREQ":
+			case "FREQUENCY":
+			case "FREQUENCYCOUNTER":
+			case "FREQUENCY_COUNTER":
+			case "COUNTER":
+				switch (deviceType) {
+					case "DAQ1400": // Versatile Input Phidget
+						device = new P_Frequency_Counter(myParent, this, deviceType, serialNum, hubPort, chNum);
+						break;
+
+					default:
+						System.out.println("device " + deviceType + " has no secondary I/O of type \"FrequencyCounter\"");	
+						break;
+				}
+				break;
+				
+			case "CURRENT":
+			case "CURRENTINPUT":
+			case "CURRENT_INPUT":
+				switch (deviceType) {
+				case "1061":  // PhidgetAdvancedServo 8-Motor
+				case "1063":  // PhidgetStepper Bipolar 1-Motor
+				case "1064":  // PhidgetMotorControl HC
+				case "1065":  // PhidgetMotorControl 1-Motor
+				case "1066":   // PhidgetAdvancedServo 1-Motor
+				case "DAQ1400": // Versatile Input Phidget
+				case "DCC1000": // DC Motor Phidget				
+				case "VCP1100": // 30A Current Sensor Phidget
+					device = new P_Current_Input(myParent, this, deviceType, serialNum, hubPort, chNum);
+					break;
+
+				default:
+					System.out.println("device " + deviceType + " has no secondary I/O of type \"currentInput\"");	
+					break;
+			}
+			break;
+			
 				
 			default:
-				System.out.println("unknown secondary I/O: " + secondaryIO + ". currently, possible secondary I/Os are: digitalInput, digitalOutput, analogInput and voltageInput.");	
+				System.out.println("unknown secondary I/O: " + secondaryIO + ". currently, possible secondary I/Os are: digitalInput, digitalOutput, analogInput, voltageInput, temperatureSensor, encoder, frequencyCounter and currentInput.");	
 				break;
 			}
 		}
@@ -656,6 +722,7 @@ public class Channel {
 			case "3520": // Sharp Distance Sensor (4-30cm)
 			case "3521": // Sharp Distance Sensor (10-80cm)
 			case "3522": // Sharp Distance Sensor (20-150cm)
+			case "DAQ1000": // 8x Voltage Input Phidget
 			case "DAQ1500": // wheatstone bridge
 			case "HIN1100": // Thumbstick Phidget
 				device = new P_Voltage_Ratio(myParent, this, deviceType, serialNum, hubPort, chNum);
@@ -808,6 +875,18 @@ public class Channel {
 			case "ENC1000": // Quadrature Encoder Phidget
 			case "HIN1101": // Dial Phidget
 				device = new P_Encoder(myParent, this, deviceType, serialNum, hubPort, chNum);
+				break;
+
+			case "LUX1000": // Light Phidget
+				device = new P_Light_Sensor(myParent, this, deviceType, serialNum, hubPort, chNum);
+				break;
+
+			case "1054": // Phidget FrequencyCounter
+				device = new P_Frequency_Counter(myParent, this, deviceType, serialNum, hubPort, chNum);
+				break;
+
+			case "VCP1100": // 30A Current Sensor Phidget
+				device = new P_Current_Input(myParent, this, deviceType, serialNum, hubPort, chNum);
 				break;
 
 			default:

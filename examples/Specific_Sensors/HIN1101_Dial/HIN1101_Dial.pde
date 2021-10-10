@@ -1,5 +1,5 @@
 /*
- This example demonstrates the use of an encoder board.
+ This example demonstrates the use of Dial Phisget, which has both an encoder knob and a switch (pressing the knob).
 */
 
 import shenkar.SimplePhidgets.*;
@@ -23,12 +23,12 @@ void draw() {
 }
 
 // setting an event function for the switch (see example Basic -> Digital_Input for full documentation)
-void stateChange() {
+void stateChange() {           // this function is automatically called when the state of the switch is changed - pressed or released
   myEncoder.setEncPosition(0); // every time the switch is pressed or depressed - the encoder position resets to 0
 }
 
 /*
- All functions for simple sensor channel:
+ All functions for encoder channel:
  
  read() - most basic way to use the channel. returns current "tick" of the encoder (the number of ticks counted since loading) (int)
  getEnabled() - get the enable state of the encoder (boolean)
@@ -50,6 +50,7 @@ void stateChange() {
  getPositionChangeTrigger() - returns minimum change for triggering the event. If this is 0 (default for most boards), the event is called in a constant rate, set by setDataInterval(int).
  getMinPositionChangeTrigger() - returns minimum value for position change trigger
  getMaxPositionChangeTrigger() - returns maximum value for position change trigger
+ getDataInterval() - returns current minimum data interval between event calls (int0
  setDataInterval(int) - allows to set minimum interval in milliseconds between event triggers
  getMinDataInterval() - return minimum possible data interval for opened device
  getMaxDataInterval() - return maximum possible data interval for opened device
