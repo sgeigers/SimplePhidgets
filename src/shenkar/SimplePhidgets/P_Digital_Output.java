@@ -22,6 +22,7 @@ public class P_Digital_Output extends Device {
 		case "1012": // PhidgetInterfaceKit 0/16/16
 		case "1013": // PhidgetInterfaceKit 8/8/8
 		case "1014": // PhidgetInterfaceKit 0/0/4 (Relays)
+		case "1017": // PhidgetInterfaceKit 0/0/8 (Relays)
 		case "1018": // PhidgetInterfaceKit 8/8/8
 		case "1019": // PhidgetInterfaceKit 8/8/8
 		case "1023": // PhidgetRFID

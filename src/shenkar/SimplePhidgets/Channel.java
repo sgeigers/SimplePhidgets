@@ -1,9 +1,13 @@
 package shenkar.SimplePhidgets;
 
+import com.phidget22.NMEAData;
+
 import processing.core.*;
 
 /* ToDos:
- * - Write an example for advanced functions (not event) in Sensor_Full_Doc
+ * - Add PAppletParent.exit(); to most errors...
+ * - Complete example Specific -> Temperature_Sensor
+ * - Then: DC Motor controllers
  * - Test RFID example + events. Create an example for RFID events
  * - [PROBABLY OK] if dual usage of same event function name fails - for every event (which has dual usage) check type of channel before invoking
  * - [CHECKED. NOT POSSIBLE] Check if possible to open both DCMotor and MotorPositionController at the same time for one device.
@@ -48,7 +52,7 @@ public class Channel {
 	public int getBridgeGain() {return device.getBridgeGain(); } // 1, 2, 4, 8, 16, 32, 64, 128
 	public void setBridgeGain(int gain) {device.setBridgeGain(gain); } // 1, 2, 4, 8, 16, 32, 64, 128
 
-	// P_Voltage_Ratio, P_Voltage_Input, P_Sound_Sensor, P_Capacitive_Touch, P_Spatial, P_RC_Servo, P_Stepper, P_Temperature_Sensor, P_Encoder, P_Light_Sensor, P_Current_Input
+	// P_Voltage_Ratio, P_Voltage_Input, P_Sound_Sensor, P_Capacitive_Touch, P_Spatial, P_RC_Servo, P_Stepper, P_Temperature_Sensor, P_Encoder, P_Light_Sensor, P_Current_Input, P_DCMotor
 	public int getDataInterval() {return device.getDataInterval(); }
 	public void setDataInterval(int dataInterval) {device.setDataInterval(dataInterval); }
 	public int getMinDataInterval() {return device.getMinDataInterval(); }  // milliseconds
@@ -196,7 +200,7 @@ public class Channel {
 	public float getFrequency() {return device.getFrequency(); }
 	public float getMaxFrequency() {return device.getMaxFrequency(); }
 
-	// P_Digital_Output, P_RC_Servo, P_Stepper
+	// P_Digital_Output, P_RC_Servo, P_Stepper, P_DCMotor
 	public void enableFailsafe(int failsafeTime) {device.enableFailsafe(failsafeTime); }	
 	public int getMinFailsafeTime() {return device.getMinFailsafeTime(); }
 	public int getMaxFailsafeTime() {return device.getMaxFailsafeTime(); }
@@ -205,21 +209,25 @@ public class Channel {
 	// P_RC_Servo, P_Stepper
 	public void setTargetPosition(float tgt) {device.setTargetPosition(tgt); }
 	public float getTargetPosition() {return device.getTargetPosition(); }
-	public float getAcceleration() {return device.getAcceleration(); }
-	public void setAcceleration(float accel) {device.setAcceleration(accel); }
-	public float getMinAcceleration() {return device.getMinAcceleration(); }
-	public float getMaxAcceleration() {return device.getMaxAcceleration(); }
 	public boolean getEngaged() {return device.getEngaged(); }
 	public void setEngaged(boolean eng) {device.setEngaged(eng); }
 	public boolean getIsMoving() {return device.getIsMoving(); }
 	public float getPosition() {return device.getPosition(); }
 	public float getMinPosition() {return device.getMinPosition(); }
 	public float getMaxPosition() {return device.getMaxPosition(); }
-	public float getVelocity() {return device.getVelocity(); }
 	public float getVelocityLimit() {return device.getVelocityLimit(); }
 	public void setVelocityLimit(float vel) {device.setVelocityLimit(vel); }
 	public float getMinVelocityLimit() {return device.getMinVelocityLimit(); }
 	public float getMaxVelocityLimit() {return device.getMaxVelocityLimit(); }
+
+	// P_RC_Servo, P_Stepper, P_DCMotor
+	public float getAcceleration() {return device.getAcceleration(); }
+	public void setAcceleration(float accel) {device.setAcceleration(accel); }
+	public float getMinAcceleration() {return device.getMinAcceleration(); }
+	public float getMaxAcceleration() {return device.getMaxAcceleration(); }
+
+	// P_RC_Servo, P_Stepper, P_GPS, P_DCMotor
+	public float getVelocity() {return device.getVelocity(); }
 
 	// P_RC_Servo
 	public void setAngle(float ang) {device.setAngle(ang); }
@@ -243,16 +251,18 @@ public class Channel {
 	// P_Stepper
 	public String getControlMode() {return device.getControlMode(); }
 	public void setControlMode(String mode) {device.setControlMode(mode); }
-	public float getCurrentLimit() {return device.getCurrentLimit(); }
-	public void setCurrentLimit(float curr) {device.setCurrentLimit(curr); }
-	public float getMinCurrentLimit() {return device.getMinCurrentLimit(); }
-	public float getMaxCurrentLimit() {return device.getMaxCurrentLimit(); }
 	public float getHoldingCurrentLimit() {return device.getHoldingCurrentLimit(); }
 	public void setHoldingCurrentLimit(float curr) {device.setHoldingCurrentLimit(curr); }
 	public void addPositionOffset(int offset) {device.addPositionOffset(offset); }
 	public float getRescaleFactor() {return device.getRescaleFactor(); }
 	public void setRescaleFactor(float fctr) {device.setRescaleFactor(fctr); }
-	
+
+	// P_Stepper, P_DCMotor
+	public float getCurrentLimit() {return device.getCurrentLimit(); }
+	public void setCurrentLimit(float curr) {device.setCurrentLimit(curr); }
+	public float getMinCurrentLimit() {return device.getMinCurrentLimit(); }
+	public float getMaxCurrentLimit() {return device.getMaxCurrentLimit(); }
+
 	// P_RFID
 	public boolean getTagPresent() {return device.getTagPresent(); }
 	public String getLastTagString() {return device.getLastTagString(); }
@@ -303,6 +313,42 @@ public class Channel {
 	public void setCurrentChangeTrigger(float changeTrigger) {device.setCurrentChangeTrigger(changeTrigger); }
 	public float getMinCurrentChangeTrigger() {return device.getMinCurrentChangeTrigger(); }
 	public float getMaxCurrentChangeTrigger() {return device.getMaxCurrentChangeTrigger(); }
+	
+	// P_GPS
+	public float getAltitude() {return device.getAltitude(); }
+	public int getDay() {return device.getDay(); }
+	public int getMonth() {return device.getMonth(); }
+	public int getYear() {return device.getYear(); }
+	public java.util.Calendar getDateAndTime() {return device.getDateAndTime(); }
+	public float getHeading() {return device.getHeading(); }
+	public float getLatitude() {return device.getLatitude(); }
+	public float getLongitude() {return device.getLongitude(); }
+	public boolean getPositionFixState() {return device.getPositionFixState(); }
+	public int getMilliseconds() {return device.getMilliseconds(); }
+	public int getSeconds() {return device.getSeconds(); }
+	public int getMinutes() {return device.getMinutes(); }
+	public int getHours() {return device.getHours(); }
+	public NMEAData getNMEAData() {return device.getNMEAData(); }
+	
+	// P_DCMotor
+	public void setTargetVelocity(float vel) {device.setTargetVelocity(vel); }
+	public float getTargetVelocity() {return device.getTargetVelocity(); }
+	public float getBackEMF() {return device.getBackEMF(); }
+	public boolean getBackEMFSensingState() {return device.getBackEMFSensingState(); }
+	public void setBackEMFSensingState(boolean state) {device.setBackEMFSensingState(state); }
+	public float getBrakingStrength() {return device.getBrakingStrength(); }
+	public float getMinBrakingStrength() {return device.getMinBrakingStrength(); }
+	public float getMaxBrakingStrength() {return device.getMaxBrakingStrength(); }
+	public float getTargetBrakingStrength() {return device.getTargetBrakingStrength(); }
+	public void setTargetBrakingStrength(float strength) {device.setTargetBrakingStrength(strength); }
+	public float getCurrentRegulatorGain() {return device.getCurrentRegulatorGain(); }
+	public void setCurrentRegulatorGain(float gain) {device.setCurrentRegulatorGain(gain); }
+	public float getMinCurrentRegulatorGain() {return device.getMinCurrentRegulatorGain(); }
+	public float getMaxCurrentRegulatorGain() {return device.getMaxCurrentRegulatorGain(); }
+	public String getFanMode() {return device.getFanMode(); }
+	public void setFanMode(String mode) {device.setFanMode(mode); }
+	public float getMinVelocity() {return device.getMinVelocity(); }
+	public float getMaxVelocity() {return device.getMaxVelocity(); }
 	
 	
 	/**
@@ -532,6 +578,8 @@ public class Channel {
 				case "1011": // PhidgetInterfaceKit 2/2/2
 				case "1012": // PhidgetInterfaceKit 0/16/16
 				case "1013": // PhidgetInterfaceKit 8/8/8
+				case "1014": // PhidgetInterfaceKit 0/0/4 (Relays)
+				case "1017": // PhidgetInterfaceKit 0/0/8 (Relays)
 				case "1018": // PhidgetInterfaceKit 8/8/8
 				case "1019": // PhidgetInterfaceKit 8/8/8
 				case "1023": // PhidgetRFID
@@ -652,6 +700,8 @@ public class Channel {
 			case "CURRENT":
 			case "CURRENTINPUT":
 			case "CURRENT_INPUT":
+			case "CURRENTSENSOR":
+			case "CURRENT_SENSOR":
 				switch (deviceType) {
 				case "1061":  // PhidgetAdvancedServo 8-Motor
 				case "1063":  // PhidgetStepper Bipolar 1-Motor
@@ -722,12 +772,30 @@ public class Channel {
 			case "3520": // Sharp Distance Sensor (4-30cm)
 			case "3521": // Sharp Distance Sensor (10-80cm)
 			case "3522": // Sharp Distance Sensor (20-150cm)
+			case "3583": // Rotary Potentiometer - WDA-D35-D4C
 			case "DAQ1000": // 8x Voltage Input Phidget
 			case "DAQ1500": // wheatstone bridge
 			case "HIN1100": // Thumbstick Phidget
 				device = new P_Voltage_Ratio(myParent, this, deviceType, serialNum, hubPort, chNum);
 				break;
 
+			case "3132": // Micro Load Cell (0-780g) - CZL616C
+			case "3133": // Micro Load Cell (0-5kg) - CZL635
+			case "3134": // Micro Load Cell (0-20kg) - CZL635
+			case "3135": // Micro Load Cell (0-50kg) - CZL635
+			case "3136": // Button Load Cell (0-50kg) - CZL204E
+			case "3137": // Button Load Cell (0-200kg) - CZL204E
+			case "3138": // S Type Load Cell (0-100kg) - CZL301C
+			case "3139": // Micro Load Cell (0-100g) - CZL639HD
+			case "3140": // S Type Load Cell (0-500kg) - CZL301
+			case "3141": // Button Load Cell (0-1000kg) - CZL204
+			case "FRC4114": // Micro Load Cell (0-780g) - CZL611CD
+			case "FRC4115": // Micro Load Cell (0-5kg) - CZL611CD
+			case "FRC4116": // Micro Load Cell (0-25kg) - CZL611CD
+				System.out.println("For load cells, use the device type of the board it's connected to (\"DAQ1500\" or \"1046\" instead of \"" + deviceType + "\")");
+				myParent.exit();
+				break;
+				
 			case "SHARP2D120X": // Sharp Distance Sensor (4-30cm)
 			case "2D120X": // Sharp Distance Sensor (4-30cm)
 				deviceType = "1101";
@@ -787,6 +855,8 @@ public class Channel {
 				device = new P_Voltage_Input(myParent, this, deviceType, serialNum, hubPort, chNum);
 				break;
 
+			case "1014": // PhidgetInterfaceKit 0/0/4 (Relays)
+			case "1017": // PhidgetInterfaceKit 0/0/8 (Relays)
 			case "1030": // PhidgetLED-64
 			case "1031": // PhidgetLED-64 Advanced
 			case "1032": // PhidgetLED-64 Advanced
@@ -889,6 +959,20 @@ public class Channel {
 				device = new P_Current_Input(myParent, this, deviceType, serialNum, hubPort, chNum);
 				break;
 
+			case "1040": // PhidgetGPS
+				device = new P_GPS(myParent, this, deviceType, serialNum, hubPort, chNum);
+				break;
+
+			case "1060":  // PhidgetMotorControl LV
+			case "1064":  // PhidgetMotorControl HC
+			case "1065":  // PhidgetMotorControl 1-Motor
+			case "DCC1000":  // DC Motor Phidget
+			case "DCC1001":  // 2A DC Motor Phidget
+			case "DCC1002":  // 4A DC Motor Phidget
+			case "DCC1003":  // 2x DC Motor Phidget
+				device = new P_DCMotor(myParent, this, deviceType, serialNum, hubPort, chNum);
+				break;
+
 			default:
 				System.out.println("Device type " + deviceType + " not supported yet");
 				myParent.exit();
@@ -927,7 +1011,9 @@ public class Channel {
 	 * 
 	 */
 	public void dispose() {
-		device.close();
+		if (device != null ) {
+			device.close();
+		}
 	}
 
 	

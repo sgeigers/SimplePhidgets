@@ -364,7 +364,8 @@ public class P_Voltage_Ratio extends Device {
 //		case "HIN1100": // thumbstick
 		case "1046": // weatstone bridge
 		case "DAQ1500": // weatstone bridge
-			System.err.println("function \"read\" is not valid for device " + deviceType + ". See help on github.com/sgeigers/SimplePhidgets#reference");
+			System.err.println("function \"read\" is not valid for device " + deviceType + ". Use \"getVoltageRatio()\" instead.\n");
+			PAppletParent.exit();
 			break;
 
 		default:			

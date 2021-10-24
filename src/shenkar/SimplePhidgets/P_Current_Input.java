@@ -305,7 +305,7 @@ public class P_Current_Input extends Device {
 		}
 		catch (PhidgetException ex) {
 			if 	(ex.getErrorCode() == com.phidget22.ErrorCode.UNKNOWN_VALUE) {
-				System.err.println("Sensor value out of range");
+				System.err.println("Current value out of range");
 			}
 			else {
 				System.err.println("Cannot get current value for device " + deviceType + " because of error: " + ex);
@@ -313,6 +313,28 @@ public class P_Current_Input extends Device {
 			}
 		}
 		return 0.0f;
+	}
+
+	@Override
+	public float getSensorValue() {
+		try {
+			return (float)(((CurrentInput)device).getCurrent());
+		}
+		catch (PhidgetException ex) {
+			if 	(ex.getErrorCode() == com.phidget22.ErrorCode.UNKNOWN_VALUE) {
+				System.err.println("Sensor value out of range");
+			}
+			else {
+				System.err.println("Cannot get sensor value for device " + deviceType + " because of error: " + ex);
+				PAppletParent.exit();
+			}
+		}
+		return 0.0f;
+	}
+
+	@Override
+	public String getSensorUnit() {
+		return "Ampere";
 	}
 
 	@Override

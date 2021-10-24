@@ -16,7 +16,8 @@ public class P_Frequency_Counter extends Device {
 	// real-time events
 	Method countChangeEventRTMethod;  // countChangeRT
 	Method frequencyChangeEventRTMethod;  // frequencyChangeRT
-	boolean RTEventRegister = false;
+	boolean RTCountChangeEventTrigger = false;
+	boolean RTFrequencyChangeEventTrigger = false;
 
 	public P_Frequency_Counter(PApplet P5Parent, Channel ChParent, String type, int serialNum, int portNum, int chNum) {
 		super(P5Parent, ChParent, type, serialNum, portNum, chNum);
@@ -123,7 +124,7 @@ public class P_Frequency_Counter extends Device {
 					System.err.println("Cannot use both countChange() and countChangeRT()."); 
 				}
 				else {
-					RTEventRegister = true;
+					RTCountChangeEventTrigger = true;
 					countChangeEventReportChannel = false;
 				}
 			}
@@ -139,7 +140,7 @@ public class P_Frequency_Counter extends Device {
 					System.err.println("Cannot use both countChange() and countChangeRT()."); 
 				}
 				else {
-					RTEventRegister = true;
+					RTCountChangeEventTrigger = true;
 					countChangeEventReportChannel = true;
 				}
 			}
@@ -155,7 +156,7 @@ public class P_Frequency_Counter extends Device {
 					System.err.println("Cannot use both frequencyChange() and frequencyChangeRT()."); 
 				}
 				else {
-					RTEventRegister = true;
+					RTFrequencyChangeEventTrigger = true;
 					frequencyChangeEventReportChannel = false;
 				}
 			}
@@ -171,7 +172,7 @@ public class P_Frequency_Counter extends Device {
 					System.err.println("Cannot use both frequencyChange() and frequencyChangeRT()."); 
 				}
 				else {
-					RTEventRegister = true;
+					RTFrequencyChangeEventTrigger = true;
 					frequencyChangeEventReportChannel = true;
 				}
 			}
@@ -181,8 +182,8 @@ public class P_Frequency_Counter extends Device {
 	}
 
 	public void pre() {
-		if (RTEventRegister) {
-			RTEventRegister = false;
+		if (RTCountChangeEventTrigger) {
+			RTCountChangeEventTrigger = false;
 			try {
 				if (countChangeEventReportChannel) { // countChangeRT(Channel)
 					((FrequencyCounter)device).addCountChangeListener(new FrequencyCounterCountChangeListener() {
@@ -221,7 +222,9 @@ public class P_Frequency_Counter extends Device {
 		    	ex.printStackTrace();
 		    	countChangeEventRTMethod = null;
 		    }
-
+		}
+		if (RTFrequencyChangeEventTrigger) {
+			RTFrequencyChangeEventTrigger = false;
 			try {
 				if (frequencyChangeEventReportChannel) { // frequencyChangeRT(Channel)
 					((FrequencyCounter)device).addFrequencyChangeListener(new FrequencyCounterFrequencyChangeListener() {

@@ -1,6 +1,6 @@
 /*
- This example shows simple use of an Phidget RFID board
-*/
+ This example shows simple use of a Phidget RFID board
+ */
 
 import shenkar.SimplePhidgets.*;
 
@@ -14,21 +14,21 @@ void setup() {
 
 void draw() {
   background(0);
-  
+
   // check if a tag is present
   if (myRFID.read() == 1) {
     strokeWeight(5);
-    // check if the present tag is a specific one. This string can be obtained using the Phidgets Control Panel.
-    if (myRFID.getLastTagString() == "ADFKALFK") {
-      fill(255,255,0);
-    }
-    else {
+    stroke(255);
+    // check if the present tag is a specific one. This string can be obtained using the Phidgets Control Panel or by printing getLasTagString().
+    if (myRFID.getLastTagString().equals("4d004a82a0")) {
+      fill(255, 255, 0);
+    } else {
       noFill();
     }
-    rect (100,100,200,200);
+    rect (100, 100, 200, 200);
   }
 }
- 
+
 /*
  All functions for RFID channel:
  
@@ -41,10 +41,10 @@ void draw() {
  setAntennaEnabled(boolean ant) - set the antenna state. You can turn it off when not used for reducing power consumption.
  
  Event functions:
-
+ 
  void tag() - called when the channel detects a tag.
  void tagLost() - called when the tag is not detected anymore.
  void tagRT() - real-time version of the event. See https://github.com/sgeigers/Phidgets4Processing
  void tagLostRT() - real-time version of the event. See https://github.com/sgeigers/Phidgets4Processing
  
-*/
+ */

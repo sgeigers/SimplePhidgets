@@ -1,23 +1,43 @@
 /*
  This example demonstrates the use of more advanced functions of sensors. In addition, there is a full list of functions for sensors below.
+ We use a micro load cell (3313), connected to channel 1 of a wheatstone bridge Phidget (DAQ1500), which in turn is connected to port 0 of a VINT hub.
+ We read the value from the sensor (voltage ratio) and dynamically change its minimum and maximum values, so we can draw a line in it's current value relative to them.
 */
 
 import shenkar.SimplePhidgets.*;
 
-Channel mySimpleSensor;
+Channel myWeightSensor;
+
+// minimum and maximum values of the sensor. 
+float minReading = 1000;
+float maxReading = -1000;
 
 void setup() {
-  size(400, 400);
-  mySimpleSensor = new Channel(this, "1142");  // opening a channel for the sensor, using it's part number (4 digits or 3 letterrs and 4 digits, e.g "LUX1000").
+  size(200, 400);
+  myWeightSensor = new Channel(this, "DAQ1500", 0, 1);  // opening a channel for the sensor. When not using channel 0 of the connected board (here DAQ1500), 
+                                                        //  you must both declare port number (0) and channel number (1)
+  myWeightSensor.setBridgeGain(128); // set maximum gain for the bridge, to get the highest possible differences between min an max readings  
 }
 
 void draw() {
   background (0);
-  int val = mySimpleSensor.read();  // get sensor value between 0 and 1000
+  float val = myWeightSensor.getVoltageRatio();  // get value from sensor (you cannot use "read()" on a wheatstone bridge, because the values are very small and you would always get 0).
   println (val);
-  noStroke();
-  fill (val/4, val/4, val/6);  // setting fill color proportional to sensor value. the dividers were set by trial and error
-  ellipse (200, 200, 300, 300);
+  // update minimum and maximum values read by sensor
+  if (val < minReading) minReading = val;
+  if (val > maxReading) maxReading = val;
+  
+  stroke(255);
+  noFill();
+  
+  rect (50, 50, 100, 300);
+  
+  if (minReading != maxReading) {  // only after getting at least 2 readings. Otherwise, the "map" function will divide by zero
+    stroke(200,0,0);
+    float h = map (val, minReading, maxReading, 0, 300);
+    h = 350 - h;
+    line (50, h, 150, h);
+  }
 }
 
 /*
@@ -45,7 +65,7 @@ void draw() {
  
  Other functions:
  
- when using a wheatstone bridge device (for sensing load cells or weight sensors), these functions are also available:
+ When using a wheatstone bridge device (for sensing load cells or weight sensors), these functions are also available:
  getBridgeEnabled() - returns "true" when the bridge is enabled
  setBridgeEnabled(boolean) - allows to turn the bridge on or off
  getBridgeGain() - returns the gain set for the bridge (int)
