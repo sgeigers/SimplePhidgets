@@ -519,12 +519,13 @@ public class P_DCMotor extends Device {
 	public void close() {
 		if (device != null) {
 			try {
-				((DCMotor)device).setTargetVelocity(0);					
+				((DCMotor)device).setTargetVelocity(0);	
+				String deviceClass = device.getChannelClassName();
 				device.close();
-				System.out.println(deviceType + " Closed");
+				System.out.println(deviceType + " of type " + deviceClass + " on port " + hubPort + " Closed");
 			}
 			catch (PhidgetException ex) {
-				System.err.println("Could not close device " + deviceType + ". See github.com/sgeigers/SimplePhidgets#reference for help");
+				System.err.println("Could not close device " + deviceType + " because of error:" + ex.toString());
 				PAppletParent.exit();
 			}
 		}

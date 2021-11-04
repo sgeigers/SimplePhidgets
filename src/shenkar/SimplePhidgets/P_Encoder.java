@@ -220,8 +220,8 @@ public class P_Encoder extends Device {
 	@Override
 	public void setEnabled(boolean en) {  // ENC1000 HIN1101 1047 1057(only for getDeviceVersion >=400)
 		boolean valid = false;
-		if ((deviceType ==  "ENC1000") || (deviceType ==  "HIN1101") || (deviceType ==  "1047")) valid = true;
-		else if (deviceType == "1057") {
+		if (deviceType.equals("ENC1000") || deviceType.equals("HIN1101") || deviceType.equals("1047")) valid = true;
+		else if (deviceType.equals("1057")) {
 			try {
 				if (device.getDeviceVersion() >= 400) valid = true;
 				else {
@@ -294,20 +294,34 @@ public class P_Encoder extends Device {
 	@Override
 	public long getIndexPosition() {
 		boolean valid = false;
-		if ((deviceType ==  "1047") || (deviceType ==  "1065") || (deviceType ==  "DCC1000") || (deviceType ==  "DCC1001") || (deviceType ==  "DCC1002") || (deviceType ==  "ENC1000")) valid = true;
-		else if (deviceType == "1057") {
-			try {
-				if (device.getDeviceVersion() >= 400) valid = true;
-				else {
-					System.err.println("Get index position not valid to device type 1057 with firmware version lower than 400");
+		switch (deviceType) {
+			case "DCC1000": // DC Motor Phidget
+			case "DCC1001": // 2A DC Motor Phidget
+			case "DCC1002": // 4A DC Motor Phidget
+			case "ENC1000": // Quadrature Encoder Phidget
+			case "1047": // PhidgetEncoder HighSpeed 4-Input
+			case "1065": // PhidgetMotorControl 1-Motor
+				valid = true;
+				break;
+
+			case "1057": // PhidgetEncoder HighSpeed
+				try {
+					if (device.getDeviceVersion() >= 400) valid = true;
+					else {
+						System.err.println("Get index position not valid to device type 1057 with firmware version lower than 400");
+						PAppletParent.exit();
+					}
+				}
+				catch (PhidgetException ex) {
+					System.err.println("Cannot get firmware version of device " + deviceType + " because of error: " + ex);
 					PAppletParent.exit();
 				}
-			}
-			catch (PhidgetException ex) {
-				System.err.println("Cannot get firmware version of device " + deviceType + " because of error: " + ex);
-				PAppletParent.exit();
-			}
+				break;
+
+			default:
+				break;
 		}
+		
 		if (valid) {
 			try {
 				return ((Encoder)device).getIndexPosition();
@@ -325,7 +339,7 @@ public class P_Encoder extends Device {
 	@Override
 	public String getIOMode() { 
 		boolean valid = false;
-		if ((deviceType ==  "ENC1000") || (deviceType ==  "DCC1000")) valid = true;
+		if ((deviceType.equals("ENC1000")) || (deviceType.equals("DCC1000"))) valid = true;
 		else if (deviceType == "1057") {
 			try {
 				if (device.getDeviceVersion() >= 400) valid = true;
@@ -368,7 +382,7 @@ public class P_Encoder extends Device {
 	@Override
 	public void setIOMode(String em) {
 		boolean valid = false;
-		if ((deviceType ==  "ENC1000") || (deviceType ==  "DCC1000")) valid = true;
+		if ((deviceType.equals("ENC1000")) || (deviceType.equals("DCC1000"))) valid = true;
 		else if (deviceType == "1057") {
 			try {
 				if (device.getDeviceVersion() >= 400) valid = true;

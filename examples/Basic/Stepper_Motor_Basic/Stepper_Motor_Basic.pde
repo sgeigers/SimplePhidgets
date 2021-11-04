@@ -25,7 +25,7 @@ void draw() {
  getMinPosition() - the minimum value that TargetPosition can be set to.
  getMaxPosition() - the maximum value that TargetPosition can be set to.
  getPosition() - the most recent position value that the controller has reported.
- addPositionOffset(float) - adds an offset (positive or negative) to the current position and target position. This is especially useful for zeroing position.
+ addPositionOffset(int) - adds an offset (positive or negative) to the current position and target position. This is especially useful for zeroing position.
   
  setVelocityLimit(float) - when moving, the stepper motor velocity will be limited by this value (units per second)
  getMinVelocityLimit() - minimum value for VelosityLimit.

@@ -1,14 +1,15 @@
 package shenkar.SimplePhidgets;
 
+import com.phidget22.DistanceSensorSonarReflections;
 import com.phidget22.NMEAData;
 
 import processing.core.*;
 
 /* ToDos:
+ * - Next: LCD (Text + Graphics)
+ * - Change all String equality checks to .equals
  * - Add PAppletParent.exit(); to most errors...
  * - Complete example Specific -> Temperature_Sensor
- * - Then: DC Motor controllers
- * - Test RFID example + events. Create an example for RFID events
  * - [PROBABLY OK] if dual usage of same event function name fails - for every event (which has dual usage) check type of channel before invoking
  * - [CHECKED. NOT POSSIBLE] Check if possible to open both DCMotor and MotorPositionController at the same time for one device.
  * - Check where specific function screening for specific devices can be done using getChannelSubClass
@@ -31,7 +32,7 @@ import processing.core.*;
 
 public class Channel {
 
-	public final static String VERSION = "1.0.9";
+	public final static String VERSION = "1.0.10";
 
 	// myParent is a reference to the parent sketch
 	PApplet myParent;
@@ -52,7 +53,7 @@ public class Channel {
 	public int getBridgeGain() {return device.getBridgeGain(); } // 1, 2, 4, 8, 16, 32, 64, 128
 	public void setBridgeGain(int gain) {device.setBridgeGain(gain); } // 1, 2, 4, 8, 16, 32, 64, 128
 
-	// P_Voltage_Ratio, P_Voltage_Input, P_Sound_Sensor, P_Capacitive_Touch, P_Spatial, P_RC_Servo, P_Stepper, P_Temperature_Sensor, P_Encoder, P_Light_Sensor, P_Current_Input, P_DCMotor
+	// P_Voltage_Ratio, P_Voltage_Input, P_Sound_Sensor, P_Capacitive_Touch, P_Spatial, P_RC_Servo, P_Stepper, P_Temperature_Sensor, P_Encoder, P_Light_Sensor, P_Current_Input, P_DCMotor, P_MotorPositionController, P_Distance_Sensor
 	public int getDataInterval() {return device.getDataInterval(); }
 	public void setDataInterval(int dataInterval) {device.setDataInterval(dataInterval); }
 	public int getMinDataInterval() {return device.getMinDataInterval(); }  // milliseconds
@@ -183,7 +184,6 @@ public class Channel {
 	public void on() {device.on(); }
 	public void off() {device.off(); }
 	public void analogWrite(int dutyCycle) {device.analogWrite(dutyCycle); }
-	public float getDutyCycle() {return device.getDutyCycle(); }
 	public void setDutyCycle(float dutyCycle) {device.setDutyCycle(dutyCycle); }
 	public float getMinDutyCycle() {return device.getMinDutyCycle(); }
 	public float getMaxDutyCycle() {return device.getMaxDutyCycle(); }
@@ -196,22 +196,27 @@ public class Channel {
 	public void setFrequency(float frequency) {device.setFrequency(frequency); }
 	public float getMinFrequency() {return device.getMinFrequency(); }
 
+	// P_Digital_Output, P_MotorPositionController
+	public float getDutyCycle() {return device.getDutyCycle(); }
+	
 	// P_Digital_Output, P_Frequency_Counter
 	public float getFrequency() {return device.getFrequency(); }
 	public float getMaxFrequency() {return device.getMaxFrequency(); }
 
-	// P_Digital_Output, P_RC_Servo, P_Stepper, P_DCMotor
+	// P_Digital_Output, P_RC_Servo, P_Stepper, P_DCMotor, P_MotorPositionController
 	public void enableFailsafe(int failsafeTime) {device.enableFailsafe(failsafeTime); }	
 	public int getMinFailsafeTime() {return device.getMinFailsafeTime(); }
 	public int getMaxFailsafeTime() {return device.getMaxFailsafeTime(); }
 	public void resetFailsafe() {device.resetFailsafe(); }	
 
 	// P_RC_Servo, P_Stepper
+	public boolean getIsMoving() {return device.getIsMoving(); }
+
+	// P_RC_Servo, P_Stepper, P_MotorPositionController
 	public void setTargetPosition(float tgt) {device.setTargetPosition(tgt); }
 	public float getTargetPosition() {return device.getTargetPosition(); }
 	public boolean getEngaged() {return device.getEngaged(); }
 	public void setEngaged(boolean eng) {device.setEngaged(eng); }
-	public boolean getIsMoving() {return device.getIsMoving(); }
 	public float getPosition() {return device.getPosition(); }
 	public float getMinPosition() {return device.getMinPosition(); }
 	public float getMaxPosition() {return device.getMaxPosition(); }
@@ -220,7 +225,7 @@ public class Channel {
 	public float getMinVelocityLimit() {return device.getMinVelocityLimit(); }
 	public float getMaxVelocityLimit() {return device.getMaxVelocityLimit(); }
 
-	// P_RC_Servo, P_Stepper, P_DCMotor
+	// P_RC_Servo, P_Stepper, P_DCMotor, P_MotorPositionController
 	public float getAcceleration() {return device.getAcceleration(); }
 	public void setAcceleration(float accel) {device.setAcceleration(accel); }
 	public float getMinAcceleration() {return device.getMinAcceleration(); }
@@ -253,11 +258,13 @@ public class Channel {
 	public void setControlMode(String mode) {device.setControlMode(mode); }
 	public float getHoldingCurrentLimit() {return device.getHoldingCurrentLimit(); }
 	public void setHoldingCurrentLimit(float curr) {device.setHoldingCurrentLimit(curr); }
+
+	// P_Stepper, P_MotorPositionController
 	public void addPositionOffset(int offset) {device.addPositionOffset(offset); }
 	public float getRescaleFactor() {return device.getRescaleFactor(); }
 	public void setRescaleFactor(float fctr) {device.setRescaleFactor(fctr); }
 
-	// P_Stepper, P_DCMotor
+	// P_Stepper, P_DCMotor, P_MotorPositionController
 	public float getCurrentLimit() {return device.getCurrentLimit(); }
 	public void setCurrentLimit(float curr) {device.setCurrentLimit(curr); }
 	public float getMinCurrentLimit() {return device.getMinCurrentLimit(); }
@@ -275,15 +282,17 @@ public class Channel {
 	public boolean getEnabled() {return device.getEnabled(); }
 	public void setEnabled(boolean en) {device.setEnabled(en); }
 	public long getIndexPosition() {return device.getIndexPosition(); }
-	public String getIOMode() {return device.getIOMode(); }
-	public void setIOMode(String em) {device.setIOMode(em); }
 	public long getEncPosition() {return device.getEncPosition(); }
 	public void setEncPosition(long pos	) {device.setEncPosition(pos); }
 	public int getPositionChangeTrigger() {return device.getPositionChangeTrigger(); }
 	public void setPositionChangeTrigger(int trigger) {device.setPositionChangeTrigger(trigger); }
 	public int getMinPositionChangeTrigger() {return device.getMinPositionChangeTrigger(); }
 	public int getMaxPositionChangeTrigger() {return device.getMaxPositionChangeTrigger(); }
-	
+
+	// P_Encoder, P_MotorPositionController
+	public String getIOMode() {return device.getIOMode(); }
+	public void setIOMode(String em) {device.setIOMode(em); }
+
 	// P_Light_Sensor
 	public float getIlluminance() {return device.getIlluminance(); }	
 	public float getMinIlluminance() {return device.getMinIlluminance(); }
@@ -341,16 +350,44 @@ public class Channel {
 	public float getMaxBrakingStrength() {return device.getMaxBrakingStrength(); }
 	public float getTargetBrakingStrength() {return device.getTargetBrakingStrength(); }
 	public void setTargetBrakingStrength(float strength) {device.setTargetBrakingStrength(strength); }
+	public float getMinVelocity() {return device.getMinVelocity(); }
+	public float getMaxVelocity() {return device.getMaxVelocity(); }
+
+	// P_DCMotor, P_MotorPositionController
 	public float getCurrentRegulatorGain() {return device.getCurrentRegulatorGain(); }
 	public void setCurrentRegulatorGain(float gain) {device.setCurrentRegulatorGain(gain); }
 	public float getMinCurrentRegulatorGain() {return device.getMinCurrentRegulatorGain(); }
 	public float getMaxCurrentRegulatorGain() {return device.getMaxCurrentRegulatorGain(); }
 	public String getFanMode() {return device.getFanMode(); }
 	public void setFanMode(String mode) {device.setFanMode(mode); }
-	public float getMinVelocity() {return device.getMinVelocity(); }
-	public float getMaxVelocity() {return device.getMaxVelocity(); }
-	
-	
+
+	// P_MotorPositionController
+	public void setDeadBand(float accel) {device.setDeadBand(accel); }
+	public float getDeadBand() {return device.getDeadBand(); }
+	public float getKd() {return device.getKd(); }
+	public void setKd(float kd) {device.setKd(kd); }
+	public float getKi() {return device.getKi(); }
+	public void setKi(float ki) {device.setKi(ki); }
+	public float getKp() {return device.getKp(); }
+	public void setKp(float kp) {device.setKp(kp); }
+	public void addPositionOffset(float offset) {device.addPositionOffset(offset); }
+	public float getStallVelocity() {return device.getStallVelocity(); }
+	public void setStallVelocity(float vel) {device.setStallVelocity(vel); }
+	public float getMinStallVelocity() {return device.getMinStallVelocity(); }
+	public float getMaxStallVelocity() {return device.getMaxStallVelocity(); }
+
+	// P_Distance_Sensor
+	public int getDistance() {return device.getDistance(); }
+	public int getMinDistance() {return device.getMinDistance(); }
+	public int getMaxDistance() {return device.getMaxDistance(); }
+	public int getDistanceChangeTrigger() {return device.getDistanceChangeTrigger(); }
+	public void setDistanceChangeTrigger(int trigger) {device.setDistanceChangeTrigger(trigger); }
+	public int getMinDistanceChangeTrigger() {return device.getMinDistanceChangeTrigger(); }
+	public int getMaxDistanceChangeTrigger() {return device.getMaxDistanceChangeTrigger(); }
+	public void setSonarQuietMode(boolean mode) {device.setSonarQuietMode(mode); }
+	public boolean getSonarQuietMode() {return device.getSonarQuietMode(); }
+	public DistanceSensorSonarReflections getSonarReflections() {return device.getSonarReflections(); }
+
 	/**
 	 * minimal constructor
 	 * 
@@ -534,91 +571,104 @@ public class Channel {
 			switch (secondaryIO) {
 			case "DIGITALINPUT":
 				switch (deviceType) {
-				case "1010": // PhidgetInterfaceKit 8/8/8
-				case "1011": // PhidgetInterfaceKit 2/2/2
-				case "1012": // PhidgetInterfaceKit 0/16/16
-				case "1013": // PhidgetInterfaceKit 8/8/8
-				case "1018": // PhidgetInterfaceKit 8/8/8
-				case "1019": // PhidgetInterfaceKit 8/8/8
-				case "1047": // PhidgetEncoder HighSpeed 4-Input 
-				case "1052": // PhidgetEncoder
-				case "1060": // PhidgetMotorControl LV
-				case "1063": // PhidgetStepper Bipolar 1-Motor
-				case "1065": // PhidgetMotorControl 1-Motor
-				case "1070": // PhidgetSBC
-				case "1072": // PhidgetSBC2
-				case "1073": // PhidgetSBC3
-				case "1202": // PhidgetTextLCD 20X2 : Blue : Integrated PhidgetInterfaceKit 8/8/8
-				case "1203": // PhidgetTextLCD 20X2 : White : Integrated PhidgetInterfaceKit 8/8/8
-				case "1219": // PhidgetTextLCD 20X2 White with PhidgetInterfaceKit 0/8/8
-				case "1220": // PhidgetTextLCD 20X2 Blue with PhidgetInterfaceKit 0/8/8
-				case "1221": // PhidgetTextLCD 20X2 Green with PhidgetInterfaceKit 0/8/8
-				case "1222": // PhidgetTextLCD 20X2 Red with PhidgetInterfaceKit 0/8/8
-				case "DAQ1200": // 4x Digital Input Phidget
-				case "DAQ1300": // 4x Isolated Digital Input Phidget
-				case "DAQ1301": // 16x Isolated Digital Input Phidget
-				case "DAQ1400": // Versatile Input Phidget
-				case "HIN1100": // Thumbstick Phidget
-				case "HIN1101": // Dial Phidget
-				case "HUB0000": // 6-Port USB VINT Hub Phidget
-				case "HUB5000": // 6-Port Network VINT Hub Phidget
-				case "SBC3003": // PhidgetSBC4 - 6-Port VINT Hub Phidget
-					device = new P_Digital_Input(myParent, this, deviceType, serialNum, hubPort, chNum);
-					break;
-
-				default:
-					System.out.println("device " + deviceType + " has no secondary I/O of type \"digitalInput\"");	
-					break;
+					case "1010": // PhidgetInterfaceKit 8/8/8
+					case "1011": // PhidgetInterfaceKit 2/2/2
+					case "1012": // PhidgetInterfaceKit 0/16/16
+					case "1013": // PhidgetInterfaceKit 8/8/8
+					case "1018": // PhidgetInterfaceKit 8/8/8
+					case "1019": // PhidgetInterfaceKit 8/8/8
+					case "1047": // PhidgetEncoder HighSpeed 4-Input 
+					case "1052": // PhidgetEncoder
+					case "1060": // PhidgetMotorControl LV
+					case "1063": // PhidgetStepper Bipolar 1-Motor
+					case "1065": // PhidgetMotorControl 1-Motor
+					case "1070": // PhidgetSBC
+					case "1072": // PhidgetSBC2
+					case "1073": // PhidgetSBC3
+					case "1202": // PhidgetTextLCD 20X2 : Blue : Integrated PhidgetInterfaceKit 8/8/8
+					case "1203": // PhidgetTextLCD 20X2 : White : Integrated PhidgetInterfaceKit 8/8/8
+					case "1219": // PhidgetTextLCD 20X2 White with PhidgetInterfaceKit 0/8/8
+					case "1220": // PhidgetTextLCD 20X2 Blue with PhidgetInterfaceKit 0/8/8
+					case "1221": // PhidgetTextLCD 20X2 Green with PhidgetInterfaceKit 0/8/8
+					case "1222": // PhidgetTextLCD 20X2 Red with PhidgetInterfaceKit 0/8/8
+					case "DAQ1200": // 4x Digital Input Phidget
+					case "DAQ1300": // 4x Isolated Digital Input Phidget
+					case "DAQ1301": // 16x Isolated Digital Input Phidget
+					case "DAQ1400": // Versatile Input Phidget
+					case "HIN1100": // Thumbstick Phidget
+					case "HIN1101": // Dial Phidget
+					case "HUB0000": // 6-Port USB VINT Hub Phidget
+					case "HUB5000": // 6-Port Network VINT Hub Phidget
+					case "SBC3003": // PhidgetSBC4 - 6-Port VINT Hub Phidget
+						device = new P_Digital_Input(myParent, this, deviceType, serialNum, hubPort, chNum);
+						break;
+	
+					default:
+						System.out.println("device " + deviceType + " has no secondary I/O of type \"digitalInput\"");	
+						break;
 				}
 				break;
 
 			case "DIGITALOUTPUT":
 				switch (deviceType) {
-				case "1010": // PhidgetInterfaceKit 8/8/8
-				case "1011": // PhidgetInterfaceKit 2/2/2
-				case "1012": // PhidgetInterfaceKit 0/16/16
-				case "1013": // PhidgetInterfaceKit 8/8/8
-				case "1014": // PhidgetInterfaceKit 0/0/4 (Relays)
-				case "1017": // PhidgetInterfaceKit 0/0/8 (Relays)
-				case "1018": // PhidgetInterfaceKit 8/8/8
-				case "1019": // PhidgetInterfaceKit 8/8/8
-				case "1023": // PhidgetRFID
-				case "1024": // PhidgetRFID Read-Write
-				case "1030": // PhidgetLED-64
-				case "1031": // PhidgetLED-64 Advanced
-				case "1032": // PhidgetLED-64 Advanced
-				case "1070": // PhidgetSBC
-				case "1072": // PhidgetSBC2
-				case "1073": // PhidgetSBC3
-				case "1202": // PhidgetTextLCD 20X2 : Blue : Integrated PhidgetInterfaceKit 8/8/8
-				case "1203": // PhidgetTextLCD 20X2 : White : Integrated PhidgetInterfaceKit 8/8/8
-				case "1219": // PhidgetTextLCD 20X2 White with PhidgetInterfaceKit 0/8/8
-				case "1220": // PhidgetTextLCD 20X2 Blue with PhidgetInterfaceKit 0/8/8
-				case "1221": // PhidgetTextLCD 20X2 Green with PhidgetInterfaceKit 0/8/8
-				case "1222": // PhidgetTextLCD 20X2 Red with PhidgetInterfaceKit 0/8/8
-				case "LED1000": // 32x Isolated LED Phidget
-				case "HUB0000": // 6-Port USB VINT Hub Phidget
-				case "HUB5000": // 6-Port Network VINT Hub Phidget
-				case "OUT1100": // 4x Digital Output Phidget
-				case "REL1000": // 4x Relay Phidget
-				case "REL1100": // 4x Isolated Solid State Relay Phidget
-				case "REL1101": // 16x Isolated Solid State Relay Phidget
-				case "SBC3003": // PhidgetSBC4 - 6-Port VINT Hub Phidget
-					device = new P_Digital_Output(myParent, this, deviceType, serialNum, hubPort, chNum);
-					break;
-
-				default:
-					System.out.println("device " + deviceType + " has no secondary I/O of type \"digitalOutput\"");	
-					break;
+					case "1010": // PhidgetInterfaceKit 8/8/8
+					case "1011": // PhidgetInterfaceKit 2/2/2
+					case "1012": // PhidgetInterfaceKit 0/16/16
+					case "1013": // PhidgetInterfaceKit 8/8/8
+					case "1014": // PhidgetInterfaceKit 0/0/4 (Relays)
+					case "1017": // PhidgetInterfaceKit 0/0/8 (Relays)
+					case "1018": // PhidgetInterfaceKit 8/8/8
+					case "1019": // PhidgetInterfaceKit 8/8/8
+					case "1023": // PhidgetRFID
+					case "1024": // PhidgetRFID Read-Write
+					case "1030": // PhidgetLED-64
+					case "1031": // PhidgetLED-64 Advanced
+					case "1032": // PhidgetLED-64 Advanced
+					case "1070": // PhidgetSBC
+					case "1072": // PhidgetSBC2
+					case "1073": // PhidgetSBC3
+					case "1202": // PhidgetTextLCD 20X2 : Blue : Integrated PhidgetInterfaceKit 8/8/8
+					case "1203": // PhidgetTextLCD 20X2 : White : Integrated PhidgetInterfaceKit 8/8/8
+					case "1219": // PhidgetTextLCD 20X2 White with PhidgetInterfaceKit 0/8/8
+					case "1220": // PhidgetTextLCD 20X2 Blue with PhidgetInterfaceKit 0/8/8
+					case "1221": // PhidgetTextLCD 20X2 Green with PhidgetInterfaceKit 0/8/8
+					case "1222": // PhidgetTextLCD 20X2 Red with PhidgetInterfaceKit 0/8/8
+					case "LED1000": // 32x Isolated LED Phidget
+					case "HUB0000": // 6-Port USB VINT Hub Phidget
+					case "HUB5000": // 6-Port Network VINT Hub Phidget
+					case "OUT1100": // 4x Digital Output Phidget
+					case "REL1000": // 4x Relay Phidget
+					case "REL1100": // 4x Isolated Solid State Relay Phidget
+					case "REL1101": // 16x Isolated Solid State Relay Phidget
+					case "SBC3003": // PhidgetSBC4 - 6-Port VINT Hub Phidget
+						device = new P_Digital_Output(myParent, this, deviceType, serialNum, hubPort, chNum);
+						break;
+	
+					default:
+						System.out.println("device " + deviceType + " has no secondary I/O of type \"digitalOutput\"");	
+						break;
 				}
 				break;
 			
 			case "ANALOGINPUT":
 			case "VOLTAGERATIO":
 				switch (deviceType) {
+					case "1010": // PhidgetInterfaceKit 8/8/8
+					case "1011": // PhidgetInterfaceKit 2/2/2
+					case "1013": // PhidgetInterfaceKit 8/8/8
+					case "1018": // PhidgetInterfaceKit 8/8/8
+					case "1019": // PhidgetInterfaceKit 8/8/8
+					case "1070": // PhidgetSBC
+					case "1072": // PhidgetSBC2
+					case "1073": // PhidgetSBC3
+					case "1202": // PhidgetTextLCD 20X2 : Blue : Integrated PhidgetInterfaceKit 8/8/8
+					case "1203": // PhidgetTextLCD 20X2 : White : Integrated PhidgetInterfaceKit 8/8/8
 					case "DAQ1000": // 8x Voltage Input Phidget
 					case "DCC1000": // DC Motor Phidget
 					case "HIN1100": // Thumbstick Phidget
+					case "HUB0000": // 6-Port USB VINT Hub Phidget
+					case "HUB5000": // 6-Port Network VINT Hub Phidget
+					case "SBC3003": // PhidgetSBC4 - 6-Port VINT Hub Phidget
 						device = new P_Voltage_Ratio(myParent, this, deviceType, serialNum, hubPort, chNum);
 						break;
 						
@@ -631,10 +681,24 @@ public class Channel {
 			case "VOLTAGE":
 			case "VOLTAGEINPUT":
 				switch (deviceType) {
+					case "1010": // PhidgetInterfaceKit 8/8/8
+					case "1011": // PhidgetInterfaceKit 2/2/2
+					case "1013": // PhidgetInterfaceKit 8/8/8
+					case "1018": // PhidgetInterfaceKit 8/8/8
+					case "1019": // PhidgetInterfaceKit 8/8/8
 					case "1051": // PhidgetTemperatureSensor 1-Input
 					case "1058": // PhidgetPhSensor
+					case "1065":  // PhidgetMotorControl 1-Motor - has 2 voltage channels: external and supply voltage
+					case "1070": // PhidgetSBC
+					case "1072": // PhidgetSBC2
+					case "1073": // PhidgetSBC3
+					case "1202": // PhidgetTextLCD 20X2 : Blue : Integrated PhidgetInterfaceKit 8/8/8
+					case "1203": // PhidgetTextLCD 20X2 : White : Integrated PhidgetInterfaceKit 8/8/8
 					case "ADP1000": // pH Phidget
 					case "DAQ1000": // 8x Voltage Input Phidget
+					case "HUB0000": // 6-Port USB VINT Hub Phidget
+					case "HUB5000": // 6-Port Network VINT Hub Phidget
+					case "PRX2300": // Beam Break Phidget - default is digital input
 					case "SAF1000": // Programmable Power Guard Phidget
 					case "TMP1100": // Isolated Thermocouple Phidget
 					case "TMP1101": // 4x Thermocouple Phidget
@@ -703,26 +767,45 @@ public class Channel {
 			case "CURRENTSENSOR":
 			case "CURRENT_SENSOR":
 				switch (deviceType) {
-				case "1061":  // PhidgetAdvancedServo 8-Motor
-				case "1063":  // PhidgetStepper Bipolar 1-Motor
-				case "1064":  // PhidgetMotorControl HC
-				case "1065":  // PhidgetMotorControl 1-Motor
-				case "1066":   // PhidgetAdvancedServo 1-Motor
-				case "DAQ1400": // Versatile Input Phidget
-				case "DCC1000": // DC Motor Phidget				
-				case "VCP1100": // 30A Current Sensor Phidget
-					device = new P_Current_Input(myParent, this, deviceType, serialNum, hubPort, chNum);
-					break;
+					case "1061":  // PhidgetAdvancedServo 8-Motor
+					case "1063":  // PhidgetStepper Bipolar 1-Motor
+					case "1064":  // PhidgetMotorControl HC
+					case "1065":  // PhidgetMotorControl 1-Motor
+					case "1066":   // PhidgetAdvancedServo 1-Motor
+					case "DAQ1400": // Versatile Input Phidget
+					case "DCC1000": // DC Motor Phidget				
+					case "VCP1100": // 30A Current Sensor Phidget
+						device = new P_Current_Input(myParent, this, deviceType, serialNum, hubPort, chNum);
+						break;
+	
+					default:
+						System.out.println("device " + deviceType + " has no secondary I/O of type \"currentInput\"");	
+						break;
+				}
+				break;
 
-				default:
-					System.out.println("device " + deviceType + " has no secondary I/O of type \"currentInput\"");	
-					break;
-			}
-			break;
-			
+			case "MOTOR_POSITION_CONTROLLER":
+			case "MOTORPOSITIONCONTROLLER":
+			case "POSITIONCONTROLLER":
+			case "POSITIONCONTROL":
+				switch (deviceType) {
+					case "DCC1000":  // DC Motor Phidget
+					case "DCC1001":  // 2A DC Motor Phidget
+					case "DCC1002":  // 4A DC Motor Phidget
+					case "DCC1100":  // Brushless DC Motor Phidget
+						device = new P_MotorPositionController(myParent, this, deviceType, serialNum, hubPort, chNum);
+						break;
+	
+					default:
+						System.out.println("device " + deviceType + " has no secondary I/O of type \"motorPositionController\"");	
+						break;
+				}
+				break;
+
 				
 			default:
-				System.out.println("unknown secondary I/O: " + secondaryIO + ". currently, possible secondary I/Os are: digitalInput, digitalOutput, analogInput, voltageInput, temperatureSensor, encoder, frequencyCounter and currentInput.");	
+				System.out.println("unknown secondary I/O: " + secondaryIO + ". currently, possible secondary I/Os are: digitalInput, digitalOutput, analogInput, voltageInput, temperatureSensor, encoder, frequencyCounter, currentInput and positionControl.");	
+				myParent.exit();
 				break;
 			}
 		}
@@ -873,6 +956,7 @@ public class Channel {
 				break;
 
 			case "1015": // Linear Touch
+			case "1016": // Circular Touch
 				device = new P_Capacitive_Touch(myParent, this, deviceType, serialNum, hubPort, chNum);
 				break;
 
@@ -971,6 +1055,18 @@ public class Channel {
 			case "DCC1002":  // 4A DC Motor Phidget
 			case "DCC1003":  // 2x DC Motor Phidget
 				device = new P_DCMotor(myParent, this, deviceType, serialNum, hubPort, chNum);
+				break;
+
+			case "PRX2300":  // Beam Break Phidget - also possible to use voltageInput as secondary
+				// this might be problematic for old InterfaceKits, but left as is for lack of interest...
+				device = new P_Digital_Input(myParent, this, deviceType, serialNum, hubPort, chNum);
+				break;
+
+			case "DST1000":  // Distance Phidget (170mm)
+			case "DST1001":  // Distance Phidget (650mm)
+			case "DST1002":  // Distance Phidget 1300mm
+			case "DST1200":  // Sonar Phidget
+				device = new P_Distance_Sensor(myParent, this, deviceType, serialNum, hubPort, chNum);
 				break;
 
 			default:

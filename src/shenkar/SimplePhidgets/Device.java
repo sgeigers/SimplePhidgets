@@ -67,11 +67,12 @@ abstract public class Device {
 	public void close() {
 		if (device != null) {
 			try {
+				String deviceClass = device.getChannelClassName();
 				device.close();
-				System.out.println(deviceType + " Closed");
+				System.out.println(deviceType + " of type " + deviceClass + " on port " + hubPort + " Closed");
 			}
 			catch (PhidgetException ex) {
-				System.err.println("Could not close device " + deviceType + ". See github.com/sgeigers/SimplePhidgets#reference for help");
+				System.err.println("Could not close device " + deviceType + " because of error:" + ex.toString());
 				PAppletParent.exit();
 			}
 		}
@@ -1477,4 +1478,137 @@ abstract public class Device {
 		PAppletParent.exit();
 		return 0;
 	}	
+	
+	public void setDeadBand(float accel) {
+		System.err.println("setDeadBand(float) is not valid for device of type " + deviceType);	
+		PAppletParent.exit();
+	}
+	
+	public float getDeadBand() {
+		System.err.println("getDeadBand() is not valid for device of type " + deviceType);	
+		PAppletParent.exit();
+		return 0;
+	}
+	
+	public float getKd() {
+		System.err.println("getKd() is not valid for device of type " + deviceType);	
+		PAppletParent.exit();
+		return 0;
+	}
+	
+	public void setKd(float kd) {
+		System.err.println("setKd(float) is not valid for device of type " + deviceType);	
+		PAppletParent.exit();
+	}
+
+	public float getKi() {
+		System.err.println("getKi() is not valid for device of type " + deviceType);	
+		PAppletParent.exit();
+		return 0;
+	}
+
+	public void setKi(float ki) {
+		System.err.println("setKi(float) is not valid for device of type " + deviceType);	
+		PAppletParent.exit();
+	}
+
+	public float getKp() {
+		System.err.println("getKp() is not valid for device of type " + deviceType);	
+		PAppletParent.exit();
+		return 0;
+	}
+
+	public void setKp(float kp) {
+		System.err.println("setKp(float) is not valid for device of type " + deviceType);	
+		PAppletParent.exit();
+	}
+	
+	public void addPositionOffset(float offset) {
+		System.err.println("addPositionOffset(float) is not valid for device of type " + deviceType);	
+		PAppletParent.exit();
+	}
+	
+	public float getStallVelocity() {
+		System.err.println("getStallVelocity() is not valid for device of type " + deviceType);	
+		PAppletParent.exit();
+		return 0;
+	}
+	
+	public void setStallVelocity(float vel) {
+		System.err.println("setStallVelocity(float) is not valid for device of type " + deviceType);	
+		PAppletParent.exit();
+	}
+
+	public float getMinStallVelocity() {
+		System.err.println("getMinStallVelocity() is not valid for device of type " + deviceType);	
+		PAppletParent.exit();
+		return 0;
+	}
+
+	public float getMaxStallVelocity() {
+		System.err.println("getMaxStallVelocity() is not valid for device of type " + deviceType);	
+		PAppletParent.exit();
+		return 0;
+	}
+	
+	
+	
+	
+	public int getDistance() {
+		System.err.println("getDistance() is not valid for device of type " + deviceType);	
+		PAppletParent.exit();
+		return 0;
+	}
+
+	public int getMinDistance() {
+		System.err.println("getMinDistance() is not valid for device of type " + deviceType);	
+		PAppletParent.exit();
+		return 0;
+	}
+
+	public int getMaxDistance() {
+		System.err.println("getMaxDistance() is not valid for device of type " + deviceType);	
+		PAppletParent.exit();
+		return 0;
+	}
+
+	public int getDistanceChangeTrigger() {
+		System.err.println("getDistanceChangeTrigger() is not valid for device of type " + deviceType);	
+		PAppletParent.exit();
+		return 0;
+	}
+
+	public void setDistanceChangeTrigger(int trigger) {
+		System.err.println("setDistanceChangeTrigger(int) is not valid for device of type " + deviceType);	
+		PAppletParent.exit();
+	}
+
+	public int getMinDistanceChangeTrigger() {
+		System.err.println("getMinDistanceChangeTrigger() is not valid for device of type " + deviceType);	
+		PAppletParent.exit();
+		return 0;
+	}
+
+	public int getMaxDistanceChangeTrigger() {
+		System.err.println("getMaxDistanceChangeTrigger() is not valid for device of type " + deviceType);	
+		PAppletParent.exit();
+		return 0;
+	}
+
+	public void setSonarQuietMode(boolean mode) {
+		System.err.println("setSonarQuietMode(boolean) is not valid for device of type " + deviceType);	
+		PAppletParent.exit();
+	}
+
+	public boolean getSonarQuietMode() {
+		System.err.println("getSonarQuietMode() is not valid for device of type " + deviceType);	
+		PAppletParent.exit();
+		return false;
+	}
+
+	public DistanceSensorSonarReflections getSonarReflections() {
+		System.err.println("getSonarReflections() is not valid for device of type " + deviceType);	
+		PAppletParent.exit();
+		return new DistanceSensorSonarReflections();
+	}
 }
