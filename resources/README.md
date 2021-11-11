@@ -161,7 +161,10 @@ Opens a frequency counter channel as secondary I/O. This currently fits the vers
 Opens a current input channel as secondary I/O. This is mostly used in some motor driver boards, for sensing motor current.
 
 ### motorPositionController
-This allows position control for DC brushed and brushless motors (using relevant VINT controller boards) with the help of an encoder or some other position sensor. This mode implements a PID closed loop control. see the [API documentation](https://www.phidgets.com/?view=api&lang=Java&api=MotorPositionController) for more explanations
+This allows position control for DC brushed and brushless motors (using relevant VINT controller boards) with the help of an encoder or some other position sensor. This mode implements a PID closed loop control. see the [API documentation](https://www.phidgets.com/?view=api&lang=Java&api=MotorPositionController)for more explanations
+
+### LCD
+Older LCD controllers are integrated with interfaceKit boards. These board's "main" operation is the LCD, but For lowering risk of confusion, opening the LCD as a secondary I/O is supported.
 
 ## Using ports as digital or analog inputs
 Sometimes you need to use a hub port or an interfaceKit connector directly. This is needed in these cases:

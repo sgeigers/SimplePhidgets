@@ -1018,7 +1018,7 @@ abstract public class Device {
 		return 0;
 	}
 	
-	public void getRTDWireSetup(int setup) {
+	public void setRTDWireSetup(int setup) {
 		System.err.println("getRTDWireSetup(int) is not valid for device of type " + deviceType);	
 		PAppletParent.exit();
 	}
@@ -1611,4 +1611,200 @@ abstract public class Device {
 		PAppletParent.exit();
 		return new DistanceSensorSonarReflections();
 	}
+	
+	public float getBacklight() {
+		System.err.println("getBacklight() is not valid for device of type " + deviceType);	
+		PAppletParent.exit();
+		return 0;
+	}
+	
+	public void setBacklight(float light) {
+		System.err.println("setBacklight(float) is not valid for device of type " + deviceType);	
+		PAppletParent.exit();
+	}
+	
+	public float getMinBacklight() {
+		System.err.println("getMinBacklight() is not valid for device of type " + deviceType);	
+		PAppletParent.exit();
+		return 0;
+	}
+	
+	public float getMaxBacklight() {
+		System.err.println("getMaxBacklight() is not valid for device of type " + deviceType);	
+		PAppletParent.exit();
+		return 0;
+	}
+	
+	public void setCharacterBitmap(String fontName, String character, byte[] bitmap) {
+		System.err.println("setCharacterBitmap(String, String, byte[]) is not valid for device of type " + deviceType);	
+		PAppletParent.exit();
+	}
+	
+	public void setCharacterBitmap(String character, byte[] bitmap) {
+		System.err.println("setCharacterBitmap(String, byte[]) is not valid for device of type " + deviceType);	
+		PAppletParent.exit();
+	}
+	
+	public int getMaxCharacters(String fontName) {
+		System.err.println("getMaxCharacters(String) is not valid for device of type " + deviceType);	
+		PAppletParent.exit();
+		return 0;
+	}
+	
+	public int getMaxCharacters() {
+		System.err.println("getMaxCharacters() is not valid for device of type " + deviceType);	
+		PAppletParent.exit();
+		return 0;
+	}
+	
+	public void clear() {
+		System.err.println("clear() is not valid for device of type " + deviceType);	
+		PAppletParent.exit();
+	}
+	
+	public float getContrast() {
+		System.err.println("getContrast() is not valid for device of type " + deviceType);	
+		PAppletParent.exit();
+		return 0;
+	}
+	
+	public void setContrast(float contrast) {
+		System.err.println("setContrast(float) is not valid for device of type " + deviceType);	
+		PAppletParent.exit();
+	}
+	
+	public float getMinContrast() {
+		System.err.println("getMinContrast() is not valid for device of type " + deviceType);	
+		PAppletParent.exit();
+		return 0;
+	}
+	
+	public float getMaxContrast() {
+		System.err.println("getMaxContrast() is not valid for device of type " + deviceType);	
+		PAppletParent.exit();
+		return 0;
+	}
+	
+	public void copy(int sourceFramebuffer,	int destFramebuffer, int sourceX1, int sourceY1, int sourceX2, int sourceY2, int destX, int destY, boolean inverted) {
+		System.err.println("copy(int, int, ...) is not valid for device of type " + deviceType);	
+		PAppletParent.exit();
+	}
+
+	public boolean getCursorBlink() {
+		System.err.println("getCursorBlink() is not valid for device of type " + deviceType);	
+		PAppletParent.exit();
+		return false;
+	}
+	
+	public void setCursorBlink(boolean blink) {
+		System.err.println("setCursorBlink(boolean) is not valid for device of type " + deviceType);	
+		PAppletParent.exit();
+	}
+	
+	public boolean getCursorOn() {
+		System.err.println("getCursorOn() is not valid for device of type " + deviceType);	
+		PAppletParent.exit();
+		return false;
+	}
+	
+	public void setCursorOn(boolean on) {
+		System.err.println("setCursorOn(boolean) is not valid for device of type " + deviceType);	
+		PAppletParent.exit();
+	}
+	
+	public void drawLine(int x1, int y1, int x2, int y2) {
+		System.err.println("drawLine(int, int, ...) is not valid for device of type " + deviceType);	
+		PAppletParent.exit();
+	}
+	
+	public void drawPixel(int x, int y, String pixelState) {
+		System.err.println("drawPixel(int, int, String) is not valid for device of type " + deviceType);	
+		PAppletParent.exit();
+	}
+	
+	public void drawRect(int x1, int y1, int x2, int y2, boolean filled, boolean inverted) {
+		System.err.println("drawRect(int, int, ...) is not valid for device of type " + deviceType);	
+		PAppletParent.exit();
+	}
+	
+	public void flush() {
+		System.err.println("flush() is not valid for device of type " + deviceType);	
+		PAppletParent.exit();
+	}
+	
+	public void setFontSize(String fontName, int width, int height) {
+		System.err.println("setFontSize(String, int, int) is not valid for device of type " + deviceType);	
+		PAppletParent.exit();
+	}
+	
+	public int getFrameBuffer() {
+		System.err.println("getFrameBuffer() is not valid for device of type " + deviceType);	
+		PAppletParent.exit();
+		return 0;
+	}
+	
+	public void setFrameBuffer(int buffer) {
+		System.err.println("setFrameBuffer(int) is not valid for device of type " + deviceType);	
+		PAppletParent.exit();
+	}
+	
+	public int getHeight() {
+		System.err.println("getHeight() is not valid for device of type " + deviceType);	
+		PAppletParent.exit();
+		return 0;
+	}
+	
+	public int getWidth() {
+		System.err.println("getWidth() is not valid for device of type " + deviceType);	
+		PAppletParent.exit();
+		return 0;
+	}
+	
+	public void initialize() {
+		System.err.println("initialize() is not valid for device of type " + deviceType);	
+		PAppletParent.exit();
+	}
+	
+	public void saveFrameBuffer(int buffer) {
+		System.err.println("saveFrameBuffer(int) is not valid for device of type " + deviceType);	
+		PAppletParent.exit();
+	}
+	
+	public String getScreenSize() {
+		System.err.println("getScreenSize() is not valid for device of type " + deviceType);	
+		PAppletParent.exit();
+		return "";
+	}
+	
+	public void setScreenSize(String size) {
+		System.err.println("setScreenSize(String) is not valid for device of type " + deviceType);	
+		PAppletParent.exit();
+	}
+	
+	public boolean getSleeping() {
+		System.err.println("getSleeping() is not valid for device of type " + deviceType);	
+		PAppletParent.exit();
+		return false;
+	}
+	
+	public void setSleeping(boolean on) {
+		System.err.println("setSleeping(boolean) is not valid for device of type " + deviceType);	
+		PAppletParent.exit();
+	}
+	
+	public void writeBitmap(int xPosition, int yPosition, int xSize, int ySize, byte[] bitmap) {
+		System.err.println("writeBitmap(int, int, ...) is not valid for device of type " + deviceType);	
+		PAppletParent.exit();
+	}
+
+	public void writeText(String fontName, int xPosition, int yPosition, String text) {
+		System.err.println("writeText(String, int, int, String) is not valid for device of type " + deviceType);	
+		PAppletParent.exit();
+	}
+	
+	public void writeText(int xPosition, int yPosition, String text) {
+		System.err.println("writeText(int, int, String) is not valid for device of type " + deviceType);	
+		PAppletParent.exit();
+	}
+	
 }

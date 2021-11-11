@@ -215,7 +215,7 @@ public class P_Digital_Output extends Device {
 	public void enableFailsafe(int failsafeTime) {
 		// applicable for newer relay and digital output boards only
 		String sType = deviceType.substring(0, 3);
-		if ((sType == "OUT") || (sType == "REL")) {
+		if (sType.equals("OUT") || sType.equals("REL")) {
 			try {
 				((DigitalOutput)device).enableFailsafe(failsafeTime);
 			}
@@ -239,7 +239,7 @@ public class P_Digital_Output extends Device {
 	public int getMinFailsafeTime() {
 		// applicable for newer relay and digital output boards only
 		String sType = deviceType.substring(0, 3);
-		if ((sType == "OUT") || (sType == "REL")) {
+		if (sType.equals("OUT") || sType.equals("REL")) {
 			try {
 				return ((DigitalOutput)device).getMinFailsafeTime();
 			}
@@ -262,7 +262,7 @@ public class P_Digital_Output extends Device {
 	public int getMaxFailsafeTime() {
 		// applicable for newer relay and digital output boards only
 		String sType = deviceType.substring(0, 3);
-		if ((sType == "OUT") || (sType == "REL")) {
+		if (sType.equals("OUT") || sType.equals("REL")) {
 			try {
 				return ((DigitalOutput)device).getMaxFailsafeTime();
 			}
@@ -284,7 +284,7 @@ public class P_Digital_Output extends Device {
 	public void resetFailsafe() {
 		// applicable for newer relay and digital output boards only
 		String sType = deviceType.substring(0, 3);
-		if ((sType == "OUT") || (sType == "REL")) {
+		if (sType.equals("OUT") || sType.equals("REL")) {
 			try {
 				((DigitalOutput)device).resetFailsafe();
 			}
@@ -306,7 +306,7 @@ public class P_Digital_Output extends Device {
 	 */
 	@Override
 	public float getFrequency() {
-		if ((deviceType == "OUT1100") || (deviceType == "REL1100")) {
+		if (deviceType.equals("OUT1100") || deviceType.equals("REL1100")) {
 			try {
 				return (float)(((DigitalOutput)device).getFrequency());
 			}
@@ -329,7 +329,7 @@ public class P_Digital_Output extends Device {
 	 */
 	@Override
 	public void setFrequency(float frequency) {
-		if ((deviceType == "OUT1100") || (deviceType == "REL1100")) {
+		if (deviceType.equals("OUT1100") || deviceType.equals("REL1100")) {
 			try {
 				((DigitalOutput)device).setFrequency((double)frequency);
 			}
@@ -351,7 +351,7 @@ public class P_Digital_Output extends Device {
 	 */
 	@Override
 	public float getMinFrequency() {
-		if ((deviceType == "OUT1100") || (deviceType == "REL1100")) {
+		if (deviceType.equals("OUT1100") || deviceType.equals("REL1100")) {
 			try {
 				return (float)(((DigitalOutput)device).getMinFrequency());
 			}
@@ -372,7 +372,7 @@ public class P_Digital_Output extends Device {
 	 */
 	@Override
 	public float getMaxFrequency() {
-		if ((deviceType == "OUT1100") || (deviceType == "REL1100")) {
+		if (deviceType.equals("OUT1100") || deviceType.equals("REL1100")) {
 			try {
 				return (float)(((DigitalOutput)device).getMaxFrequency());
 			}

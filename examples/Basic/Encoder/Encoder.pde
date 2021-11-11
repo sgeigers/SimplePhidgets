@@ -1,5 +1,5 @@
 /*
- This example demonstrates the use of a 
+ This example demonstrates the use of a quadrature encoder connected to an encoder interface board (ENC1000)
 */
 
 import shenkar.SimplePhidgets.*;
@@ -21,7 +21,7 @@ void draw() {
 }
 
 /*
- All functions for simple sensor channel:
+ All functions for an encoder channel:
  
  read() - most basic way to use the channel. returns current "tick" of the encoder (the number of ticks counted since loading) (int)
  getEnabled() - get the enable state of the encoder (boolean)

@@ -27,15 +27,29 @@ public class P_Temperature_Sensor extends Device {
 				
 		// device opening
 		switch (deviceType) {
-		case "1045": // PhidgetTemperatureSensor IR
-		case "1048": // PhidgetTemperatureSensor 4-Input
-		case "1051": // PhidgetTemperatureSensor 1-Input
+		case "1045": // PhidgetTemperatureSensor IR			[only dataInterval, Temperature, TemperatureChangeTrigger]
+		case "1048": // PhidgetTemperatureSensor 4-Input	[only dataInterval, Temperature, TemperatureChangeTrigger, thermocoupleType]
+		case "1051": // PhidgetTemperatureSensor 1-Input	[only dataInterval, Temperature, TemperatureChangeTrigger, thermocoupleType]
 			initNoHub();
 			break;
 
-		default:
+		case "DCC1000": // DC Motor Phidget
+		case "DCC1100": // Brushless DC Motor Phidget
+		case "HUM1000": // Humidity Phidget					[only dataInterval, Temperature, TemperatureChangeTrigger]
+		case "HUM1001": // Humidity Phidget					[only dataInterval, Temperature, TemperatureChangeTrigger]
+		case "MOT0109": // PhidgetSpatial Precision 3/3/3	[only dataInterval, Temperature, TemperatureChangeTrigger]
+		case "SAF1000": // Programmable Power Guard Phidget	[only dataInterval, Temperature, TemperatureChangeTrigger]
+		case "TMP1000": // Temperature Phidget				[only dataInterval, Temperature, TemperatureChangeTrigger]
+		case "TMP1101": // 4x Thermocouple Phidget			[only dataInterval, Temperature, TemperatureChangeTrigger, thermocoupleType]
+		case "TMP1200": // RTD Phidget						[only dataInterval, RTDType, RTDWireSetup, Temperature, TemperatureChangeTrigger]
 			init(false);
 			break;
+			
+		default:
+			System.out.println("Device type " + deviceType + " not supported yet");
+			PAppletParent.exit();
+			break;
+			
 		}
 
 		// post-opening setup
@@ -309,96 +323,117 @@ public class P_Temperature_Sensor extends Device {
 
 	@Override
 	public String getRTDType() {
-		try {
-			RTDType sensorType = ((TemperatureSensor)device).getRTDType();
-			switch (sensorType) {
-			case PT100_3850: return "PT100_3850";
-			case PT1000_3850: return "PT1000_3850";
-			case PT100_3920: return "PT100_3920";
-			case PT1000_3920: return "PT1000_3920";
+		if (deviceType.equals("TMP1200")) {
+			try {
+				RTDType sensorType = ((TemperatureSensor)device).getRTDType();
+				switch (sensorType) {
+				case PT100_3850: return "PT100_3850";
+				case PT1000_3850: return "PT1000_3850";
+				case PT100_3920: return "PT100_3920";
+				case PT1000_3920: return "PT1000_3920";
+				}
+			}
+			catch (PhidgetException ex) {
+				System.err.println("Cannot get RTD type value from device " + deviceType + " because of error: " + ex);
 			}
 		}
-		catch (PhidgetException ex) {
-			System.err.println("Cannot get RTD type value from device " + deviceType + " because of error: " + ex);
+		else {
+			System.err.println("getRTDType() is not valid for device of type " + deviceType);
+			PAppletParent.exit();
 		}
 		return "";
 	}
 
 	@Override
 	public void setRTDType(String sensorType) {
-		RTDType nSensorType = RTDType.PT100_3850;
-
-		sensorType = sensorType.toUpperCase();
-
-		switch (sensorType) {
-		case "PT100_3850":
-			break;
-
-		case "PT1000_3850":
-			nSensorType = RTDType.PT1000_3850;
-			break;
-
-		case "PT100_3920":
-			nSensorType = RTDType.PT100_3920;
-			break;
-
-		case "PT1000_3920":
-			nSensorType = RTDType.PT1000_3920;
-			break;
-
-		default:
-			System.err.println("Cannot set RTD type to " + sensorType +". Use only: \"PT100_3850\", \"PT1000_3850\", \"PT100_3920\" or \"PT1000_3920\"");		
-			return;
+		if (deviceType.equals("TMP1200")) {
+			RTDType nSensorType = RTDType.PT100_3850;
+			sensorType = sensorType.toUpperCase();
+			switch (sensorType) {
+			case "PT100_3850":
+				break;
+	
+			case "PT1000_3850":
+				nSensorType = RTDType.PT1000_3850;
+				break;
+	
+			case "PT100_3920":
+				nSensorType = RTDType.PT100_3920;
+				break;
+	
+			case "PT1000_3920":
+				nSensorType = RTDType.PT1000_3920;
+				break;
+	
+			default:
+				System.err.println("Cannot set RTD type to " + sensorType +". Use only: \"PT100_3850\", \"PT1000_3850\", \"PT100_3920\" or \"PT1000_3920\"");		
+				return;
+			}
+			try {
+				((TemperatureSensor)device).setRTDType(nSensorType);
+			}
+			catch (PhidgetException ex) {
+				System.err.println("Cannot set RTD type for device " + deviceType + " because of error: " + ex);
+			}
 		}
-		try {
-			((TemperatureSensor)device).setRTDType(nSensorType);
-		}
-		catch (PhidgetException ex) {
-			System.err.println("Cannot set RTD type for device " + deviceType + " because of error: " + ex);
+		else {
+			System.err.println("setRTDType(String) is not valid for device of type " + deviceType);
+			PAppletParent.exit();
 		}
 	}
 
 	@Override
 	public int getRTDWireSetup() {
-		try {
-			RTDWireSetup wireSetup = ((TemperatureSensor)device).getRTDWireSetup();
-			switch (wireSetup) {
-			case WIRES_2: return 2;
-			case WIRES_3: return 3;
-			case WIRES_4: return 4;
+		if (deviceType.equals("TMP1200")) {
+			try {
+				RTDWireSetup wireSetup = ((TemperatureSensor)device).getRTDWireSetup();
+				switch (wireSetup) {
+				case WIRES_2: return 2;
+				case WIRES_3: return 3;
+				case WIRES_4: return 4;
+				}
+			}
+			catch (PhidgetException ex) {
+				System.err.println("Cannot get RTD type value from device " + deviceType + " because of error: " + ex);
 			}
 		}
-		catch (PhidgetException ex) {
-			System.err.println("Cannot get RTD type value from device " + deviceType + " because of error: " + ex);
+		else {
+			System.err.println("getRTDWireSetup() is not valid for device of type " + deviceType);
+			PAppletParent.exit();
 		}
 		return 0;
 	}
 
 	@Override
-	public void getRTDWireSetup(int setup) {
-		RTDWireSetup nSetup = RTDWireSetup.WIRES_2;
-
-		switch (setup) {
-		case 2:
-			break;
-
-		case 3:
-			nSetup = RTDWireSetup.WIRES_3;
-			break;
-
-		case 4:
-			nSetup = RTDWireSetup.WIRES_4;
-			break;
-
-		default:
-			System.err.println("Cannot set RTD wire setup to " + setup +". Use only: 2, 3 or 4 (for 2-wire, 3-wire or 4-wire)");		
-			return;
+	public void setRTDWireSetup(int setup) {
+		if (deviceType.equals("TMP1200")) {
+			RTDWireSetup nSetup = RTDWireSetup.WIRES_2;
+			switch (setup) {
+			case 2:
+				break;
+	
+			case 3:
+				nSetup = RTDWireSetup.WIRES_3;
+				break;
+	
+			case 4:
+				nSetup = RTDWireSetup.WIRES_4;
+				break;
+	
+			default:
+				System.err.println("Cannot set RTD wire setup to " + setup +". Use only: 2, 3 or 4 (for 2-wire, 3-wire or 4-wire)");		
+				return;
+			}
+			try {
+				((TemperatureSensor)device).setRTDWireSetup(nSetup);
+			}
+			catch (PhidgetException ex) {
+				System.err.println("Cannot set RTD wire setup for device " + deviceType + " because of error: " + ex);
+			}
 		}
-		try {
-			((TemperatureSensor)device).setRTDWireSetup(nSetup);
-		}
-		catch (PhidgetException ex) {
-			System.err.println("Cannot set RTD wire setup for device " + deviceType + " because of error: " + ex);
+		else {
+			System.err.println("setRTDWireSetup(int) is not valid for device of type " + deviceType);
+			PAppletParent.exit();
 		}
 	}
 
@@ -468,57 +503,69 @@ public class P_Temperature_Sensor extends Device {
 
 	@Override
 	public String getSensorUnit() {
-		return "DEGREE_CELCIUS";
+		return "DEGREE_CELSIUS";
 	}
 
 	@Override
 	public String getThermocoupleType() {
-		try {
-			ThermocoupleType tcType = ((TemperatureSensor)device).getThermocoupleType();
-			switch (tcType) {
-			case J: return "J";
-			case K: return "K";
-			case E: return "E";
-			case T: return "T";
+		if (deviceType.equals("1048") || deviceType.equals("1051") || deviceType.equals("TMP1101")) {
+			try {
+				ThermocoupleType tcType = ((TemperatureSensor)device).getThermocoupleType();
+				switch (tcType) {
+				case J: return "J";
+				case K: return "K";
+				case E: return "E";
+				case T: return "T";
+				}
+			}
+			catch (PhidgetException ex) {
+				System.err.println("Cannot get thermocouple type from device " + deviceType + " because of error: " + ex);
 			}
 		}
-		catch (PhidgetException ex) {
-			System.err.println("Cannot get thermocouple type from device " + deviceType + " because of error: " + ex);
+		else {
+			System.err.println("getThermocoupleType() is not valid for device of type " + deviceType);
+			PAppletParent.exit();
 		}
 		return "";
 	}
 
 	@Override
 	public void setThermocoupleType(String tcType) {
-		ThermocoupleType ntcType = ThermocoupleType.J;
-
-		tcType = tcType.toUpperCase();
-
-		switch (tcType) {
-		case "J":
-			break;
-
-		case "K":
-			ntcType = ThermocoupleType.K;
-			break;
-
-		case "E":
-			ntcType = ThermocoupleType.E;
-			break;
-
-		case "T":
-			ntcType = ThermocoupleType.T;
-			break;
-
-		default:
-			System.err.println("Cannot set thermocouple type to " + ntcType +". Use only: \"J\", \"K\", \"E\" or \"T\"");		
-			return;
+		if (deviceType.equals("1048") || deviceType.equals("1051") || deviceType.equals("TMP1101")) {
+			ThermocoupleType ntcType = ThermocoupleType.J;
+	
+			tcType = tcType.toUpperCase();
+	
+			switch (tcType) {
+			case "J":
+				break;
+	
+			case "K":
+				ntcType = ThermocoupleType.K;
+				break;
+	
+			case "E":
+				ntcType = ThermocoupleType.E;
+				break;
+	
+			case "T":
+				ntcType = ThermocoupleType.T;
+				break;
+	
+			default:
+				System.err.println("Cannot set thermocouple type to " + ntcType +". Use only: \"J\", \"K\", \"E\" or \"T\"");		
+				return;
+			}
+			try {
+				((TemperatureSensor)device).setThermocoupleType(ntcType);
+			}
+			catch (PhidgetException ex) {
+				System.err.println("Cannot set RTD type for device " + deviceType + " because of error: " + ex);
+			}
 		}
-		try {
-			((TemperatureSensor)device).setThermocoupleType(ntcType);
-		}
-		catch (PhidgetException ex) {
-			System.err.println("Cannot set RTD type for device " + deviceType + " because of error: " + ex);
+		else {
+			System.err.println("setThermocoupleType(String) is not valid for device of type " + deviceType);
+			PAppletParent.exit();
 		}
 	}
 }

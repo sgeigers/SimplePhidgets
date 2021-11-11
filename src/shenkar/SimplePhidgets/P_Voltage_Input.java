@@ -407,7 +407,7 @@ public class P_Voltage_Input extends Device {
 
 	@Override
 	public int getPowerSupply() {  // in V; 12, 24 or 0 for OFF
-		if (deviceType == "DAQ1400") {
+		if (deviceType.equals("DAQ1400")) {
 			try {
 				PowerSupply ps = (((VoltageInput)device).getPowerSupply());
 				switch (ps) {
@@ -431,7 +431,7 @@ public class P_Voltage_Input extends Device {
 
 	@Override
 	public void setPowerSupply(int ps) {
-		if (deviceType == "DAQ1400") {
+		if (deviceType.equals("DAQ1400")) {
 			try {
 				PowerSupply p = PowerSupply.OFF;
 				switch (ps) {
@@ -460,7 +460,7 @@ public class P_Voltage_Input extends Device {
 
 	@Override
 	public String getSensorType() {
-		if (deviceType == "1058") {
+		if (deviceType.equals("1058")) {
 			System.err.println("getSensorType() is not valid for device of type " + deviceType);				
 		}
 		else {
@@ -517,7 +517,7 @@ public class P_Voltage_Input extends Device {
 
 	@Override
 	public void setSensorType(String sensorType) {
-		if (deviceType == "1058") {
+		if (deviceType.equals("1058")) {
 			System.err.println("setSensorType(String) is not valid for device of type " + deviceType);				
 		}
 		else {
@@ -709,7 +709,7 @@ public class P_Voltage_Input extends Device {
 
 	@Override
 	public String getSensorUnit() {
-		if (deviceType == "1058") {
+		if (deviceType.equals("1058")) {
 			System.err.println("getSensorUnit() is not valid for device of type " + deviceType);				
 		}
 		else {
@@ -725,7 +725,7 @@ public class P_Voltage_Input extends Device {
 
 	@Override
 	public float getSensorValue() {
-		if (deviceType == "1058") {
+		if (deviceType.equals("1058")) {
 			System.err.println("getSensorValue() is not valid for device of type " + deviceType);				
 		}
 		else {
@@ -751,7 +751,7 @@ public class P_Voltage_Input extends Device {
 
 	@Override
 	public boolean getSensorValueValidity() {
-		if (deviceType == "1058") {
+		if (deviceType.equals("1058")) {
 			System.err.println("getSensorValueValidity() is not valid for device of type " + deviceType);				
 		}
 		else {
@@ -779,7 +779,7 @@ public class P_Voltage_Input extends Device {
 
 	@Override
 	public float getSensorValueChangeTrigger() {
-		if (deviceType == "1058") {
+		if (deviceType.equals("1058")) {
 			System.err.println("getSensorValueChangeTrigger() is not valid for device of type " + deviceType);				
 		}
 		else {
@@ -795,7 +795,7 @@ public class P_Voltage_Input extends Device {
 
 	@Override
 	public void setSensorValueChangeTrigger(float sensorValueChangeTrigger) {
-		if (deviceType == "1058") {
+		if (deviceType.equals("1058")) {
 			System.err.println("setSensorValueChangeTrigger() is not valid for device of type " + deviceType);				
 		}
 		else {
@@ -900,7 +900,7 @@ public class P_Voltage_Input extends Device {
 
 	@Override
 	public int getVoltageRange() {  // in mV;  312 => 312.5;  -1 => AUTO
-		if (deviceType == "1058") {
+		if (deviceType.equals("1058")) {
 			System.err.println("getVoltageRange() is not valid for device of type " + deviceType);				
 		}
 		else {
@@ -940,7 +940,7 @@ public class P_Voltage_Input extends Device {
 
 	@Override
 	public void setVoltageRange(int vr) {
-		if (deviceType == "1058") {
+		if (deviceType.equals("1058")) {
 			System.err.println("setVoltageRange(int) is not valid for device of type " + deviceType);				
 		}
 		else {

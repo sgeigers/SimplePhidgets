@@ -340,7 +340,7 @@ public class P_Encoder extends Device {
 	public String getIOMode() { 
 		boolean valid = false;
 		if ((deviceType.equals("ENC1000")) || (deviceType.equals("DCC1000"))) valid = true;
-		else if (deviceType == "1057") {
+		else if (deviceType.equals("1057")) {
 			try {
 				if (device.getDeviceVersion() >= 400) valid = true;
 				else {
@@ -383,7 +383,7 @@ public class P_Encoder extends Device {
 	public void setIOMode(String em) {
 		boolean valid = false;
 		if ((deviceType.equals("ENC1000")) || (deviceType.equals("DCC1000"))) valid = true;
-		else if (deviceType == "1057") {
+		else if (deviceType.equals("1057")) {
 			try {
 				if (device.getDeviceVersion() >= 400) valid = true;
 				else {

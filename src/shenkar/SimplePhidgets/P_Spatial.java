@@ -1307,7 +1307,7 @@ public class P_Spatial extends Device {
 
 	@Override
 	public float getMagneticFieldChangeTrigger() {
-		if ((deviceType=="1042") || (deviceType=="1044") || (deviceType=="1056") || (deviceType=="MOT1101")) { 
+		if (deviceType.equals("1042") || deviceType.equals("1044") || deviceType.equals("1056") || deviceType.equals("MOT1101")) { 
 			try {
 				return (float)(magnetometer.getMagneticFieldChangeTrigger());
 			}

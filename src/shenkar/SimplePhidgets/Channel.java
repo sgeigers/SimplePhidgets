@@ -2,14 +2,12 @@ package shenkar.SimplePhidgets;
 
 import com.phidget22.DistanceSensorSonarReflections;
 import com.phidget22.NMEAData;
-
 import processing.core.*;
 
 /* ToDos:
- * - Next: LCD (Text + Graphics)
- * - Change all String equality checks to .equals
+ * - Left: IR, BLDCMotor, HumiditySensor, PHSensor, PowerGuard, PressureSensor, ResistenceInput, VoltageOutput
  * - Add PAppletParent.exit(); to most errors...
- * - Complete example Specific -> Temperature_Sensor
+ * - Add specific example for 1045
  * - [PROBABLY OK] if dual usage of same event function name fails - for every event (which has dual usage) check type of channel before invoking
  * - [CHECKED. NOT POSSIBLE] Check if possible to open both DCMotor and MotorPositionController at the same time for one device.
  * - Check where specific function screening for specific devices can be done using getChannelSubClass
@@ -132,7 +130,7 @@ public class Channel {
 	public String getRTDType() {return device.getRTDType(); }
 	public void setRTDType(String sensorType) {device.setRTDType(sensorType); }
 	public int getRTDWireSetup() {return device.getRTDWireSetup(); }
-	public void getRTDWireSetup(int setup) {device.getRTDWireSetup(setup); }
+	public void setRTDWireSetup(int setup) {device.setRTDWireSetup(setup); }
 	public float getTemperatureChangeTrigger() {return device.getTemperatureChangeTrigger(); }
 	public void setTemperatureChangeTrigger(float changeTrigger) {device.setTemperatureChangeTrigger(changeTrigger); }
 	public float getMinTemperatureChangeTrigger() {return device.getMinTemperatureChangeTrigger(); }
@@ -388,6 +386,44 @@ public class Channel {
 	public boolean getSonarQuietMode() {return device.getSonarQuietMode(); }
 	public DistanceSensorSonarReflections getSonarReflections() {return device.getSonarReflections(); }
 
+	// P_LCD
+	public float getBacklight() {return device.getBacklight(); }	
+	public void setBacklight(float light) {device.setBacklight(light); }	
+	public float getMinBacklight() {return device.getMinBacklight(); }	
+	public float getMaxBacklight() {return device.getMaxBacklight(); }	
+	public void setCharacterBitmap(String fontName, String character, byte[] bitmap) {device.setCharacterBitmap(fontName, character, bitmap); }	
+	public void setCharacterBitmap(String character, byte[] bitmap) {device.setCharacterBitmap(character, bitmap); }	
+	public int getMaxCharacters(String fontName) {return device.getMaxCharacters(fontName); }	
+	public int getMaxCharacters() {return device.getMaxCharacters(); }	
+	public void clear() {device.clear(); }	
+	public float getContrast() {return device.getContrast(); }	
+	public void setContrast(float contrast) {device.setContrast(contrast); }	
+	public float getMinContrast() {return device.getMinContrast(); }	
+	public float getMaxContrast() {return device.getMaxContrast(); }	
+	public void copy(int sourceFramebuffer,	int destFramebuffer, int sourceX1, int sourceY1, int sourceX2, int sourceY2, int destX, int destY, boolean inverted) {device.copy(sourceFramebuffer, destFramebuffer, sourceX1, sourceY1, sourceX2, sourceY2, destX, destY, inverted); }
+	public boolean getCursorBlink() {return device.getCursorBlink(); }	
+	public void setCursorBlink(boolean blink) {device.setCursorBlink(blink); }	
+	public boolean getCursorOn() {return device.getCursorOn(); }	
+	public void setCursorOn(boolean on) {device.setCursorOn(on); }	
+	public void drawLine(int x1, int y1, int x2, int y2) {device.drawLine(x1, y1, x2, y2); }	
+	public void drawPixel(int x, int y, String pixelState) {device.drawPixel(x, y, pixelState); }	
+	public void drawRect(int x1, int y1, int x2, int y2, boolean filled, boolean inverted) {device.drawRect(x1, y1, x2, y2, filled, inverted); }	
+	public void flush() {device.flush(); }	
+	public void setFontSize(String fontName, int width, int height) {device.setFontSize(fontName, width, height); }	
+	public int getFrameBuffer() {return device.getFrameBuffer(); }	
+	public void setFrameBuffer(int buffer) {device.setFrameBuffer(buffer); }	
+	public int getHeight() {return device.getHeight(); }	
+	public int getWidth() {return device.getWidth(); }	
+	public void initialize() {device.initialize(); }	
+	public void saveFrameBuffer(int buffer) {device.saveFrameBuffer(buffer); }
+	public String getScreenSize() {return device.getScreenSize(); }	
+	public void setScreenSize(String size) {device.setScreenSize(size); }	
+	public boolean getSleeping() {return device.getSleeping(); }	
+	public void setSleeping(boolean on) {device.setSleeping(on); }	
+	public void writeBitmap(int xPosition, int yPosition, int xSize, int ySize, byte[] bitmap) {device.writeBitmap(xPosition, yPosition, xSize, ySize, bitmap); }
+	public void writeText(String fontName, int xPosition, int yPosition, String text) {device.writeText(fontName, xPosition, yPosition, text); }	
+	public void writeText(int xPosition, int yPosition, String text) {device.writeText(xPosition, yPosition, text); }		
+	
 	/**
 	 * minimal constructor
 	 * 
@@ -717,8 +753,9 @@ public class Channel {
 				switch (deviceType) {
 					case "DCC1000": // DC Motor Phidget
 					case "DCC1100": // Brushless DC Motor Phidget
-					case "HUM1000": // pH PhidgetHumidity Phidget
-					case "MOT1102":  // Spatial Phidget
+					case "HUM1000": // Humidity Phidget
+					case "HUM1001": // Humidity Phidget
+					case "MOT0109":	 // PhidgetSpatial Precision 3/3/3
 					case "SAF1000": // Programmable Power Guard Phidget
 						device = new P_Temperature_Sensor(myParent, this, deviceType, serialNum, hubPort, chNum);
 						break;
@@ -802,9 +839,25 @@ public class Channel {
 				}
 				break;
 
+			case "LCD":
+				switch (deviceType ) {
+					case "1202": // PhidgetTextLCD 20X2 : Blue : Integrated PhidgetInterfaceKit 8/8/8
+					case "1203": // PhidgetTextLCD 20X2 : White : Integrated PhidgetInterfaceKit 8/8/8
+					case "1219": // PhidgetTextLCD 20X2 White with PhidgetInterfaceKit 0/8/8
+					case "1220": // PhidgetTextLCD 20X2 Blue with PhidgetInterfaceKit 0/8/8
+					case "1221": // PhidgetTextLCD 20X2 Green with PhidgetInterfaceKit 0/8/8
+					case "1222": // PhidgetTextLCD 20X2 Red with PhidgetInterfaceKit 0/8/8
+						device = new P_LCD(myParent, this, deviceType, serialNum, hubPort, chNum);
+						break;
+	
+					default:
+						System.out.println("device " + deviceType + " has no secondary I/O of type \"LCD\"");	
+						break;
+				}
+				break;
 				
 			default:
-				System.out.println("unknown secondary I/O: " + secondaryIO + ". currently, possible secondary I/Os are: digitalInput, digitalOutput, analogInput, voltageInput, temperatureSensor, encoder, frequencyCounter, currentInput and positionControl.");	
+				System.out.println("unknown secondary I/O: " + secondaryIO + ". currently, possible secondary I/Os are: digitalInput, digitalOutput, analogInput, voltageInput, temperatureSensor, encoder, frequencyCounter, currentInput, positionControl and LCD.");	
 				myParent.exit();
 				break;
 			}
@@ -1067,6 +1120,17 @@ public class Channel {
 			case "DST1002":  // Distance Phidget 1300mm
 			case "DST1200":  // Sonar Phidget
 				device = new P_Distance_Sensor(myParent, this, deviceType, serialNum, hubPort, chNum);
+				break;
+
+			case "1202": // PhidgetTextLCD 20X2 : Blue : Integrated PhidgetInterfaceKit 8/8/8
+			case "1203": // PhidgetTextLCD 20X2 : White : Integrated PhidgetInterfaceKit 8/8/8
+			case "1204": // PhidgetTextLCD Adapter
+			case "1219": // PhidgetTextLCD 20X2 White with PhidgetInterfaceKit 0/8/8
+			case "1220": // PhidgetTextLCD 20X2 Blue with PhidgetInterfaceKit 0/8/8
+			case "1221": // PhidgetTextLCD 20X2 Green with PhidgetInterfaceKit 0/8/8
+			case "1222": // PhidgetTextLCD 20X2 Red with PhidgetInterfaceKit 0/8/8
+			case "LCD1100":  // Graphic LCD Phidget
+				device = new P_LCD(myParent, this, deviceType, serialNum, hubPort, chNum);
 				break;
 
 			default:

@@ -247,7 +247,7 @@ public class P_Current_Input extends Device {
 
 	@Override
 	public int getPowerSupply() {  // in V; 12, 24 or 0 for OFF
-		if (deviceType == "DAQ1400") {
+		if (deviceType.equals("DAQ1400")) {
 			try {
 				PowerSupply ps = (((CurrentInput)device).getPowerSupply());
 				switch (ps) {
@@ -271,7 +271,7 @@ public class P_Current_Input extends Device {
 
 	@Override
 	public void setPowerSupply(int ps) {
-		if (deviceType == "DAQ1400") {
+		if (deviceType.equals("DAQ1400")) {
 			try {
 				PowerSupply p = PowerSupply.OFF;
 				switch (ps) {
