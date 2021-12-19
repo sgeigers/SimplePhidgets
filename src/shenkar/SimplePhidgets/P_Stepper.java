@@ -473,9 +473,6 @@ public class P_Stepper extends Device {
 	@Override
 	public void setTargetPosition(float pos) {
 		try {
-			if (((Stepper)device).getControlMode() != StepperControlMode.STEP) {
-				((Stepper)device).setControlMode(StepperControlMode.STEP);
-			}
 			if (((Stepper)device).getEngaged() == false) {
 				((Stepper)device).setEngaged(true);
 			}
@@ -948,6 +945,11 @@ public class P_Stepper extends Device {
 	@Override
 	public void setVelocityLimit(float vel) {
 		try {
+			if (((Stepper)device).getControlMode() == StepperControlMode.RUN) {
+				if (((Stepper)device).getEngaged() == false) {
+					((Stepper)device).setEngaged(true);
+				}
+			}
 			((Stepper)device).setVelocityLimit((double)vel);
 		}
 		catch (PhidgetException ex) {

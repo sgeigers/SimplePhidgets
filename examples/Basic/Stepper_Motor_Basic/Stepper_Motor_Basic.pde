@@ -17,9 +17,11 @@ void draw() {
 }
  
 /*
+ A stepper motor can be controlled in 2 modes: either setting its position ("STEP" mode - default) or setting its speed ("RUN" mode).
+ 
  All functions for stepper channel:
  
- setTargetPosition(float) - most basic way to use the channel. Rotates the motor the selected position in 1/16 of steps.
+ setTargetPosition(float) - most basic way to use the channel in "STEP" mode. Rotates the motor the selected position in 1/16 of steps.
 
  getTargetPosition() - get target position as set in setTargetPosition().
  getMinPosition() - the minimum value that TargetPosition can be set to.
@@ -27,34 +29,35 @@ void draw() {
  getPosition() - the most recent position value that the controller has reported.
  addPositionOffset(int) - adds an offset (positive or negative) to the current position and target position. This is especially useful for zeroing position.
   
- setVelocityLimit(float) - when moving, the stepper motor velocity will be limited by this value (units per second)
+ setVelocityLimit(float) - when moving, the stepper motor velocity will be limited by this value. In "RUN" mode, this value sets motor's velocity and direction, 
+   and may be set to either positive or negative number (units per second)
  getMinVelocityLimit() - minimum value for VelosityLimit.
  getMaxVelocityLimit() - maximum value for VelosityLimit.
  getVelocity() - get the most recent velocity value that the controller has reported.
  getVelocityLimit() - as set in setVelocityLimit().
 
- getAcceleration() - get the rate at which the controller can change the motor's velocity
+ setControlMode(String) - "STEP" = controlling the motor with target position.  "RUN" = controlling with speed (continueous run)
+ getControlMode() - returns current control mode (String)
+
  setAcceleration(float) - set the rate at which the controller can change the motor's velocity
+ getAcceleration() - get the rate at which the controller can change the motor's velocity
  getMinAcceleration() - get the minimum value that acceleration can be set to.
  getMaxAcceleration() - get the maximum value that Acceleration can be set to.
  
  getIsMoving() - true if the controller is sending steps to the motor (it can't indicate a stalled motor)
- 
- getControlMode() - "STEP" = controlling the motor with target position.  "RUN" = controlling with speed (continueous run)
- setControlMode(String) - set to "STEP" or "RUN"
- 
- getCurrentLimit() - current limit to the motor (in Amperes)
+  
  setCurrentLimit(float) - the current through the motor will be limited by the set value
+ getCurrentLimit() - current limit to the motor (in Amperes)
  getMinCurrentLimit() - get minimum current imit to the motor
  getMaxCurrentLimit() - get maximum current limit to the motor
  
- getEngaged() - when this property is true, the controller will supply power to the motor coils.
  setEngaged(boolean) - this is automatically set to true when calling setTargetPosition
+ getEngaged() - when this property is true, the controller will supply power to the motor coils.
 
- getRescaleFactor() - get rescaler factor (see bellow)
  setRescaleFactor(float) - applies a factor to the units used by all movement parameters to make the units in your sketch more intuitive.
      For example: if your motor is 400 steps per revolution, after applying a factor of 1/(16*400) - because the basic unit is 1/16th step - setting target
      position to 1.0 will result in exactly one revolution of the motor.
+ getRescaleFactor() - get rescaler factor (float)
  
  Event functions:
 
@@ -70,8 +73,8 @@ void draw() {
 
  for newer stepper boards (VINT stepper controllers), these functions are also available:
  
- getHoldingCurrentLimit() - this value will activate when the TargetPosition has been reached. It will limit current through the motor.
- setHoldingCurrentLimit(float) - sets the holding current limit to the motor.
+ setHoldingCurrentLimit(float) - this value will activate when the TargetPosition has been reached. It will limit current through the motor to given value in Amperes.
+ getHoldingCurrentLimit() - returns the holding current limit to the motor (float, Amperes).
  
  enableFailsafe(int) - enable the fail-safe mode with the given fail-safe time.
  getMinFailsafeTime() - returns min fale-safe time

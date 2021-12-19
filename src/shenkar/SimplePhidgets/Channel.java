@@ -5,7 +5,9 @@ import com.phidget22.NMEAData;
 import processing.core.*;
 
 /* ToDos:
- * - Left: IR, BLDCMotor, HumiditySensor, PHSensor, PowerGuard, PressureSensor, ResistenceInput, VoltageOutput
+ * - Check real-time event of encoder. seems like double and even triple calls to it when in changeTrigger = 0. (Maybe use millis() for checking calling periods)
+ * - Change order of functions in all examples to "setup" functions and "draw" functions
+ * - APIs left to implement: IR, BLDCMotor, HumiditySensor, PHSensor, PowerGuard, PressureSensor, ResistenceInput, VoltageOutput
  * - Add PAppletParent.exit(); to most errors...
  * - Add specific example for 1045
  * - [PROBABLY OK] if dual usage of same event function name fails - for every event (which has dual usage) check type of channel before invoking
@@ -458,6 +460,19 @@ public class Channel {
 	}
 
 	/**
+	 * broaderish constructor
+	 * 
+	 * @param theParent the parent PApplet
+	 * @param type 4 numbers or 3 letters and 4 numbers describing type of device to associate to this channel
+	 * @param serialNum serial number of hub or interfaceKit (to be used in case there are more than one hub/IK connected to the computer)
+	 * @param hubPort the port number of hub or interfaceKit where the device is connected, or hub/IK serial number (if number used has more than 4 digits)
+	 * @param chNum specify the channel used (see general constructor), or hub port if serial number was specified in previous parameter
+	 */
+	public Channel(PApplet theParent, String type, int serialNum, int hubPort, int chNum) {
+		this(theParent, type, serialNum, hubPort, chNum, "");
+	}
+
+	/**
 	 * minimal constructor w/ secondary I/O
 	 * 
 	 * @param theParent the parent PApplet
@@ -536,13 +551,13 @@ public class Channel {
 	 * 
 	 * @param theParent the parent PApplet
 	 * @param type 4 numbers or 3 letters and 4 numbers describing type of device to associate to this channel
-	 * @param serial serial number of hub or interfaceKit (to be used in case there are more than one hub/IK connected to the computer)
+	 * @param serialNum serial number of hub or interfaceKit (to be used in case there are more than one hub/IK connected to the computer)
 	 * @param hubPort the port number of hub or interfaceKit where the device is connected, or hub/IK serial number (if number used has more than 4 digits)
 	 * @param secondaryIO either "digital_input" or "digital_output" to indicate digital channel (unless trivial by board type)
 	 * @param chNum specify the channel used (see general constructor), or hub port if serial number was specified in previous parameter
 	 */
 	public Channel(PApplet theParent, String type, int serialNum, int hubPort, String secondaryIO, int chNum) {
-		this(theParent, type, -1, hubPort, chNum, secondaryIO);
+		this(theParent, type, serialNum, hubPort, chNum, secondaryIO);
 	}
 
 	/**
@@ -550,13 +565,13 @@ public class Channel {
 	 * 
 	 * @param theParent the parent PApplet
 	 * @param type 4 numbers or 3 letters and 4 numbers describing type of device to associate to this channel
-	 * @param serial serial number of hub or interfaceKit (to be used in case there are more than one hub/IK connected to the computer)
+	 * @param serialNum serial number of hub or interfaceKit (to be used in case there are more than one hub/IK connected to the computer)
 	 * @param secondaryIO either "digital_input" or "digital_output" to indicate digital channel (unless trivial by board type)
 	 * @param hubPort the port number of hub or interfaceKit where the device is connected, or hub/IK serial number (if number used has more than 4 digits)
 	 * @param chNum specify the channel used (see general constructor), or hub port if serial number was specified in previous parameter
 	 */
 	public Channel(PApplet theParent, String type, int serialNum, String secondaryIO, int hubPort, int chNum) {
-		this(theParent, type, -1, hubPort, chNum, secondaryIO);
+		this(theParent, type, serialNum, hubPort, chNum, secondaryIO);
 	}
 
 	/**
@@ -565,12 +580,12 @@ public class Channel {
 	 * @param theParent the parent PApplet
 	 * @param type 4 numbers or 3 letters and 4 numbers describing type of device to associate to this channel
 	 * @param secondaryIO either "digital_input" or "digital_output" to indicate digital channel (unless trivial by board type)
-	 * @param serial serial number of hub or interfaceKit (to be used in case there are more than one hub/IK connected to the computer)
+	 * @param serialNum serial number of hub or interfaceKit (to be used in case there are more than one hub/IK connected to the computer)
 	 * @param hubPort the port number of hub or interfaceKit where the device is connected, or hub/IK serial number (if number used has more than 4 digits)
 	 * @param chNum specify the channel used (see general constructor), or hub port if serial number was specified in previous parameter
 	 */
 	public Channel(PApplet theParent, String type, String secondaryIO, int serialNum, int hubPort, int chNum) {
-		this(theParent, type, -1, hubPort, chNum, secondaryIO);
+		this(theParent, type, serialNum, hubPort, chNum, secondaryIO);
 	}
 
 
@@ -580,7 +595,7 @@ public class Channel {
 	 * 
 	 * @param theParent the parent PApplet
 	 * @param type 4 numbers or 3 letters and 4 numbers describing type of device to associate to this channel
-	 * @param serial serial number of hub or interfaceKit (to be used in case there are more than one hub/IK connected to the computer)
+	 * @param serialNum serial number of hub or interfaceKit (to be used in case there are more than one hub/IK connected to the computer)
 	 * @param hubPort the port number of hub or interfaceKit where the device is connected. Only needed if different than 0 or if a channel number is specified
 	 * @param chNum if the device has more than one channel (e.g. wheatstone bridge) - specify the channel used
 	 */
@@ -590,12 +605,25 @@ public class Channel {
 		myParent.registerMethod("draw", this);
 		myParent.registerMethod("dispose", this);
 		if (hubPort > 9999) {
+			int h = serialNum;
 			serialNum = hubPort;
-			if (chNum>-1) hubPort = chNum;
-			else hubPort = 0;
-			chNum = -1;
+			hubPort = h;
+			if (hubPort == -1) {
+				hubPort = chNum;
+				chNum = h;
+			}
+			if (hubPort == -1) {
+				hubPort = 0;
+			}
+		}
+		else if (chNum > 9999) {
+			int c = serialNum;
+			serialNum = chNum;
+			chNum = hubPort;
+			hubPort = c;
 		}
 
+		System.out.println("Type: "+type + " \tSerial: "+serialNum +"\thubPort: "+hubPort+ "\tchannel: "+chNum+ "\tsecIO: "+secondaryIO);
 		deviceType = type;
 		int p = deviceType.indexOf("_");
 		if (p > 0) deviceType = deviceType.substring(0, p);
