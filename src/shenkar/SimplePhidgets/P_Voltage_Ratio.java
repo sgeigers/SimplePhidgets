@@ -27,6 +27,7 @@ public class P_Voltage_Ratio extends Device {
 				
 		// device opening
 		switch (deviceType) {
+		case "DAQ1000": // 8x Voltage Input Phidget
 		case "DAQ1500": // weatstone bridge
 		case "DCC1000": // DC Motor Phidget
 		case "HIN1100": // thumbstick

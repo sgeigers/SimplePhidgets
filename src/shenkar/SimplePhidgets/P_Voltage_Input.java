@@ -33,6 +33,7 @@ public class P_Voltage_Input extends Device {
 			break;
 			
 		case "ADP1000": // pH Phidget
+		case "DAQ1000": // 8x Voltage Input Phidget
 			init(false);
 			break;
 			
