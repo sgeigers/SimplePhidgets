@@ -60,6 +60,9 @@ public class P_Digital_Input extends Device {
 			break;
 
 		case "HUB0000": // 6-Port USB VINT Hub Phidget
+		case "HUB0001": // 6-Port USB VINT Hub Phidget
+		case "HUB0002": // 6-Port USB VINT Hub Phidget
+		case "HUB0007": // 1-Port USB VINT Hub Phidget
 		case "HUB5000": // 6-Port Network VINT Hub Phidget
 		case "SBC3003": // PhidgetSBC4 - 6-Port VINT Hub Phidget
 		default:

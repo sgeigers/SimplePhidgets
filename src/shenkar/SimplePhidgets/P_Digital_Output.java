@@ -21,8 +21,6 @@ public class P_Digital_Output extends Device {
 		case "1011": // PhidgetInterfaceKit 2/2/2
 		case "1012": // PhidgetInterfaceKit 0/16/16
 		case "1013": // PhidgetInterfaceKit 8/8/8
-		case "1014": // PhidgetInterfaceKit 0/0/4 (Relays)
-		case "1017": // PhidgetInterfaceKit 0/0/8 (Relays)
 		case "1018": // PhidgetInterfaceKit 8/8/8
 		case "1019": // PhidgetInterfaceKit 8/8/8
 		case "1023": // PhidgetRFID
@@ -42,6 +40,11 @@ public class P_Digital_Output extends Device {
 			initNoHub();
 			break;
 
+		case "1014": // PhidgetInterfaceKit 0/0/4 (Relays)
+		case "1017": // PhidgetInterfaceKit 0/0/8 (Relays)
+			initDual();
+			break;
+
 		case "LED1000": // 32x Isolated LED Phidget
 		case "OUT1100": // 4x Digital Output Phidget
 		case "PSU1000": // Power Plug Phidget
@@ -55,6 +58,9 @@ public class P_Digital_Output extends Device {
 			break;
 
 		case "HUB0000": // 6-Port USB VINT Hub Phidget
+		case "HUB0001": // 6-Port USB VINT Hub Phidget
+		case "HUB0002": // 6-Port USB VINT Hub Phidget
+		case "HUB0007": // 1-Port USB VINT Hub Phidget
 		case "HUB5000": // 6-Port Network VINT Hub Phidget
 		case "SBC3003": // PhidgetSBC4 - 6-Port VINT Hub Phidget
 		default:
@@ -214,8 +220,9 @@ public class P_Digital_Output extends Device {
 	@Override
 	public void enableFailsafe(int failsafeTime) {
 		// applicable for newer relay and digital output boards only
+		// on 1014/1017 - newer versions support failsafe, but checking for its version is a headache, so for now - left as is
 		String sType = deviceType.substring(0, 3);
-		if (sType.equals("OUT") || sType.equals("REL")) {
+		if (sType.equals("OUT") || sType.equals("REL") || deviceType.equals("1014") || deviceType.equals("1017")) {
 			try {
 				((DigitalOutput)device).enableFailsafe(failsafeTime);
 			}
@@ -238,8 +245,9 @@ public class P_Digital_Output extends Device {
 	@Override
 	public int getMinFailsafeTime() {
 		// applicable for newer relay and digital output boards only
+		// on 1014/1017 - newer versions support failsafe, but checking for its version is a headache, so for now - left as is
 		String sType = deviceType.substring(0, 3);
-		if (sType.equals("OUT") || sType.equals("REL")) {
+		if (sType.equals("OUT") || sType.equals("REL") || deviceType.equals("1014") || deviceType.equals("1017")) {
 			try {
 				return ((DigitalOutput)device).getMinFailsafeTime();
 			}
@@ -261,8 +269,9 @@ public class P_Digital_Output extends Device {
 	@Override
 	public int getMaxFailsafeTime() {
 		// applicable for newer relay and digital output boards only
+		// on 1014/1017 - newer versions support failsafe, but checking for its version is a headache, so for now - left as is
 		String sType = deviceType.substring(0, 3);
-		if (sType.equals("OUT") || sType.equals("REL")) {
+		if (sType.equals("OUT") || sType.equals("REL") || deviceType.equals("1014") || deviceType.equals("1017")) {
 			try {
 				return ((DigitalOutput)device).getMaxFailsafeTime();
 			}
@@ -283,8 +292,9 @@ public class P_Digital_Output extends Device {
 	@Override
 	public void resetFailsafe() {
 		// applicable for newer relay and digital output boards only
+		// on 1014/1017 - newer versions support failsafe, but checking for its version is a headache, so for now - left as is
 		String sType = deviceType.substring(0, 3);
-		if (sType.equals("OUT") || sType.equals("REL")) {
+		if (sType.equals("OUT") || sType.equals("REL") || deviceType.equals("1014") || deviceType.equals("1017")) {
 			try {
 				((DigitalOutput)device).resetFailsafe();
 			}

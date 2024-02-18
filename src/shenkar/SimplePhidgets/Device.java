@@ -64,6 +64,27 @@ abstract public class Device {
 		}
 	}
 	
+	// try to open without a hub, and if fails - open with hub.
+	// this is for devices with dual connectivity - both USB and VINT (e.g. MOT0100)
+	public void initDual() {  
+		int backupChannelNum = channelNum;
+		boolean noHubSuccess = true;
+		
+		try {
+			if (hubPort != 0) channelNum = hubPort;
+			if (channelNum > -1) device.setChannel(channelNum);
+			if (serial > -1) device.setDeviceSerialNumber(serial);
+			device.open(1000);
+		}
+		catch (PhidgetException e) {
+			noHubSuccess = false;
+		}
+		if (noHubSuccess) return;
+		// noHub failed - try to open with a hub
+		channelNum = backupChannelNum;
+		init(false);
+	}
+	
 	public void close() {
 		if (device != null) {
 			try {

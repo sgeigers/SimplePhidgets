@@ -662,6 +662,9 @@ public class Channel {
 					case "HIN1100": // Thumbstick Phidget
 					case "HIN1101": // Dial Phidget
 					case "HUB0000": // 6-Port USB VINT Hub Phidget
+					case "HUB0001": // 6-Port USB VINT Hub Phidget
+					case "HUB0002": // 6-Port USB VINT Hub Phidget
+					case "HUB0007": // 1-Port USB VINT Hub Phidget
 					case "HUB5000": // 6-Port Network VINT Hub Phidget
 					case "SBC3003": // PhidgetSBC4 - 6-Port VINT Hub Phidget
 						device = new P_Digital_Input(myParent, this, deviceType, serialNum, hubPort, chNum);
@@ -699,6 +702,9 @@ public class Channel {
 					case "1222": // PhidgetTextLCD 20X2 Red with PhidgetInterfaceKit 0/8/8
 					case "LED1000": // 32x Isolated LED Phidget
 					case "HUB0000": // 6-Port USB VINT Hub Phidget
+					case "HUB0001": // 6-Port USB VINT Hub Phidget
+					case "HUB0002": // 6-Port USB VINT Hub Phidget
+					case "HUB0007": // 1-Port USB VINT Hub Phidget
 					case "HUB5000": // 6-Port Network VINT Hub Phidget
 					case "OUT1100": // 4x Digital Output Phidget
 					case "REL1000": // 4x Relay Phidget
@@ -731,6 +737,9 @@ public class Channel {
 					case "DCC1000": // DC Motor Phidget
 					case "HIN1100": // Thumbstick Phidget
 					case "HUB0000": // 6-Port USB VINT Hub Phidget
+					case "HUB0001": // 6-Port USB VINT Hub Phidget
+					case "HUB0002": // 6-Port USB VINT Hub Phidget
+					case "HUB0007": // 1-Port USB VINT Hub Phidget
 					case "HUB5000": // 6-Port Network VINT Hub Phidget
 					case "SBC3003": // PhidgetSBC4 - 6-Port VINT Hub Phidget
 						device = new P_Voltage_Ratio(myParent, this, deviceType, serialNum, hubPort, chNum);
@@ -761,6 +770,9 @@ public class Channel {
 					case "ADP1000": // pH Phidget
 					case "DAQ1000": // 8x Voltage Input Phidget
 					case "HUB0000": // 6-Port USB VINT Hub Phidget
+					case "HUB0001": // 6-Port USB VINT Hub Phidget
+					case "HUB0002": // 6-Port USB VINT Hub Phidget
+					case "HUB0007": // 1-Port USB VINT Hub Phidget
 					case "HUB5000": // 6-Port Network VINT Hub Phidget
 					case "PRX2300": // Beam Break Phidget - default is digital input
 					case "SAF1000": // Programmable Power Guard Phidget
@@ -784,6 +796,7 @@ public class Channel {
 					case "HUM1000": // Humidity Phidget
 					case "HUM1001": // Humidity Phidget
 					case "MOT0109":	 // PhidgetSpatial Precision 3/3/3
+					case "MOT0110":	 // PhidgetSpatial Precision 3/3/3
 					case "SAF1000": // Programmable Power Guard Phidget
 						device = new P_Temperature_Sensor(myParent, this, deviceType, serialNum, hubPort, chNum);
 						break;
@@ -940,6 +953,7 @@ public class Channel {
 			case "DAQ1000": // 8x Voltage Input Phidget
 			case "DAQ1500": // wheatstone bridge
 			case "HIN1100": // Thumbstick Phidget
+			case "HUM1100": // Soil Moisture Sensor
 				device = new P_Voltage_Ratio(myParent, this, deviceType, serialNum, hubPort, chNum);
 				break;
 
@@ -1065,7 +1079,9 @@ public class Channel {
 			case "1056":  // PhidgetSpatial 3/3/3
 			case "1059":  // PhidgetAccelerometer 3-Axis
 			case "MOT0109":	 // PhidgetSpatial Precision 3/3/3
+			case "MOT0110":	 // PhidgetSpatial Precision 3/3/3
 			case "MOT1100":  // Accelerometer Phidget
+			case "MOT0100":  // PhidgetAccelerometer
 			case "MOT1101":  // Spatial Phidget
 			case "MOT1102":  // Spatial Phidget
 				device = new P_Spatial(myParent, this, deviceType, serialNum, hubPort, chNum);
@@ -1087,6 +1103,7 @@ public class Channel {
 			case "STC1001":  // 2.5A Stepper Phidget
 			case "STC1002":  // 8A Stepper Phidget
 			case "STC1003":  // 4A Stepper Phidget
+			case "STC1005":  // 4A Stepper Phidget
 				device = new P_Stepper(myParent, this, deviceType, serialNum, hubPort, chNum);
 				break;
 
@@ -1108,6 +1125,7 @@ public class Channel {
 			case "1052": // PhidgetEncoder
 			case "1057": // PhidgetEncoder HighSpeed
 			case "ENC1000": // Quadrature Encoder Phidget
+			case "ENC1001": // Quadrature Encoder Phidget
 			case "HIN1101": // Dial Phidget
 				device = new P_Encoder(myParent, this, deviceType, serialNum, hubPort, chNum);
 				break;
@@ -1207,8 +1225,8 @@ public class Channel {
 	
 	/**
 	 * print general help message to the console.
-	 * 
-	public static void help() {
+	 *
+	/*public static void help() {
 		System.out.println(
 				  "To add a Phidget device to your sketch, do the following steps:\n"
 				+ "1. Connect the device using a VINT Hub, a PhidgetInterfaceKit or directly to USB. If the hub used has more than one channel, connect to lowest\n"
@@ -1237,17 +1255,6 @@ public class Channel {
 	 * 
 	public static void help(String type) {
 		Device.help(type);
-	}
-
-	/**
-	 * create and initialize the Phidget channel object
-	 * 
-	 * @param theParent the parent PApplet
-	 * @param channel channel object to initialize
-	 * @param deviceType name of device type to initialize
-
-/*	public static Channel init(PApplet theParent, String deviceType) {
-		return channel;
 	}*/
 
 }

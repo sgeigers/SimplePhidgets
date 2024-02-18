@@ -47,6 +47,7 @@ public class P_Stepper extends Device {
 		case "STC1001":  // 2.5A Stepper Phidget
 		case "STC1002":  // 8A Stepper Phidget
 		case "STC1003":  // 4A Stepper Phidget
+		case "STC1005":  // 4A Stepper Phidget
 			init(false);
 			break;
 
@@ -690,6 +691,7 @@ public class P_Stepper extends Device {
 		case "STC1001":  // 2.5A Stepper Phidget
 		case "STC1002":  // 8A Stepper Phidget
 		case "STC1003":  // 4A Stepper Phidget
+		case "STC1005":  // 4A Stepper Phidget
 			try {
 				((Stepper)device).enableFailsafe(failsafeTime);
 			}
@@ -718,6 +720,7 @@ public class P_Stepper extends Device {
 		case "STC1001":  // 2.5A Stepper Phidget
 		case "STC1002":  // 8A Stepper Phidget
 		case "STC1003":  // 4A Stepper Phidget
+		case "STC1005":  // 4A Stepper Phidget
 			try {
 				return ((Stepper)device).getMinFailsafeTime();
 			}
@@ -745,6 +748,7 @@ public class P_Stepper extends Device {
 		case "STC1001":  // 2.5A Stepper Phidget
 		case "STC1002":  // 8A Stepper Phidget
 		case "STC1003":  // 4A Stepper Phidget
+		case "STC1005":  // 4A Stepper Phidget
 			try {
 				return ((Stepper)device).getMaxFailsafeTime();
 			}
@@ -771,6 +775,7 @@ public class P_Stepper extends Device {
 		case "STC1001":  // 2.5A Stepper Phidget
 		case "STC1002":  // 8A Stepper Phidget
 		case "STC1003":  // 4A Stepper Phidget
+		case "STC1005":  // 4A Stepper Phidget
 			try {
 				((Stepper)device).resetFailsafe();
 			}
@@ -794,6 +799,7 @@ public class P_Stepper extends Device {
 		case "STC1001":  // 2.5A Stepper Phidget
 		case "STC1002":  // 8A Stepper Phidget
 		case "STC1003":  // 4A Stepper Phidget
+		case "STC1005":  // 4A Stepper Phidget
 			try {
 				return (float)(((Stepper)device).getHoldingCurrentLimit());
 			}
@@ -816,6 +822,7 @@ public class P_Stepper extends Device {
 		case "STC1001":  // 2.5A Stepper Phidget
 		case "STC1002":  // 8A Stepper Phidget
 		case "STC1003":  // 4A Stepper Phidget
+		case "STC1005":  // 4A Stepper Phidget
 			try {
 				((Stepper)device).setHoldingCurrentLimit((double)curr);
 			}

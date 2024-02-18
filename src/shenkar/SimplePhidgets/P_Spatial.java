@@ -59,6 +59,7 @@ public class P_Spatial extends Device {
 			case "1044":  // PhidgetSpatial Precision 3/3/3 High Resolution
 			case "1056":  // PhidgetSpatial 3/3/3
 			case "MOT0109":	 // PhidgetSpatial Precision 3/3/3
+			case "MOT0110":	 // PhidgetSpatial Precision 3/3/3
 			case "MOT1101":  // Spatial Phidget
 			case "MOT1102":  // Spatial Phidget
 				spatial = new Spatial();
@@ -89,10 +90,15 @@ public class P_Spatial extends Device {
 			init(false);
 			break;
 
+		case "MOT0100":  // PhidgetAccelerometer
+			initDual();
+			break;
+
 		case "1042":  // PhidgetSpatial 3/3/3 Basic
 		case "1044":  // PhidgetSpatial Precision 3/3/3 High Resolution
 		case "1056":  // PhidgetSpatial 3/3/3
 		case "MOT0109":	 // PhidgetSpatial Precision 3/3/3
+		case "MOT0110":	 // PhidgetSpatial Precision 3/3/3
 			initNoHub();
 			try {
 				if (serial > -1) {
@@ -146,6 +152,7 @@ public class P_Spatial extends Device {
 			case "1044":  // PhidgetSpatial Precision 3/3/3 High Resolution
 			case "1056":  // PhidgetSpatial 3/3/3
 			case "MOT0109":	 // PhidgetSpatial Precision 3/3/3
+			case "MOT0110":	 // PhidgetSpatial Precision 3/3/3
 			case "MOT1101":  // Spatial Phidget
 			case "MOT1102":  // Spatial Phidget
 				spatial.setDataInterval(spatial.getMinDataInterval());
@@ -175,6 +182,7 @@ public class P_Spatial extends Device {
 		case "1053":  // PhidgetAccelerometer 2-Axis
 		case "1059":  // PhidgetAccelerometer 3-Axis
 		case "MOT1100":  // Accelerometer Phidget
+		case "MOT0100":  // PhidgetAccelerometer
 
 			// accelChange()
 			try {
@@ -261,11 +269,12 @@ public class P_Spatial extends Device {
 			}
 			break;
 
-			// if this is a device with other sensors (gyro and magnetometer), accelChange is only set by user. also check for other event methonds
+			// if this is a device with other sensors (gyro and magnetometer), accelChange is only set by user. also check for other event methods
 		case "1042":  // PhidgetSpatial 3/3/3 Basic
 		case "1044":  // PhidgetSpatial Precision 3/3/3 High Resolution
 		case "1056":  // PhidgetSpatial 3/3/3
 		case "MOT0109":	 // PhidgetSpatial Precision 3/3/3
+		case "MOT0110":	 // PhidgetSpatial Precision 3/3/3
 		case "MOT1101":  // Spatial Phidget
 		case "MOT1102":  // Spatial Phidget
 			// accelChange()

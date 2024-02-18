@@ -31,6 +31,7 @@ public class P_Encoder extends Device {
 		case "DCC1001": // 2A DC Motor Phidget
 		case "DCC1002": // 4A DC Motor Phidget
 		case "ENC1000": // Quadrature Encoder Phidget
+		case "ENC1001": // Quadrature Encoder Phidget
 		case "HIN1101": // Dial Phidget
 			init(false);
 			break;
@@ -220,7 +221,7 @@ public class P_Encoder extends Device {
 	@Override
 	public void setEnabled(boolean en) {  // ENC1000 HIN1101 1047 1057(only for getDeviceVersion >=400)
 		boolean valid = false;
-		if (deviceType.equals("ENC1000") || deviceType.equals("HIN1101") || deviceType.equals("1047")) valid = true;
+		if (deviceType.equals("ENC1000") || deviceType.equals("ENC1001") || deviceType.equals("HIN1101") || deviceType.equals("1047")) valid = true;
 		else if (deviceType.equals("1057")) {
 			try {
 				if (device.getDeviceVersion() >= 400) valid = true;
@@ -299,6 +300,7 @@ public class P_Encoder extends Device {
 			case "DCC1001": // 2A DC Motor Phidget
 			case "DCC1002": // 4A DC Motor Phidget
 			case "ENC1000": // Quadrature Encoder Phidget
+			case "ENC1001": // Quadrature Encoder Phidget
 			case "1047": // PhidgetEncoder HighSpeed 4-Input
 			case "1065": // PhidgetMotorControl 1-Motor
 				valid = true;
